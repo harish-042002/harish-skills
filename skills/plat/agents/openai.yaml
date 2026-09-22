@@ -1,4 +1,4 @@
 interface:
   display_name: "Plat"
-  short_description: "Adaptive engineering control plane with specialist depth"
-  default_prompt: "Use Plat to infer this task's mode and depth, honor current repository truth and any relevant Plat profile, load only specialist guidance that can improve the outcome, make the simplest correct change or investigation, and verify with fresh evidence."
+  short_description: "Minimum sufficient engineering depth for AI coding agents"
+  default_prompt: "Use Plat to solve this engineering task with the minimum sufficient depth: inspect repository truth first, load only specialist guidance that can change the outcome, avoid unnecessary tool/context churn, course-correct on fresh evidence, and verify before claiming completion."
