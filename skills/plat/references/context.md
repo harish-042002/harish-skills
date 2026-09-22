@@ -57,6 +57,7 @@ When cheap, record branch + HEAD/commit as a freshness anchor.
 - Keep inherited uncertainty under **Assumptions / Risks** until checked.
 - On takeover, compare the freshness anchor/current workspace and re-verify material claims before editing.
 - Current repository evidence wins over session notes.
+- When the developer materially corrects intent, replace stale Goal/Constraints/Decisions/Next entries rather than appending contradictory history. Preserve an old decision only if its rejection still prevents repeated work.
 
 ## Keep only high-signal state
 
