@@ -17,7 +17,7 @@ Usage:
 The installer:
   1. installs Plat into the selected agent using direct copy mode,
   2. verifies SKILL.md exists in the agent's real skill directory,
-  3. runs one-time developer preference onboarding,
+  3. runs one-time developer preference onboarding and creates only ~/.plat/profile.md,
   4. wires Plat into the agent instructions.
 
 Re-running this installer updates Plat while preserving existing preferences.
@@ -42,8 +42,8 @@ ask_agent() {
 ask_scope() {
   echo
   echo "Install scope:"
-  echo "  1. Global — use Plat across projects"
-  echo "  2. Project — use Plat only in this project"
+  echo "  1. Global skill install — use Plat across projects"
+  echo "  2. Project-local skill install — install Plat only in this repo"
   read -r -p "> " choice
   case "${choice:-1}" in
     1) SCOPE="global" ;;
@@ -195,7 +195,7 @@ wire_agent
 
 echo
 echo "✓ Plat is ready."
-echo "  Preferences: $HOME/.plat/profile.md"
+echo "  Developer profile: $HOME/.plat/profile.md"
 echo "  Skill:       $SKILL_DIR"
 echo
 echo "Ask normally. Plat decides the smallest useful mode, depth, and specialist team."
