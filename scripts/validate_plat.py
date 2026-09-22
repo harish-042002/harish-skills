@@ -12,6 +12,7 @@ ROUTING = ROOT / "skills" / "plat" / "references" / "routing.md"
 VERSION = ROOT / "VERSION"
 SKILL_VERSION = ROOT / "skills" / "plat" / "VERSION"
 CASES = ROOT / "tests" / "routing-cases.json"
+UPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
 
 errors: list[str] = []
 
@@ -68,6 +69,12 @@ for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`", skill):
     require(p.exists(), f"missing referenced file: {p.relative_to(ROOT)}")
 
 require(VERSION.read_text().strip() == SKILL_VERSION.read_text().strip(), "root VERSION and skill VERSION differ")
+require(UPDATE_CHECK.exists(), "daily update checker script is missing")
+if UPDATE_CHECK.exists():
+    update_text = UPDATE_CHECK.read_text(encoding="utf-8")
+    require("StartInterval" in update_text and "86400" in update_text, "daily checker must keep 24h macOS interval")
+    require("OnUnitActiveSec=24h" in update_text, "daily checker must keep 24h Linux timer")
+    require("LATEST_RELEASE_API" in update_text, "daily checker must use release discovery outside agent prompts")
 
 data = json.loads(CASES.read_text(encoding="utf-8"))
 items = data.get("cases", [])
