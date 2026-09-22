@@ -21,9 +21,11 @@ Profiles reduce rediscovery and tune explanation/output to the developer. They a
 
 For interactive human use, the **global developer profile is a one-time required onboarding step**. The recommended Plat installer performs it during installation. If Plat was installed through a generic skill installer and the profile is missing, complete onboarding on first Plat use before substantive engineering work.
 
-Project and session profiles remain conditional:
-- global developer profile - required once for interactive use;
-- project profile - optional and evidence-derived;
+Installation/onboarding creates **only** the global developer profile at `~/.plat/profile.md`.
+
+Project and session state are separate runtime concerns:
+- global developer profile - required once for interactive use and the only profile created during installation;
+- project profile - optional later runtime cache only when explicitly requested or clearly useful for non-trivial repository work; never create it during installation/onboarding;
 - session state - only for non-trivial continuation.
 
 Non-interactive CI/automation may use neutral defaults without creating a persistent profile.
@@ -170,7 +172,7 @@ When the developer asks to set up Plat for the current project:
 4. Write a compact `.plat/project.md` with source/freshness pointers.
 5. Add `.plat/` to `.git/info/exclude` when safe and not already covered; do not edit shared `.gitignore` solely for Plat without intent.
 
-Project setup is independent of developer onboarding and should normally be inferred from repository evidence after installation.
+Do not perform project setup during installation. If project context is needed later, derive it from repository evidence during the actual task rather than asking onboarding questions about the project.
 
 ## Read/update rules
 
