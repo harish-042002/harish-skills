@@ -25,31 +25,53 @@ EOF
 }
 
 ask_agent() {
-  echo
-  echo "Choose your coding agent:"
-  echo "  1. Claude Code"
-  echo "  2. Codex"
-  echo "  3. Cursor"
-  read -r -p "> " choice
-  case "${choice:-1}" in
-    1) AGENT="claude-code" ;;
-    2) AGENT="codex" ;;
-    3) AGENT="cursor" ;;
-    *) echo "Invalid choice." >&2; exit 2 ;;
-  esac
+  local choice raw_choice
+  while true; do
+    echo
+    echo "Choose your coding agent:"
+    echo "  1. Claude Code"
+    echo "  2. Codex"
+    echo "  3. Cursor"
+    read -r -p "> " raw_choice || exit 1
+
+    if [[ -z "$raw_choice" ]]; then
+      choice="1"
+    else
+      # macOS terminals may send literal arrow-key escape sequences to plain Bash read.
+      # Keep a trailing numeric choice when present; otherwise re-prompt.
+      choice="${raw_choice##*[!0-9]}"
+    fi
+
+    case "$choice" in
+      1) AGENT="claude-code"; return 0 ;;
+      2) AGENT="codex"; return 0 ;;
+      3) AGENT="cursor"; return 0 ;;
+      *) echo "Please enter 1, 2, or 3." >&2 ;;
+    esac
+  done
 }
 
 ask_scope() {
-  echo
-  echo "Install scope:"
-  echo "  1. Global skill install — use Plat across projects"
-  echo "  2. Project-local skill install — install Plat only in this repo"
-  read -r -p "> " choice
-  case "${choice:-1}" in
-    1) SCOPE="global" ;;
-    2) SCOPE="project" ;;
-    *) echo "Invalid choice." >&2; exit 2 ;;
-  esac
+  local choice raw_choice
+  while true; do
+    echo
+    echo "Install scope:"
+    echo "  1. Global skill install — use Plat across projects"
+    echo "  2. Project-local skill install — install Plat only in this repo"
+    read -r -p "> " raw_choice || exit 1
+
+    if [[ -z "$raw_choice" ]]; then
+      choice="1"
+    else
+      choice="${raw_choice##*[!0-9]}"
+    fi
+
+    case "$choice" in
+      1) SCOPE="global"; return 0 ;;
+      2) SCOPE="project"; return 0 ;;
+      *) echo "Please enter 1 or 2." >&2 ;;
+    esac
+  done
 }
 
 expected_skill_dir() {
@@ -185,11 +207,13 @@ tmp_setup="$(mktemp)"
 trap 'rm -f "$tmp_setup"' EXIT
 curl -fsSL "${RAW_BASE}/skills/plat/scripts/setup.py" -o "$tmp_setup"
 
-SETUP_ARGS=()
+# Avoid expanding an empty Bash array here. macOS still ships Bash 3.2,
+# where set -u can treat an empty array expansion as an unbound variable.
 if [[ "$RECONFIGURE" -eq 1 ]]; then
-  SETUP_ARGS+=(--force)
+  python3 "$tmp_setup" --force
+else
+  python3 "$tmp_setup"
 fi
-python3 "$tmp_setup" "${SETUP_ARGS[@]}"
 
 wire_agent
 
