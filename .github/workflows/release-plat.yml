@@ -1,5 +1,5 @@
 name: Release Plat
-# v1 release automation
+# reusable release automation
 
 on:
   workflow_dispatch:
@@ -39,22 +39,16 @@ jobs:
           cd ..
           sha256sum skill.zip > SHA256SUMS.txt
 
-      - name: Create release if missing
+      - name: Create or refresh release
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
-          VERSION: ${{ steps.version.outputs.version }}
         shell: bash
         run: |
           set -euo pipefail
 
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release $TAG already exists; leaving it unchanged."
-            exit 0
-          fi
-
-          cat > release-notes.md <<EOF
-          # Plat $TAG
+          cat > release-notes.md <<'EOF'
+          # Plat v1.0.0
 
           Adaptive engineering control plane for AI coding agents.
 
@@ -74,4 +68,9 @@ jobs:
           The release asset `skill.zip` contains the complete Plat skill, including the MIT license.
           EOF
 
-          gh release create "$TAG" skill.zip SHA256SUMS.txt             --target "$GITHUB_SHA"             --title "Plat $TAG"             --notes-file release-notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG"               --title "Plat $TAG"               --notes-file release-notes.md
+            gh release upload "$TAG" skill.zip SHA256SUMS.txt --clobber
+          else
+            gh release create "$TAG" skill.zip SHA256SUMS.txt               --target "$GITHUB_SHA"               --title "Plat $TAG"               --notes-file release-notes.md
+          fi
