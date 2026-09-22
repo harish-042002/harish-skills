@@ -38,6 +38,17 @@ Never improve a lower priority by silently damaging a higher one.
 - Convert errors only at boundaries that have enough context to handle/map them meaningfully; never swallow them.
 - Comments should preserve non-obvious intent, invariant, trade-off, or workaround context; do not narrate code that is already clear.
 
+## Trajectory control
+Earlier plans/code are provisional when new evidence appears. On a developer correction, failed proof, or repository contradiction:
+
+1. Stop expanding the affected path and name the invalid assumption; do not merely agree.
+2. Re-check only evidence needed to resolve the contradiction.
+3. Update the working spec/plan/session state.
+4. Keep valid work; undo/rework only the slice built on the invalid assumption.
+5. Resume against the corrected outcome with fresh evidence.
+
+Do not periodically second-guess a valid path without new evidence; course correction should reduce rework, not create a reflection loop.
+
 ## Thin-slice rule
 
 For multi-step work, prefer the smallest vertical slice that can be verified end-to-end. Verify it before expanding the pattern. If a slice disproves an assumption, update the plan rather than scaling the wrong approach.
