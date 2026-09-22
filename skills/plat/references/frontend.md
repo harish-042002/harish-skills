@@ -1,31 +1,52 @@
 # Frontend Engineering
 
-Use for web UI, React/Next.js or similar client frameworks, browser behavior, accessibility, client state, and frontend/backend contracts.
+Use for web UI, React/Next.js or similar client frameworks, browser behavior, accessibility, client state, responsive interaction, and frontend/backend contracts.
 
 ## Philosophy
 
-Server authoritative. Client responsive.
+Frontend is a first-class engineering surface, not decoration. Server authoritative; client responsive.
 
-Frontend owns interaction, presentation state, accessibility, loading/error/empty states, optimistic UX where safe, and browser behavior. Backend owns protected durable invariants and privileged side effects. Do not redesign the product's visual language unless the request is actually about design.
+Frontend owns interaction, presentation state, accessibility, loading/error/empty states, responsive behavior, optimistic UX where safe, and browser execution. Backend owns protected durable invariants and privileged side effects. Preserve the product's design system/visual language unless redesign is requested; Plat is not a substitute for a dedicated visual-design skill.
+
+## Start from the existing product
+
+- Inspect framework/version, routing, component library/design tokens, state/data-fetching patterns, form utilities, tests, and analogous screens before adding patterns.
+- Reuse established primitives and interaction conventions before adding another state library, component kit, CSS system, or abstraction.
+- For redesigns, separate **visual intent** from **behavioral contracts** so styling changes do not silently break data flow, accessibility, navigation, or existing states.
 
 ## Component and state design
 
-- Follow the repository's component/state architecture before introducing another pattern or state library.
 - Keep state at the nearest meaningful owner; separate remote/server state from local presentation state.
 - Derive state instead of maintaining synchronized duplicates when practical.
-- Keep rendering components understandable; do not split trivial markup into abstraction noise.
-- Keep effects for synchronization with external systems, not as a default place for ordinary derivation/business logic.
-- Avoid shared mutable module state in request/server-rendered environments unless the framework guarantees the intended lifecycle.
-- Respect server/client execution boundaries in SSR/hydrated frameworks; browser-only APIs, secrets, non-deterministic rendering, and duplicated fetches can create hydration or security bugs.
+- Model the states users can actually encounter: initial/loading/partial/empty/success/error/retry/offline/expired where relevant.
+- Keep effects for synchronization with external systems, not ordinary derivation/business logic.
+- Keep components understandable without fragmenting trivial markup into abstraction noise.
+- Prefer composition and explicit data flow over context/global state for one-off convenience.
+- Avoid shared mutable module state in request/server-rendered environments unless lifecycle semantics guarantee it is safe.
 
 ## Data fetching and async work
 
 - Remove avoidable request waterfalls; start independent I/O concurrently when semantics permit.
-- Defer expensive/remote work until a branch actually needs it.
-- Avoid duplicate fetching across route/component/client layers.
+- Defer remote/expensive work until a branch actually needs it.
+- Avoid duplicate fetching across route/component/client layers; follow framework cache/server-state semantics.
 - Cancel, supersede, or ignore stale async work when it can update the wrong view.
-- Treat loading, partial, empty, retry, auth-expiry, and error states explicitly where users can encounter them.
 - Keep secrets and privileged operations off the client.
+- Optimistic updates need rollback/reconciliation when the authoritative server rejects or changes the result.
+
+## Forms and user input
+
+- Use native semantics and the repository's established form/validation pattern before inventing another abstraction.
+- Preserve entered values across recoverable failures; show field-level/actionable errors at the right boundary.
+- Client validation improves feedback; backend validation/authorization remains authoritative.
+- Handle submit pending/double-submit/retry behavior explicitly when duplicate writes matter.
+
+## Rendering, responsive behavior, and accessibility
+
+- Respect server/client boundaries in SSR/hydrated frameworks; browser-only APIs, nondeterministic render output, duplicated fetching, and secret access can cause hydration/security bugs.
+- Verify layout at affected narrow/wide breakpoints and with realistic content, not only placeholder text.
+- Account for text zoom, long/localized strings, RTL where the product supports it, keyboard navigation, visible focus, semantic/native controls, accessible names, status/error announcements, and reduced-motion preferences.
+- Preserve logical focus across dialogs, navigation, validation failures, and dynamic content.
+- Touch/click targets and interaction affordances must remain usable; hover-only behavior cannot be the sole path to essential actions.
 
 ## Performance priority
 
@@ -34,24 +55,14 @@ Optimize high-impact causes before micro-tuning JavaScript:
 1. Network/data waterfalls.
 2. Initial bundle/client JavaScript and heavy third parties.
 3. Server/client serialization and duplicate data.
-4. Large assets and huge collections.
+4. Oversized images/media and unbounded collections.
 5. Excessive rerenders/subscriptions/layout work.
 6. Hot-path JavaScript only after evidence.
 
-Load large modules/assets only when the feature needs them when supported by the framework. Do not memoize every value/callback by habit; measure or identify a concrete cost.
+Use framework-supported lazy loading/code splitting when the feature boundary justifies it. Virtualize genuinely large collections; do not memoize every value/callback or add caches by habit.
 
-## Accessibility and UX correctness
+## Verification
 
-Use semantic/native controls where possible. Preserve keyboard access, visible focus, labels/names, meaningful error/status announcements, reduced-motion preferences when relevant, and logical focus after dialogs/navigation/errors.
+For meaningful UI work, verify the rendered result and interaction flow in a real browser/runtime when tooling exists. Check relevant DOM/accessibility behavior, console errors, network requests, responsive states, loading/error/empty states, keyboard flow, and hydration/runtime warnings. Static code review cannot prove rendered behavior.
 
-Visual presence is not proof of accessibility.
-
-## Validation and optimistic UI
-
-Client validation gives fast feedback; backend validation/authorization remains authoritative. Optimistic updates need a clear rollback/reconciliation path when the server rejects or modifies the operation.
-
-## Browser verification
-
-For meaningful UI changes, verify in a real browser/runtime when tooling exists. Inspect the relevant DOM/accessibility behavior, console errors, network requests, responsive states, and interaction flow. Static code review cannot prove hydration, focus, race timing, or rendered layout.
-
-Keep QA bounded: perform one comprehensive pass over the affected states/viewports, fix the batch of concrete defects, then one focused confirmation pass. Do not burn tokens on endless aesthetic self-polishing unless the user requests design iteration.
+Keep QA bounded: one comprehensive affected-state/viewpoint pass, fix concrete defects, then one focused confirmation. Do not burn tokens on endless aesthetic self-polishing unless the user explicitly requests design iteration.
