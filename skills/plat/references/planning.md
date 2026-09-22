@@ -8,35 +8,21 @@ Use for multi-file work, architecture, migrations, unclear requirements, or mean
 - Medium: short ordered steps plus proof for each.
 - Large/high-risk: explicit contracts, dependencies, rollout/rollback, failure modes, and validation.
 
-Do not create a large plan to avoid doing obvious work.
-
-## Compact working spec
-
-For a non-trivial feature/build, establish the current spec before implementation. Keep it compact unless risk demands more:
-
-```text
-Outcome: observable user/system result
-In scope: required behavior
-Out of scope: explicit non-goals when useful
-Constraints: compatibility/security/platform/cost limits
-Acceptance evidence: how completion will be proved
-```
-
-Treat this as a living contract, not paperwork. The latest explicit clarification/correction updates the spec; reconcile contradictions instead of carrying both old and new interpretations. Implementation follows the **current** spec, not the first interpretation.
+Do not create a large plan to avoid doing obvious work. Normal feature work does **not** require a formal spec.
 
 ## Planning sequence
 
 1. Define observable success and acceptance cases.
 2. Separate known requirements from assumptions. Resolve from repository evidence first; ask the developer only when an unresolved choice materially changes behavior, scope, compatibility, risk, or a hard-to-reverse action.
-3. Record hard constraints: compatibility, latency, throughput, cost, security, platform/framework, migration, rollout.
-4. Map the current ownership boundaries and source of truth.
+3. Record only hard constraints that change implementation: compatibility, latency, throughput, cost, security, platform/framework, migration, rollout.
+4. Map current ownership boundaries and source of truth.
 5. Choose the smallest viable change before designing a larger target architecture.
-6. Define interfaces/data flow before internal implementation detail.
+6. Define interfaces/data flow before internal implementation detail when boundaries actually change.
 7. Identify state, concurrency, failure, retry, and recovery behavior where relevant.
 8. Plan coexistence for old/new schemas, APIs, workers, clients, or services when deployments can overlap.
 9. Break work into independently verifiable slices with real dependencies.
-10. Attach proof to each slice.
-11. Define rollback, disable, or forward-fix strategy when production impact is meaningful.
+10. Attach proof to each material slice.
+11. Define rollback, disable, or forward-fix when production impact is meaningful.
 
 ## Simplicity challenge
 
@@ -66,16 +52,28 @@ Consider only when applicable:
 
 ## Re-plan triggers
 
-Stop the affected path and update the spec/plan when:
+Stop the affected path and update direction when:
 
-- The developer corrects a requirement/intent in a way that invalidates the current approach.
-- Repository evidence contradicts a core assumption.
+- The developer corrects intent in a way that invalidates the current approach.
+- Repository/test/runtime evidence contradicts a core assumption.
 - A required public/data contract change was not anticipated.
 - The intended slice cannot be verified independently.
 - Repeated implementation friction reveals the chosen boundary is wrong.
-- The change grows materially beyond the accepted scope.
+- The change grows materially beyond accepted scope.
 
-Do not preserve a stale plan for consistency's sake. Distinguish a **correction** (the previous interpretation was wrong) from a **new requirement** (scope genuinely changed). For a correction, replace the stale assumption and rework/undo only what no longer serves the current spec. Do not respond with agreement alone; identify the changed assumption and the next valid action.
+Distinguish a **correction** (the earlier interpretation was wrong) from a **new requirement** (scope genuinely changed). Do not preserve a stale plan for consistency or respond with agreement alone.
+
+### Lightweight course-correction anchor
+
+Only when a material correction/evidence change risks continued drift, write or update at most 1-3 lines:
+
+```text
+Current outcome: ...
+Changed assumption: ...
+Next valid slice: ...
+```
+
+Then act. Do not create a full specification, restate stable requirements, or run periodic reflection without new evidence. Preserve valid work and rework only what depended on the invalid assumption.
 
 ## Task graph and delegation
 
@@ -88,6 +86,5 @@ Persist only decisions that are non-obvious, costly to reverse, or likely to be 
 ```text
 Decision: ...
 Reason: ...
-Rejected simpler option: ...
 Trigger to revisit: ...
 ```
