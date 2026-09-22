@@ -10,7 +10,7 @@ Frontend owns interaction, presentation state, accessibility, loading/error/empt
 
 ## Start from the existing product
 
-- Inspect framework/version, routing, component library/design tokens, state/data-fetching patterns, form utilities, tests, and analogous screens before adding patterns.
+- Follow the repository's existing frontend architecture. Inspect framework/version, routing, component library/design tokens, state/data-fetching patterns, form utilities, tests, and analogous screens before adding patterns.
 - Reuse established primitives and interaction conventions before adding another state library, component kit, CSS system, or abstraction.
 - For redesigns, separate **visual intent** from **behavioral contracts** so styling changes do not silently break data flow, accessibility, navigation, or existing states.
 
@@ -43,7 +43,7 @@ Frontend owns interaction, presentation state, accessibility, loading/error/empt
 ## Rendering, responsive behavior, and accessibility
 
 - Respect server/client boundaries in SSR/hydrated frameworks; browser-only APIs, nondeterministic render output, duplicated fetching, and secret access can cause hydration/security bugs.
-- Verify layout at affected narrow/wide breakpoints and with realistic content, not only placeholder text.
+- Verify layout at affected narrow/wide breakpoints and with realistic content, not only sample content.
 - Account for text zoom, long/localized strings, RTL where the product supports it, keyboard navigation, visible focus, semantic/native controls, accessible names, status/error announcements, and reduced-motion preferences.
 - Preserve logical focus across dialogs, navigation, validation failures, and dynamic content.
 - Touch/click targets and interaction affordances must remain usable; hover-only behavior cannot be the sole path to essential actions.
