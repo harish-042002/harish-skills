@@ -1,6 +1,6 @@
 ---
 name: plat
-description: Backend-first engineering operating layer for AI coding agents. Use for software engineering across repository changes, debugging, testing, system design, backend services, APIs, databases, security, performance, CI/CD and delivery, frontend, Flutter/mobile, and AI systems. Infer the workflow from natural language, load only relevant bundled references, preserve compact local cross-agent context for non-trivial work, prefer the simplest correct solution, delegate only when useful, and require fresh verification before completion. Do not use for purely non-engineering writing, general research, or visual-design-only work.
+description: Full-stack engineering operating layer for AI coding agents with backend/reliability emphasis and substantial frontend/mobile/client coverage. Use for software engineering across repository changes, debugging, testing, system design, backend services, APIs, databases, security, performance, CI/CD and delivery, frontend, Flutter/mobile, and AI systems. Infer the workflow from natural language, load only relevant bundled references, preserve compact local cross-agent context for non-trivial work, prefer the simplest correct solution, delegate only when useful, and require fresh verification before completion. Do not use for purely non-engineering writing, general research, or visual-design-only work.
 ---
 
 # Plat
@@ -16,6 +16,7 @@ Act as an engineering control plane. Infer intent from the developer's request; 
 5. Make completion claims only from fresh evidence.
 6. Optimize after correctness and measurement.
 7. Minimize total task tokens and rework, not just response length.
+8. Treat frontend/mobile/client engineering as first-class (~40% of Plat coverage); keep backend/data/reliability authority as the ~60% foundation.
 
 For non-trivial implementation/refactoring, read `references/engineering-core.md`.
 
@@ -27,7 +28,7 @@ Choose the smallest useful set in this order: **process -> domain -> risk/delive
 | --- | --- |
 | Long task, resume, agent switch | `references/context.md` |
 | Existing repo discovery | `references/repository-understanding.md` |
-| Non-trivial feature/spec/multi-file/design/migration | `references/planning.md` |
+| Non-trivial feature/multi-file/design/migration | `references/planning.md` |
 | Bug/crash/flaky/wrong behavior | `references/debugging.md` |
 | Behavior-changing code/proof | `references/testing.md` |
 | Service/worker/queue/domain logic | `references/backend.md` |
@@ -58,7 +59,7 @@ Choose the smallest useful set in this order: **process -> domain -> risk/delive
 
 ## Work loop
 
-1. **Interpret** - define observable success/constraints; keep a compact current spec for non-trivial feature work.
+1. **Interpret** - define observable success, constraints, and material assumptions.
 2. **Inspect** - read relevant instructions, code, tests, contracts, config, versions, and analogous patterns.
 3. **Route** - load only guidance required now.
 4. **Plan** - for substantial build/bug work, state a short approach, smallest safe change, and proof; re-plan when evidence invalidates it.
@@ -72,7 +73,7 @@ Compress the loop for tiny changes. Ceremony must not cost more than the task.
 
 ### Course-correct, do not drift
 
-If user correction or new evidence invalidates direction, stop that slice, name the invalid assumption, update the current spec/plan, and continue from the smallest valid point. Do not merely agree, defend sunk work, or re-review without new evidence.
+If user correction or new evidence invalidates direction, stop that slice, name the invalid assumption, update the plan/current direction, and continue from the smallest valid point. Use only a 1-3 line direction anchor when it prevents drift; do not create a full spec for ordinary feature work. Do not merely agree, defend sunk work, or re-review without new evidence.
 
 ## Repository discipline
 
