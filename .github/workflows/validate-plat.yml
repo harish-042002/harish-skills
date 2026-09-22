@@ -1,0 +1,28 @@
+name: Validate Plat
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/plat/**"
+      - "tests/routing-cases.json"
+      - "scripts/validate_plat.py"
+      - "VERSION"
+      - ".github/workflows/validate-plat.yml"
+  pull_request:
+    paths:
+      - "skills/plat/**"
+      - "tests/routing-cases.json"
+      - "scripts/validate_plat.py"
+      - "VERSION"
+      - ".github/workflows/validate-plat.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/validate_plat.py
