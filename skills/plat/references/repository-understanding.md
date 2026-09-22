@@ -43,11 +43,11 @@ When behavior depends on a framework/library/API:
 
 Be able to state internally:
 
-- Likely files to change.
-- Important callers/consumers.
-- Direct proof/test for the change.
-- Whether API/schema/event/config/security behavior changes.
-- Likely blast radius and rollback difficulty.
+- likely files/ownership;
+- direct proof/test;
+- whether a public/data/security/deployment boundary changes.
+
+Inspect callers/consumers, history/blame, and rollback/blast radius **only when risk earns it**. Do not calculate a broad blast radius for an isolated local edit.
 
 For a trivial isolated edit this can stay implicit.
 
@@ -58,3 +58,16 @@ Reuse repository conventions for dependency injection, validation, errors, loggi
 ## Staleness rule
 
 Treat `.plat/session.md`, plans, issues, docs, comments, and prior agent outputs as leads, not authority. Verify material claims against current code/tests/config before acting.
+
+
+## Discovery stop condition
+
+Stop repository exploration when all are true:
+
+- the active outcome is clear;
+- ownership is localized;
+- an existing pattern or minimal approach fits the evidence;
+- the direct verification path is known;
+- another search/read is unlikely to change the decision.
+
+Large repository size alone is not permission for broad reading.
