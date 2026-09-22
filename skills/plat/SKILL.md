@@ -28,12 +28,20 @@ Infer depth:
 - **Deep** - high-risk, distributed/concurrent, production-only, large-repo, repeated failed hypotheses, major architecture, subtle security/performance/AI work.
 - **Research** - broad verified understanding/decision support; read-only unless edits are requested.
 Read `references/adaptive-depth.md` when Deep/Research may apply, several domains interact, or the developer explicitly asks for a deep investigation.
-## Optional profiles
-Read `references/profile.md` when setup/customization is requested or an existing Plat profile can save meaningful rediscovery.
-- `~/.plat/profile.md` - optional developer role/experience/output preferences.
-- `.plat/project.md` - optional verified project map/conventions.
+## First-run onboarding and profiles
+For an **interactive human session**, a developer profile is required once per machine/user before substantive Plat engineering work.
+
+1. If `~/.plat/profile.md` exists, use it as preference context.
+2. If it is missing, read `references/profile.md` and complete the compact four-choice developer onboarding before continuing substantive work.
+3. The recommended Plat installer performs this onboarding during installation. A raw third-party skill install may not, so enforce it on first Plat use.
+4. In non-interactive CI/automation, do not block waiting for answers; use neutral defaults for that run and do not persist a profile unless configured explicitly.
+
+Profile layers:
+- `~/.plat/profile.md` - required one-time developer role/experience/output/depth preferences for interactive use.
+- `.plat/project.md` - optional verified project map/conventions; learn from repository evidence rather than asking the developer what the repo can answer.
 - `.plat/session.md` - current non-trivial work/continuation state; see `references/context.md`.
-Do not create global/project profiles without explicit setup intent. Tiny tasks should not probe them just for personalization.
+
+Profiles shape assistance only. Current request and current repository/runtime evidence always outrank them.
 ## Basic routes
 Most Standard tasks start with at most one process reference plus one domain reference.
 - Existing repo discovery: `references/repository-understanding.md`
@@ -94,6 +102,15 @@ Compress this loop for tiny tasks. Ceremony must never cost more than the task.
 If developer correction, repo evidence, or failed proof invalidates direction: stop the affected slice, name the invalid assumption, re-check only needed evidence, and resume from the smallest valid point. If the correction invalidates the artifact's audience, metaphor, information hierarchy, or product framing, re-evaluate the whole affected artifact instead of doing a word-level patch. Use a 1-3 line direction anchor only when it prevents drift; never require a full spec for ordinary feature work.
 ## Repository discipline
 Search for existing helpers/caches/stores/tests/schemas/dependencies/analogous code before adding new ones. Follow repo instructions and installed versions over generic memory. Do not silently change public contracts, migrations, security behavior, generated code, lockfiles, deployment behavior, or compatibility. Do not add a dependency/service/cache/queue/abstraction when existing capabilities solve the actual requirement.
+## Updates
+Do not perform a network update check on every engineering request. When the developer asks whether Plat is current, requests an update, or runs an explicit maintenance/setup flow, prefer the installed Skills CLI:
+
+- `npx skills check` - report available updates.
+- `npx skills update plat -g` - update a global install.
+- `npx skills update plat -p` - update a project install.
+
+New installations should use the repository's recommended installer so onboarding and persistent agent instructions are configured together.
+
 ## Communication
 Normal execution stays concise: **Changed / Verified / Risk-Next only when material**. Research may use **Scope -> Architecture/Flow -> Evidence -> Findings -> Unknowns/Risks -> Options/Next** when useful. Deep reasoning alone is not a reason for verbose output.
 ## Completion gate
