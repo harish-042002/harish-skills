@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="1200" height="760" fill="#f3efe4"/>
+<rect x="18" y="18" width="1164" height="724" rx="18" fill="#fffdf7" stroke="#4d5d54" stroke-width="4"/>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
+<text x="54" y="68" font-size="27" font-weight="700" fill="#2f4238">THE PAIN → THE PLAT RESPONSE</text>
+<text x="54" y="98" font-size="13" fill="#6d7d73">AI coding agents should not spend the same amount of thinking on every task</text>
+
+<!-- column headers -->
+<rect x="54" y="126" width="500" height="42" rx="6" fill="#f1e3df" stroke="#9d746b" stroke-width="2"/>
+<text x="74" y="152" font-size="14" font-weight="700" fill="#704f49">PAIN</text>
+<rect x="646" y="126" width="500" height="42" rx="6" fill="#e4efe3" stroke="#6d836f" stroke-width="2"/>
+<text x="666" y="152" font-size="14" font-weight="700" fill="#3d5845">PLAT RESPONSE</text>
+
+<!-- row 1 -->
+<g transform="translate(54 190)">
+<rect width="500" height="78" rx="7" fill="#f7e9e5" stroke="#b18479" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#704f49">OVERTHINKING SIMPLE WORK</text>
+<text x="18" y="49" font-size="10" fill="#80655f">tiny edits trigger broad reads, planning, and architecture ceremony</text>
+</g>
+<path d="M566 229H634" stroke="#baa994" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(646 190)">
+<rect width="500" height="78" rx="7" fill="#e8f0e5" stroke="#6f8273" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#3d5845">MINIMUM SUFFICIENT DEPTH</text>
+<text x="18" y="49" font-size="10" fill="#65766a">Quick / Standard keeps local work local and avoids unnecessary context</text>
+</g>
+
+<!-- row 2 -->
+<g transform="translate(54 286)">
+<rect width="500" height="78" rx="7" fill="#f7e9e5" stroke="#b18479" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#704f49">UNDERTHINKING HARD WORK</text>
+<text x="18" y="49" font-size="10" fill="#80655f">races, migrations, security, or AI failures receive a shallow local patch</text>
+</g>
+<path d="M566 325H634" stroke="#baa994" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(646 286)">
+<rect width="500" height="78" rx="7" fill="#e3edf6" stroke="#6d8394" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#425d70">EVIDENCE-BASED ESCALATION</text>
+<text x="18" y="49" font-size="10" fill="#708596">Deep specialists load only when risk or ambiguity actually earns them</text>
+</g>
+
+<!-- row 3 -->
+<g transform="translate(54 382)">
+<rect width="500" height="78" rx="7" fill="#f7e9e5" stroke="#b18479" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#704f49">REPEATED REPO DISCOVERY</text>
+<text x="18" y="49" font-size="10" fill="#80655f">agents reread broad areas and reinvent helpers that already exist</text>
+</g>
+<path d="M566 421H634" stroke="#baa994" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(646 382)">
+<rect width="500" height="78" rx="7" fill="#eee4f3" stroke="#876f91" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#654e6e">REPOSITORY TRUTH FIRST</text>
+<text x="18" y="49" font-size="10" fill="#817087">needle-first search + local patterns + compact reusable context</text>
+</g>
+
+<!-- row 4 -->
+<g transform="translate(54 478)">
+<rect width="500" height="78" rx="7" fill="#f7e9e5" stroke="#b18479" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#704f49">STALE DIRECTION AFTER CORRECTION</text>
+<text x="18" y="49" font-size="10" fill="#80655f">agent agrees with new intent but continues from the old assumption</text>
+</g>
+<path d="M566 517H634" stroke="#baa994" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(646 478)">
+<rect width="500" height="78" rx="7" fill="#f3e7d7" stroke="#987a5d" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#705239">COURSE CORRECTION</text>
+<text x="18" y="49" font-size="10" fill="#8a745e">stop affected slice → re-check evidence → preserve valid work → resume</text>
+</g>
+
+<!-- row 5 -->
+<g transform="translate(54 574)">
+<rect width="500" height="78" rx="7" fill="#f7e9e5" stroke="#b18479" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#704f49">UNVERIFIED “DONE”</text>
+<text x="18" y="49" font-size="10" fill="#80655f">the patch looks plausible but the requested behavior was never freshly proven</text>
+</g>
+<path d="M566 613H634" stroke="#baa994" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(646 574)">
+<rect width="500" height="78" rx="7" fill="#e8f0e5" stroke="#6f8273" stroke-width="2"/>
+<text x="18" y="27" font-size="12" font-weight="700" fill="#3d5845">PROOF-FIRST COMPLETION</text>
+<text x="18" y="49" font-size="10" fill="#65766a">claim completion only from fresh evidence matched to the requested behavior</text>
+</g>
+
+<rect x="54" y="682" width="1092" height="34" rx="6" fill="#f1ede4" stroke="#aaa08f" stroke-width="2"/>
+<text x="76" y="704" font-size="10" fill="#52645a">TARGET: correct result first → then fewer tokens · fewer tools · fewer rereads · fewer repair turns · less wall time</text>
+</g>
+</svg>
