@@ -46,3 +46,7 @@ Plat does not replace:
 - human product judgment.
 
 It is a control layer for deciding when and how to use those forms of evidence.
+
+## Background update checks
+
+The installer attempts to register one user-level daily scheduler (LaunchAgent on macOS, systemd user timer or cron on Linux, Scheduled Task on Windows). Locked-down environments may block scheduler registration. That failure does not break Plat; installation continues and reports the warning. The cached checker never runs inside an engineering prompt.
