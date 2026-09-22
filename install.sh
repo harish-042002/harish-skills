@@ -14,7 +14,13 @@ Plat installer
 Usage:
   bash install.sh [--agent claude-code|codex|cursor] [--scope global|project] [--reconfigure]
 
-If agent/scope are omitted, the installer asks interactively.
+The installer:
+  1. installs Plat into the selected agent using direct copy mode,
+  2. verifies SKILL.md exists in the agent's real skill directory,
+  3. runs one-time developer preference onboarding,
+  4. wires Plat into the agent instructions.
+
+Re-running this installer updates Plat while preserving existing preferences.
 EOF
 }
 
@@ -46,6 +52,21 @@ ask_scope() {
   esac
 }
 
+expected_skill_dir() {
+  if [[ "$SCOPE" == "global" ]]; then
+    case "$AGENT" in
+      claude-code) printf '%s\n' "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/plat" ;;
+      codex) printf '%s\n' "${CODEX_HOME:-$HOME/.codex}/skills/plat" ;;
+      cursor) printf '%s\n' "$HOME/.cursor/skills/plat" ;;
+    esac
+  else
+    case "$AGENT" in
+      claude-code) printf '%s\n' "$(pwd)/.claude/skills/plat" ;;
+      codex|cursor) printf '%s\n' "$(pwd)/.agents/skills/plat" ;;
+    esac
+  fi
+}
+
 append_block() {
   local file="$1"
   mkdir -p "$(dirname "$file")"
@@ -60,7 +81,6 @@ append_block() {
 
 <!-- plat:start -->
 For software engineering requests, use the installed Plat skill.
-If the Plat developer profile is missing in an interactive session, complete Plat onboarding before substantive engineering work.
 <!-- plat:end -->
 EOF
   echo "✓ Added Plat instruction: $file"
@@ -76,7 +96,6 @@ alwaysApply: true
 ---
 
 For software engineering requests, use the installed Plat skill.
-If the Plat developer profile is missing in an interactive session, complete Plat onboarding before substantive engineering work.
 EOF
   echo "✓ Added Plat Cursor rule: $file"
 }
@@ -84,9 +103,9 @@ EOF
 wire_agent() {
   if [[ "$SCOPE" == "global" ]]; then
     case "$AGENT" in
-      claude-code) append_block "${HOME}/.claude/CLAUDE.md" ;;
-      codex) append_block "${HOME}/.codex/AGENTS.md" ;;
-      cursor) install_cursor_rule "${HOME}/.cursor/rules/plat.mdc" ;;
+      claude-code) append_block "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md" ;;
+      codex) append_block "${CODEX_HOME:-$HOME/.codex}/AGENTS.md" ;;
+      cursor) install_cursor_rule "$HOME/.cursor/rules/plat.mdc" ;;
     esac
   else
     case "$AGENT" in
@@ -139,17 +158,28 @@ case "$SCOPE" in
 esac
 
 echo
-echo "PLAT · INSTALL"
+echo "PLAT · INSTALL / UPDATE"
 echo "Agent: $AGENT"
 echo "Scope: $SCOPE"
 echo
 
-INSTALL_ARGS=(skills add "$REPO" --skill plat -a "$AGENT" -y)
+INSTALL_ARGS=(-y skills@latest add "$REPO" --skill plat -a "$AGENT" --copy -y)
 if [[ "$SCOPE" == "global" ]]; then
   INSTALL_ARGS+=(-g)
 fi
 
 npx "${INSTALL_ARGS[@]}"
+
+SKILL_DIR="$(expected_skill_dir)"
+if [[ ! -f "$SKILL_DIR/SKILL.md" ]]; then
+  echo >&2
+  echo "Plat install verification failed." >&2
+  echo "Expected: $SKILL_DIR/SKILL.md" >&2
+  echo "Nothing else was configured. Re-run the installer after checking the error above." >&2
+  exit 1
+fi
+
+echo "✓ Verified Plat skill: $SKILL_DIR/SKILL.md"
 
 tmp_setup="$(mktemp)"
 trap 'rm -f "$tmp_setup"' EXIT
@@ -165,12 +195,9 @@ wire_agent
 
 echo
 echo "✓ Plat is ready."
+echo "  Preferences: $HOME/.plat/profile.md"
+echo "  Skill:       $SKILL_DIR"
 echo
-echo "Ask normally, or explicitly invoke Plat when your agent supports it."
+echo "Ask normally. Plat decides the smallest useful mode, depth, and specialist team."
 echo
-echo "Update check: npx skills check"
-if [[ "$SCOPE" == "global" ]]; then
-  echo "Update:       npx skills update plat -g"
-else
-  echo "Update:       npx skills update plat -p"
-fi
+echo "To update later, re-run this same installer command."
