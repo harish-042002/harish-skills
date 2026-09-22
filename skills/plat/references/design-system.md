@@ -6,21 +6,22 @@ Use for new pages/screens, redesigns, design-system work, visual direction, typo
 
 1. Purpose
 2. Design context
-3. Surface mode
-4. Design dials
-5. Existing product vs greenfield
-6. Design-system output
-7. Typography
-8. Color
-9. Spacing, shape, depth
-10. Layout and responsive behavior
-11. Accessibility and interaction floor
-12. Product archetypes
-13. Component decisions
-14. Charts and data display
-15. Stack adaptation
-16. Persistence and token discipline
-17. Failure modes
+3. Audience and artifact intent
+4. Surface mode
+5. Design dials
+6. Existing product vs greenfield
+7. Design-system output
+8. Typography
+9. Color
+10. Spacing, shape, depth
+11. Layout and responsive behavior
+12. Accessibility and interaction floor
+13. Product archetypes
+14. Component decisions
+15. Charts and data display
+16. Stack adaptation
+17. Persistence and token discipline
+18. Failure modes
 
 ## Purpose
 
@@ -40,6 +41,20 @@ Before making visual decisions, resolve from the request and repository where po
 - What constraints matter: brand, accessibility, content density, localization, device class, performance, asset availability?
 
 Ask the developer only when an unresolved choice would materially change the visual direction. Do not ask them to choose routine values the skill can infer.
+
+## Audience and artifact intent
+
+Before choosing a metaphor, layout, or visual reference for a public-facing artifact, establish:
+
+- **Audience** - who will see this without the current conversation context?
+- **Purpose** - what should they understand, trust, or do next?
+- **Stable product story** - what remains true beyond the current development session?
+- **Internal-only context** - release ancestry, candidate/pending status, implementation history, debugging notes, or benchmark caveats that do not help the audience.
+- **Reference abstraction** - extract useful principles from inspiration (e.g. character-led explanation, spatial storytelling, information density) without copying its nouns, characters, product metaphor, or hierarchy when they do not fit.
+
+For a public README/product page, lead with what the product is, why it matters, how it works, evidence, examples, and how to use/install it. Put maintenance history, internal release bookkeeping, and development-state notes in changelog/release/benchmark documentation unless the public reader needs them.
+
+A developer correction such as "this is a team, not an office" invalidates the framing, not just one noun. Re-evaluate labels, characters, hierarchy, and visuals that inherited the old metaphor.
 
 ## Surface mode
 
