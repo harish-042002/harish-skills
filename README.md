@@ -66,6 +66,8 @@ fresh verification
 
 A request for a detailed explanation does **not** automatically trigger Deep engineering depth. Output preference and technical depth are separate.
 
+Short follow-ups such as **"do it"**, **"continue"**, **"still wrong"**, or **"remove that"** are resolved from the latest active task, correction, diff/runtime evidence, and repository state before Plat asks a clarification question. If one safe interpretation clearly dominates, Plat acts; if materially different interpretations remain, it asks one focused question.
+
 <img src="assets/plat-flow.svg" alt="How one engineering request moves through Plat" width="100%" />
 
 <img src="assets/plat-roster.svg" alt="Plat specialist engineering team roster" width="100%" />
@@ -105,6 +107,8 @@ The course-correction case in the independent pilot **failed with Plat** and pas
 - **[Benchmarks](docs/BENCHMARKS.md)** — methodology, all current numbers, failure case, next protocol
 - **[Limitations](docs/LIMITATIONS.md)** — evidence gaps, host differences, probabilistic behavior, community validation
 - **[Agent failure modes](skills/plat/references/agent-failure-modes.md)** — concrete behaviors Plat is designed to prevent
+- **[Maintenance protocol](docs/MAINTENANCE.md)** — mandatory market scan → license check → adapt → test → release workflow for Plat changes
+- **[Research log](docs/RESEARCH_LOG.md)** — public sources inspected and which principles were adopted/rejected
 
 ## Update
 
