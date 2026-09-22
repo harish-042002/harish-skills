@@ -1,5 +1,4 @@
 name: Release Plat
-# reusable release automation
 
 on:
   workflow_dispatch:
@@ -43,33 +42,45 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
         shell: bash
         run: |
           set -euo pipefail
 
-          cat > release-notes.md <<'EOF'
-          # Plat v1.0.0
+          cat > release-notes.md <<EOF
+          # Plat $TAG
 
           Adaptive engineering control plane for AI coding agents.
 
-          **What Plat does**
-          - Chooses task mode and depth automatically.
-          - Loads only the specialist engineering guidance the task needs.
-          - Supports backend, frontend, mobile, AI/RAG, testing, database, API, security, performance, delivery, system design, and UI/UX.
-          - Reuses optional developer/project/session context without overriding repository truth.
-          - Course-corrects when new evidence invalidates the current direction.
-          - Requires fresh verification before claiming completion.
+          ## Install
 
-          **Install**
+          macOS / Linux:
+
           ```bash
-          npx skills add harish-042002/harish-skills --skill plat -g -a claude-code -y
+          bash -c "\$(curl -fsSL https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.sh)"
           ```
 
-          The release asset `skill.zip` contains the complete Plat skill, including the MIT license.
+          Windows PowerShell:
+
+          ```powershell
+          iex (irm 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1')
+          ```
+
+          ## $VERSION highlights
+
+          - Verified direct-copy installation into the selected agent's real skill directory.
+          - Mandatory one-time developer preference onboarding for interactive users.
+          - Onboarding is preference-only: role, experience, response style, optional familiar stack.
+          - Engineering depth remains evidence-driven; asking for a deep answer does not force expensive specialist loading.
+          - Correctness/safety first; then minimize total tokens, tool calls, rereads, repair turns, and wall time.
+          - Re-running the installer updates Plat while preserving the existing developer profile.
+          - GitHub Release notifications provide update awareness without per-task network/token overhead.
+
+          The release asset `skill.zip` contains the complete Plat skill and MIT license.
           EOF
 
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG"               --title "Plat $TAG"               --notes-file release-notes.md
+            gh release edit "$TAG" --title "Plat $TAG" --notes-file release-notes.md
             gh release upload "$TAG" skill.zip SHA256SUMS.txt --clobber
           else
             gh release create "$TAG" skill.zip SHA256SUMS.txt               --target "$GITHUB_SHA"               --title "Plat $TAG"               --notes-file release-notes.md
