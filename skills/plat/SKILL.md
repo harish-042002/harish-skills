@@ -15,8 +15,8 @@ Use: **current developer request/correction > current repo/runtime evidence > `.
 4. Keep protected durable invariants authoritative at backend/data boundaries.
 5. Claim completion only from fresh evidence.
 6. Optimize after correctness and measurement.
-7. Minimize total tokens, tool churn, rereads, repair turns, and wall time.
-8. Lazy-load depth: hard tasks may spend more context; ordinary tasks must not pay for it.
+7. After correctness and required safety/compatibility, minimize total tokens, tool churn, rereads, repair turns, and wall time.
+8. Lazy-load depth: hard tasks may spend more context; ordinary tasks must not pay for it. A request for a detailed/deep answer does not by itself justify Deep specialist routing.
 9. Deep internal work does not imply a long final response.
 10. For public-facing artifacts, resolve audience and purpose before format; internal build history, candidate status, or implementation notes belong only when that audience needs them.
 For non-trivial implementation/refactoring, read `references/engineering-core.md`.
@@ -29,7 +29,7 @@ Infer depth:
 - **Research** - broad verified understanding/decision support; read-only unless edits are requested.
 Read `references/adaptive-depth.md` when Deep/Research may apply, several domains interact, or the developer explicitly asks for a deep investigation.
 ## First-run onboarding and profiles
-For an **interactive human session**, a developer profile is required once per machine/user before substantive Plat engineering work.
+For an **interactive human session**, a developer preference profile is required once per machine/user before substantive Plat engineering work.
 
 1. If `~/.plat/profile.md` exists, use it as preference context.
 2. If it is missing, read `references/profile.md` and complete the compact four-choice developer onboarding before continuing substantive work.
@@ -37,7 +37,7 @@ For an **interactive human session**, a developer profile is required once per m
 4. In non-interactive CI/automation, do not block waiting for answers; use neutral defaults for that run and do not persist a profile unless configured explicitly.
 
 Profile layers:
-- `~/.plat/profile.md` - required one-time developer role/experience/output/depth preferences for interactive use.
+- `~/.plat/profile.md` - required one-time developer role/experience/output preferences for interactive use; it does not control engineering depth.
 - `.plat/project.md` - optional verified project map/conventions; learn from repository evidence rather than asking the developer what the repo can answer.
 - `.plat/session.md` - current non-trivial work/continuation state; see `references/context.md`.
 
