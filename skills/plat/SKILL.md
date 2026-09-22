@@ -38,7 +38,7 @@ For an **interactive human session**, a developer preference profile is required
 
 Profile layers:
 - `~/.plat/profile.md` - required one-time developer role/experience/output preferences for interactive use; it does not control engineering depth.
-- `.plat/project.md` - optional verified project map/conventions; learn from repository evidence rather than asking the developer what the repo can answer.
+- `.plat/project.md` - optional later runtime cache only; never create it as part of installation/onboarding. If used later, learn from repository evidence rather than asking the developer what the repo can answer.
 - `.plat/session.md` - current non-trivial work/continuation state; see `references/context.md`.
 
 Profiles shape assistance only. Current request and current repository/runtime evidence always outrank them.
