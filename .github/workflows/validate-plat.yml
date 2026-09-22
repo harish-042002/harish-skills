@@ -26,3 +26,5 @@ jobs:
         with:
           python-version: "3.12"
       - run: python scripts/validate_plat.py
+      - run: python tests/test_update_check.py
+      - run: bash -n install.sh
