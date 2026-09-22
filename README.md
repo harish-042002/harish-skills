@@ -8,10 +8,10 @@ Reusable, vendor-neutral Agent Skills for software engineering.
 
 It is designed to make coding agents behave more like disciplined software engineers: understand the repository before changing it, choose the simplest correct design, debug from evidence, verify before claiming completion, delegate only when useful, and keep context/token usage under control.
 
-Plat is intentionally **backend-weighted but full-stack**: roughly **60% backend/data/reliability** and **40% frontend/mobile/client engineering**. Frontend is treated as a first-class engineering surface rather than a visual-design afterthought.
+Plat is intentionally **backend-weighted but full-stack**: roughly **60% backend/data/reliability** and **40% frontend/mobile/client engineering**. The engineering ratio stays stable; a separate deep UI/UX branch is loaded only when visual design, redesign, motion, or polish is actually part of the task.
 
-> Current release: **v0.6.0**  
-> Status: **60/40 full-stack rebalance + lightweight course-correction; ready for live A/B benchmarking**
+> Current candidate: **v0.7.0**  
+> Status: **Deep UI/UX design architecture added; static validated, live rendered-UI A/B pending**
 
 ---
 
@@ -209,6 +209,29 @@ Normal feature work does **not** require a formal spec. Plat keeps ordinary buil
 
 Only when a developer correction or fresh evidence invalidates the current direction does Plat use a tiny 1-3 line direction anchor: current outcome, changed assumption, next valid slice. It then preserves valid work, reworks only what depended on the wrong assumption, and continues. It should not merely say "you're right," keep extending the old path, or run periodic reflection without new evidence.
 
+
+### Deep design architecture
+
+Visual design is deliberately separated from ordinary frontend engineering so backend work and behavior-only frontend work do not pay for a large design prompt.
+
+When appearance, art direction, interaction feel, or UI polish is materially in scope, Plat progressively loads five deeper layers:
+
+```text
+Design System & UI/UX Intelligence
+        ↓
+Product & Component Patterns
+        ↓
+Visual Taste & Art Direction
+        ↓
+Motion & Interaction Craft
+        ↓
+Rendered Visual Review & Polish
+```
+
+The layers synthesize current public patterns from **UI/UX Pro Max**, **Taste Skill**, **Emil Design Engineering**, and **Impeccable** into Plat's own vendor-neutral guidance. Plat does not require or fetch those skills at runtime.
+
+A normal UI state/API change may load only `frontend.md`. A new screen or redesign can load design system + taste. Pattern, motion, and final visual-review references are added only when the task needs them. This allows pure design work to spend significantly more context without imposing that cost on the rest of Plat.
+
 ---
 
 ## Engineering Principles
@@ -281,6 +304,11 @@ Plat currently contains focused guidance for:
 | Performance | Latency, throughput, cost, memory and capacity |
 | Delivery | CI/CD, deployment, IaC, release and Git integration |
 | Frontend | Web/client state, forms, async flows, responsive behavior, SSR/hydration, accessibility and browser verification |
+| Design System | Product context, surface mode, visual dials, tokens, typography, color, layout and accessibility |
+| Design Patterns | Page architecture, navigation, forms, tables, states, mobile patterns and data visualization |
+| Design Taste | Art direction, hierarchy, typography craft, composition, restraint and anti-generic UI guidance |
+| Design Motion | Interaction frequency, timing/easing, spatial continuity, perceived performance and reduced motion |
+| Design Review | Rendered browser/device review, responsive/a11y/state QA, bounded polish and stop conditions |
 | Flutter / Mobile | Lifecycle, state, navigation, responsive/adaptive UI, accessibility, networking, offline, performance and device verification |
 | AI Engineering | LLMs, RAG, agents, tools, evals and model economics |
 | Context | Compact same-developer cross-agent continuation |
@@ -348,15 +376,16 @@ Architecture, shared contracts, integration, destructive/security-sensitive deci
 
 Plat is designed around **minimum sufficient context**.
 
-v0.4.0 baseline static load model. v0.6 keeps the router compact while adding first-class frontend/mobile coverage and lightweight correction control:
+Plat uses progressive loading. v0.7 keeps deep design knowledge outside the ordinary engineering path:
 
 | Scenario | Approx. Plat context |
 | --- | ---: |
-| Tiny engineering task | ~1.67k tokens |
-| Median benchmark task | ~3.41k tokens |
-| P90 benchmark task | ~4.36k tokens |
-| Heaviest benchmark case | ~6.26k tokens |
-| Loading every Plat module | ~15.6k tokens |
+| v0.6 root router | ~1.73k proxy tokens |
+| v0.7 root router | ~2.00k proxy tokens |
+| Root increase for design routing | ~270 proxy tokens |
+| Five deep design references, all loaded | ~14.9k proxy tokens |
+| Backend / ordinary engineering task | Does not load deep design references |
+| Pure design/redesign task | May deliberately load several design references |
 
 The objective is not "shortest prompt."
 
@@ -370,7 +399,20 @@ A slightly larger first pass can be cheaper than a small prompt that causes repe
 
 ## Benchmark Status
 
-Plat v0.6.0 is the current live A/B candidate. v0.5.0 remains the prior course-correction baseline.
+Plat v0.7.0 is the current design-craft candidate. v0.6.0 remains the last live-tested engineering baseline.
+
+### v0.7.0 deep-design static validation
+
+The v0.7.0 design architecture currently passes:
+
+- **122 / 122** targeted design-architecture / structural checks;
+- **15 / 15** semantic mutation tests;
+- skill validator and package integrity checks;
+- **0** known long exact duplicate instruction blocks;
+- root-router increase limited to about **270 proxy tokens** versus v0.6.0;
+- about **14.9k proxy tokens** of deep design knowledge kept behind progressive-loading routes.
+
+This is static evidence that the architecture is coherent and routable. It is **not** yet a claim that v0.7 improves rendered UI quality, correctness, cost, or time. The next phase is a controlled rendered-UI A/B using the same task/model/settings.
 
 ### v0.6.0 frontend + lightweight course-correction validation
 
@@ -457,6 +499,11 @@ harish-skills/
             ├── database.md
             ├── debugging.md
             ├── delivery.md
+            ├── design-motion.md
+            ├── design-patterns.md
+            ├── design-review.md
+            ├── design-system.md
+            ├── design-taste.md
             ├── engineering-core.md
             ├── flutter-mobile.md
             ├── frontend.md
@@ -507,7 +554,7 @@ Analyze failures
 Next version
 ```
 
-Once a benchmark release is frozen, it should not be edited midway through that experiment. Findings become inputs to the next version. v0.6.0 should now remain unchanged during the upcoming live A/B runs.
+Once a benchmark candidate is frozen, it should not be edited midway through that experiment. Findings become inputs to the next version. Freeze v0.7.0 for the next rendered-design A/B before making further design-policy changes.
 
 ---
 
