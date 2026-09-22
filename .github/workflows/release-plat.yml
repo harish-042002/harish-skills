@@ -7,7 +7,6 @@ on:
       - main
     paths:
       - VERSION
-      - skills/plat/VERSION
       - .github/workflows/release-plat.yml
 
 concurrency:
@@ -97,6 +96,8 @@ jobs:
           - Failed fixes retire disproven hypotheses instead of stacking patches.
           - Market-first maintenance protocol requires external skill research, license review, adaptation, regression testing, and evidence logging before material Plat changes.
           - Correctness/safety first; then minimize total tokens, tool calls, rereads, repair turns, coordination, and wall time.
+          - One user-level background checker checks GitHub Releases once every 24 hours outside engineering sessions.
+          - Update status is cached locally and an OS notification appears only when a newer release exists; Plat does not silently replace itself mid-session.
 
           The release asset `skill.zip` contains the complete Plat skill and MIT license.
           EOF
@@ -105,5 +106,8 @@ jobs:
             gh release edit "$TAG" --title "Plat $TAG" --notes-file release-notes.md
             gh release upload "$TAG" skill.zip SHA256SUMS.txt --clobber
           else
-            gh release create "$TAG" skill.zip SHA256SUMS.txt               --target "$GITHUB_SHA"               --title "Plat $TAG"               --notes-file release-notes.md
+            gh release create "$TAG" skill.zip SHA256SUMS.txt \
+              --target "$GITHUB_SHA" \
+              --title "Plat $TAG" \
+              --notes-file release-notes.md
           fi
