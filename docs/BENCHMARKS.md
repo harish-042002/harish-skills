@@ -90,6 +90,8 @@ Future claims should use frozen comparable runs with:
 
 Priority cases:
 
+- vague continuation with one evidence-supported referent ("do it", "continue", "remove that");
+- vague request with multiple materially different targets where one focused clarification is required;
 - tiny known-file edit;
 - greenfield full-stack build;
 - existing-repo feature;
