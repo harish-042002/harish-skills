@@ -19,15 +19,14 @@ Use when the developer asks to set up/customize Plat, when an existing profile c
 
 Profiles reduce rediscovery and tune explanation/output to the developer. They are **hints and verified summaries**, not hidden policy and not sources of repository truth.
 
-Do not create a global/project profile without explicit setup intent. Missing profiles must never block normal Plat use.
+For interactive human use, the **global developer profile is a one-time required onboarding step**. The recommended Plat installer performs it during installation. If Plat was installed through a generic skill installer and the profile is missing, complete onboarding on first Plat use before substantive engineering work.
 
-Plat supports all combinations:
+Project and session profiles remain conditional:
+- global developer profile - required once for interactive use;
+- project profile - optional and evidence-derived;
+- session state - only for non-trivial continuation.
 
-- no profile at all;
-- global developer profile only;
-- project profile only;
-- both global + project profiles;
-- session state only for one long task.
+Non-interactive CI/automation may use neutral defaults without creating a persistent profile.
 
 ## Precedence
 
@@ -140,15 +139,25 @@ Use `context.md` for session rules.
 
 ## Setup flows
 
-### Global setup
+### Mandatory developer onboarding
 
-When the developer explicitly asks to "set up Plat for me" or equivalent:
+The interactive onboarding has **four required choices** and one optional field:
 
-1. Ask only what cannot be inferred from their answer: primary role/domain, experience level by relevant domain, preferred explanation/output depth, and recurring technology familiarity if they want it stored.
-2. Keep the questionnaire short; do not ask lifestyle/personal questions.
-3. Show or summarize the profile before writing if choices were ambiguous.
-4. Write `~/.plat/profile.md` only after explicit setup intent.
-5. Do not change agent/vendor settings outside Plat unless separately requested.
+1. Primary work: backend / frontend / full-stack / mobile / AI / design / platform / data.
+2. Overall engineering experience: beginner / intermediate / advanced.
+3. Response preference: concise / balanced / explanatory.
+4. Deep-mode preference: automatic / ask first when safe.
+5. Optional familiar technologies.
+
+Do not ask for employer, personal life, credentials, customer data, or information unrelated to engineering assistance.
+
+The repository includes `scripts/setup.py`; the recommended installer runs it automatically. If onboarding is happening inside an agent instead, ask the same compact choices and write `~/.plat/profile.md`.
+
+If a valid profile already exists, preserve it during normal upgrades. Reconfigure only when the developer requests it or runs setup with a force/reconfigure option.
+
+### Global setup result
+
+Write `~/.plat/profile.md` with role, experience, assistance preferences, optional familiar stack, schema version, and guardrails. Familiar technologies affect explanation/search shortcuts only; they never mandate architecture.
 
 ### Project setup
 
@@ -160,11 +169,11 @@ When the developer asks to set up Plat for the current project:
 4. Write a compact `.plat/project.md` with source/freshness pointers.
 5. Add `.plat/` to `.git/info/exclude` when safe and not already covered; do not edit shared `.gitignore` solely for Plat without intent.
 
-Global setup is optional. Project setup works independently.
+Project setup is independent of developer onboarding and should normally be inferred from repository evidence after installation.
 
 ## Read/update rules
 
-- Do not probe/create profiles for tiny one-shot tasks merely to personalize tone.
+- In interactive use, check only whether the required global profile exists; do not repeatedly reread or rewrite it for tiny tasks once loaded.
 - If a global profile is already known/loaded, reuse it for the session.
 - For non-trivial existing-repo work, read `.plat/project.md` when present and useful.
 - Verify material project-profile claims against current code/config before acting if HEAD/branch changed or the claim affects correctness.
