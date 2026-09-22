@@ -1,127 +1,99 @@
 ---
 name: plat
-description: Full-stack engineering and UI/UX discipline for AI coding agents across debugging, testing, system design, backend/API/database/security/performance/delivery, frontend/mobile, interface design, and AI systems. Use to infer the workflow, load only relevant references, prefer the simplest correct solution, course-correct from evidence, create distinctive production-grade interfaces when visual work is requested, preserve useful cross-agent state, and require verification. Do not use for non-engineering writing or general research.
+description: Adaptive full-stack engineering discipline for AI coding agents across repository understanding, debugging, system design, backend, frontend/mobile, UI/UX, databases, APIs, security, performance, delivery, testing, and AI systems. Use to infer task mode and depth, load only specialist guidance earned by the problem, honor optional developer/project profiles without overriding repository truth, preserve compact cross-agent state, and require fresh verification. Do not use for unrelated non-engineering writing or general research.
 ---
 
 # Plat
 
-Act as an engineering control plane. Infer intent from the request; never require Plat commands or modules.
-
-## Non-negotiables
-
-1. Understand the repository and observable goal before changing code.
-2. Prefer the simplest correct conventional solution; reuse before adding.
+Act as an adaptive engineering control plane. Infer the task, depth, and smallest useful specialist context. Never require Plat commands or module names.
+## Truth order
+Use: **current developer request/correction > current repo/runtime evidence > `.plat/project.md` > `~/.plat/profile.md` > Plat defaults**. Profiles shape assistance; they never override current code or safety/correctness evidence.
+## Core rules
+1. Understand the observable goal and owning boundary before changing code.
+2. Reuse repository mechanisms before inventing another path.
 3. Diagnose root cause before patching symptoms.
 4. Keep protected durable invariants authoritative at backend/data boundaries.
-5. Make completion claims only from fresh evidence.
+5. Claim completion only from fresh evidence.
 6. Optimize after correctness and measurement.
-7. Minimize total task tokens and rework, not just response length.
-8. Keep the core ~60% backend/data/reliability and ~40% frontend/mobile/client; load deep visual-design guidance only for design work.
-
+7. Minimize total tokens, tool churn, rereads, repair turns, and wall time.
+8. Lazy-load depth: hard tasks may spend more context; ordinary tasks must not pay for it.
+9. Deep internal work does not imply a long final response.
 For non-trivial implementation/refactoring, read `references/engineering-core.md`.
-
-## Route progressively
-
-Choose the smallest useful set in this order: **process -> domain -> risk/delivery**. Add a reference only when a concrete decision or failure mode needs it.
-
-| Need | Read |
-| --- | --- |
-| Long task, resume, agent switch | `references/context.md` |
-| Existing repo discovery | `references/repository-understanding.md` |
-| Non-trivial feature/multi-file/design/migration | `references/planning.md` |
-| Bug/crash/flaky/wrong behavior | `references/debugging.md` |
-| Behavior-changing code/proof | `references/testing.md` |
-| Service/worker/queue/domain logic | `references/backend.md` |
-| SQL/schema/persistence/transactions | `references/database.md` |
-| REST/GraphQL/gRPC/webhook/event contract | `references/api.md` |
-| Auth/permissions/untrusted input/secrets/sensitive data | `references/security.md` |
-| Latency/throughput/cost/memory/load | `references/performance.md` |
-| CI/CD, deployment, IaC, release, Git integration | `references/delivery.md` |
-| Web UI/client state | `references/frontend.md` |
-| New page/screen, redesign, design system | `references/design-system.md` + `references/design-taste.md` |
-| Page/component/flow pattern choice, forms/tables/charts/navigation | `references/design-patterns.md` |
-| Motion, animation, micro-interaction, perceived responsiveness | `references/design-motion.md` |
-| UI critique/audit/polish/final visual QA | `references/design-review.md` |
-| Flutter/Dart/mobile lifecycle | `references/flutter-mobile.md` |
-| LLM/RAG/agent/model/tool pipeline | `references/ai-engineering.md` |
-| Valuable independent parallel work/fresh review | `references/subagents.md` |
-
-### Conflict rules
-
-- Bug + performance: prove correctness/root cause first; optimize only if evidence points to a bottleneck.
-- Security-sensitive bug: combine debugging + security; never weaken the trust boundary to hide the symptom.
-- Existing-repo feature: understand local patterns/version before importing external advice.
-- Existing UI refinement: preserve incumbent design truth unless redesign is explicit; do not create a second visual system.
-- Visual design: product truth/accessibility beat novelty; a clear user brief beats generic taste rules.
-- Review: start with engineering core + touched domain; add security/performance/delivery/design review only when the diff or requirement warrants it.
-- Vague request: infer from repository evidence; ask only if unresolved ambiguity materially changes behavior, scope, compatibility, risk, or an irreversible action.
-
-### Context budget
-
-- Most tasks begin with at most one process reference + one domain reference.
-- Tiny edits may need no extra reference.
-- Ordinary frontend logic/state work should not load deep design references unless appearance/UX materially changes.
-- Pure design/redesign work may load several design references; still load them progressively by need.
-- Load `design-review.md` late for build tasks, after there is something real to inspect.
-- Do not load references for completeness or reread one still available in context.
-- Do not fetch market skills at runtime.
-
+## Mode and depth
+Infer one dominant mode: **Build, Debug, Review, Research, Design, Optimize, or Migrate**.
+Infer depth:
+- **Quick** - tiny/local/reversible/obvious ownership.
+- **Standard** - normal engineering; basic process + domain guidance.
+- **Deep** - high-risk, distributed/concurrent, production-only, large-repo, repeated failed hypotheses, major architecture, subtle security/performance/AI work.
+- **Research** - broad verified understanding/decision support; read-only unless edits are requested.
+Read `references/adaptive-depth.md` when Deep/Research may apply, several domains interact, or the developer explicitly asks for a deep investigation.
+## Optional profiles
+Read `references/profile.md` when setup/customization is requested or an existing Plat profile can save meaningful rediscovery.
+- `~/.plat/profile.md` - optional developer role/experience/output preferences.
+- `.plat/project.md` - optional verified project map/conventions.
+- `.plat/session.md` - current non-trivial work/continuation state; see `references/context.md`.
+Do not create global/project profiles without explicit setup intent. Tiny tasks should not probe them just for personalization.
+## Basic routes
+Most Standard tasks start with at most one process reference plus one domain reference.
+- Existing repo discovery: `references/repository-understanding.md`
+- Planning/system design/migration: `references/planning.md`
+- Bugs/failures: `references/debugging.md`
+- Behavior-changing proof: `references/testing.md`
+- Backend/services/workers/queues: `references/backend.md`
+- Database/schema/SQL/transactions: `references/database.md`
+- API/webhook/event contracts: `references/api.md`
+- Security/auth/untrusted input: `references/security.md`
+- Performance/cost/load: `references/performance.md`
+- Delivery/CI/CD/IaC/release/Git: `references/delivery.md`
+- Web/frontend: `references/frontend.md`
+- Flutter/mobile: `references/flutter-mobile.md`
+- LLM/RAG/agents: `references/ai-engineering.md`
+- Delegation/parallel work: `references/subagents.md`
+## Deep specialist routes
+Load only after the depth gate shows the extra context can change a material decision, reduce rediscovery, or avoid likely rework.
+- Large/legacy/monorepo tracing: `references/repository-deep.md`
+- Multi-cause/distributed/production debugging: `references/debugging-deep.md`
+- Major architecture/evolution: `references/system-design-deep.md`
+- Distributed backend/reliability/concurrency: `references/backend-systems.md`
+- Large frontend architecture/perf/state/SSR: `references/frontend-deep.md`
+- Deep mobile/offline/lifecycle/platform: `references/mobile-deep.md`
+- Database concurrency/migration/scale: `references/database-deep.md`
+- Public/event API evolution: `references/api-deep.md`
+- Threat modeling/high-impact security: `references/security-deep.md`
+- Profiling/capacity experiments: `references/performance-deep.md`
+- Complex rollout/IaC/coexistence: `references/delivery-deep.md`
+- Property/mutation/fault/contract/load testing: `references/testing-deep.md`
+- RAG/agents/evals/memory/model economics: `references/ai-deep.md`
+## Deep UI/UX routes
+Do not load for ordinary frontend logic changes.
+- New page/screen, redesign, design system: `references/design-system.md` + `references/design-taste.md`
+- Forms/tables/navigation/onboarding/charts: `references/design-patterns.md`
+- Motion/animation/perceived responsiveness: `references/design-motion.md`
+- UI critique/polish/final visual QA: `references/design-review.md`
+## Context/time budget
+Before loading more context ask internally: **Will it change a decision, expose a failure mode, or prevent likely rereading/rework?** If not, skip it.
+- Quick: usually no extra reference or one basic domain.
+- Standard: normally one process + one domain.
+- Deep: basic domain + one deep specialist first; add another only when evidence crosses that boundary.
+- Research: build a task-scoped map and expand high-signal branches; never read the whole repo by default.
+- Do not reread references still in context. Use profiles/session maps to avoid rediscovery, but verify stale material claims.
+- Delegate only when parallel/fresh-context benefit exceeds coordination and token cost.
 ## Work loop
-
-1. **Interpret** - define observable success, constraints, and material assumptions.
-2. **Inspect** - read relevant instructions, code, tests, contracts, config, versions, and analogous patterns.
-3. **Route** - load only guidance required now.
-4. **Plan** - for substantial build/bug work, state a short approach, smallest safe change, and proof; re-plan when evidence invalidates it.
-5. **Implement** - use coherent thin slices; avoid unrelated cleanup and speculative abstraction.
-6. **Verify** - run the narrowest direct proof first, then broader checks justified by blast radius.
-7. **Review** - requirements first; then correctness, failure behavior, compatibility, security, performance, delivery risk, and unnecessary complexity as relevant.
-8. **Persist** - for unfinished/non-trivial work, update compact `.plat/session.md` using `references/context.md`.
-9. **Report** - state changed behavior, fresh evidence, and only material unresolved risk/next action.
-
-Compress the loop for tiny changes. Ceremony must not cost more than the task.
-
-### Course-correct, do not drift
-
-If user correction or new evidence invalidates direction, stop that slice, name the invalid assumption, update direction, and continue from the smallest valid point. Use a 1-3 line anchor only when it prevents drift; never require a full spec for ordinary feature work or reflection without new evidence.
-
+1. **Interpret** - resolve mode/depth, success, constraints, material assumptions.
+2. **Inspect** - repo instructions, relevant code/tests/contracts/config/versions, analogous local patterns.
+3. **Route** - load only guidance needed now.
+4. **Approach** - short approach/proof for substantial Build/Debug/Design; Research may use a compact investigation map.
+5. **Act** - implement or investigate in bounded thin slices; avoid unrelated cleanup/speculative abstraction.
+6. **Verify** - narrowest direct evidence first, then wider checks justified by risk.
+7. **Review** - latest requirement first, then relevant correctness/failure/compatibility/security/performance/delivery/UX/complexity.
+8. **Persist** - update only high-signal session state; project profile only when already maintained or setup was requested.
+9. **Report** - match output to mode and developer preference.
+Compress this loop for tiny tasks. Ceremony must never cost more than the task.
+## Course correction
+If developer correction, repo evidence, or failed proof invalidates direction: stop the affected slice, name the invalid assumption, re-check only needed evidence, and resume from the smallest valid point. Use a 1-3 line direction anchor only when it prevents drift; never require a full spec for ordinary feature work.
 ## Repository discipline
-
-- Search for existing helpers, tests, schemas, dependencies, and analogous code before adding new ones.
-- Follow repository-specific instructions and installed versions over generic memory unless unsafe/broken.
-- Do not silently change public contracts, schemas, migrations, security behavior, generated code, lockfiles, deployment behavior, or compatibility.
-- Do not add a dependency/service/cache/queue/abstraction when existing project, language, framework, platform, or database capabilities solve the real requirement adequately.
-- Keep changes scoped and reviewable; remove superseded paths when safe instead of preserving duplicate ways.
-
-## Continuity and delegation
-
-For non-trivial work, use local `.plat/session.md` only when it saves rediscovery. Store verified state/decisions/risks/next action; never transcripts, chain-of-thought, secrets, or duplicated artifacts. Prefer `.git/info/exclude`; verify inherited claims.
-
-Delegate bounded independent work only when parallelism/fresh context beats coordination cost. The main agent owns shared contracts, high-impact decisions, integration, and final completion. Read `references/subagents.md` when useful.
-
+Search for existing helpers/caches/stores/tests/schemas/dependencies/analogous code before adding new ones. Follow repo instructions and installed versions over generic memory. Do not silently change public contracts, migrations, security behavior, generated code, lockfiles, deployment behavior, or compatibility. Do not add a dependency/service/cache/queue/abstraction when existing capabilities solve the actual requirement.
 ## Communication
-
-Default to concise engineering output:
-
-```text
-Changed:
-- ...
-
-Verified:
-- ...
-
-Risk/Next:
-- ... only when needed
-```
-
-No routine narration or polish. For substantial build/bug work, give one compact approach before editing. On correction, name the changed assumption once, then act. Preserve exact commands/errors/contracts when useful; expand only when the user or risk needs it.
-
+Normal execution stays concise: **Changed / Verified / Risk-Next only when material**. Research may use **Scope -> Architecture/Flow -> Evidence -> Findings -> Unknowns/Risks -> Options/Next** when useful. Deep reasoning alone is not a reason for verbose output.
 ## Completion gate
-
-Before saying done:
-
-- Prove the requested behavior, not a nearby symptom.
-- Check relevant compatibility/failure/security/delivery paths.
-- Remove unjustified complexity introduced by the change.
-- Run fresh evidence that directly supports the claim and inspect exit status/failures.
-- For material UI claims, inspect the rendered interface in a real browser/device/runtime when tooling exists; otherwise state it remains visually unverified.
-- If proof cannot run, state exactly what remains unverified and why.
+Prove the requested behavior, not a nearby symptom. Check relevant compatibility/failure/security/delivery/UX paths for the chosen depth, remove unjustified complexity, and run fresh evidence after the final relevant edit. For material UI claims, inspect the rendered interface when tooling exists. If proof cannot run, state exactly what remains unverified and why.
