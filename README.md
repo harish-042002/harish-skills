@@ -93,7 +93,7 @@ Plat therefore optimizes for:
 
 A public README should be written for a first-time user, not for the internal development conversation that produced it. Plat now explicitly treats **audience, purpose, metaphor, and information hierarchy** as part of the requirement.
 
-If a developer corrects the framing — for example, "this is a team, not an office" — Plat should re-evaluate the affected artifact rather than merely replace one word.
+If a developer corrects the product framing, Plat should re-evaluate the affected characters, labels, hierarchy, and visuals rather than doing a word-level patch.
 
 ## More agents
 
