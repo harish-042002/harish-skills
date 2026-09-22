@@ -60,7 +60,9 @@ Do not complicate five-item code to improve an irrelevant Big-O term while ignor
 - Separate broad cleanup from behavior changes when mixing them harms review or rollback.
 - Avoid speculative extension points, wrapper-on-wrapper layers, one-use configuration systems, and future-proofing without a current requirement.
 - Add an extension point when a real second use or near-certain requirement exists.
+- Treat surface area as a budget: every new public symbol, file, layer, dependency, service, or indirection should pay for itself by removing more complexity or satisfying a concrete requirement. Architecture that only adds has failed the simplicity check.
 - Delete dead or superseded paths when the migration/removal is safe and within scope; do not preserve obsolete code solely because an agent is afraid to remove it.
+- When an important structural rule is repeatedly violated, prefer a small existing-tool automated guard/CI check over more prose; do not build a custom enforcement system for a one-off concern.
 
 ## Review in two stages
 
@@ -74,7 +76,7 @@ Fix compliance issues before polishing implementation quality.
 
 ### 2. Engineering quality
 
-Check only what is relevant. After correctness is proven, ask whether a new team member would understand the result faster than the previous version:
+Check only what is relevant. Rank findings by impact: correctness/security/data-loss/compatibility blockers first, structural simplifications next, style nits last and clearly optional. A few high-confidence findings beat a long list of low-value comments. After correctness is proven, ask whether a new team member would understand the result faster than the previous version:
 
 - Edge/null/boundary behavior.
 - Error, timeout, retry, and recovery behavior.
