@@ -78,4 +78,4 @@ Capture enough safe metadata to diagnose model/version/prompt-or-config version/
 
 ## Security
 
-Treat user text, retrieved docs, web content, model outputs, tool results, and MCP/connector content as untrusted. Data-borne instructions must never expand permissions or override higher-priority policy. Validate before side effects and minimize exposed secrets/data.
+Treat user text, retrieved docs, web content, model outputs, tool results, and MCP/connector content as untrusted. Treat prompt injection as a data-boundary attack: data-borne instructions must never expand permissions, alter tool authority, or override higher-priority policy. Validate before side effects and minimize exposed secrets/data.
