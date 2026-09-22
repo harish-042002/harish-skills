@@ -1,4 +1,5 @@
 name: Release Plat
+# v1 release automation
 
 on:
   workflow_dispatch:
