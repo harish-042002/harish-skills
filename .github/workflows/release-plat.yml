@@ -29,6 +29,9 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Validate Plat
+        run: python scripts/validate_plat.py
+
       - name: Package Plat
         shell: bash
         run: |
@@ -67,14 +70,16 @@ jobs:
 
           ## Highlights
 
-          - Clear pain-point positioning: prevent over-engineering simple tasks and under-engineering difficult ones.
-          - Machine-readable architecture, benchmark, limitation, and failure-mode documentation.
-          - Minimum-sufficient-depth routing remains the core mechanism.
-          - Repository truth and local mechanisms are checked before invention.
-          - Course correction stops stale trajectories when user intent or evidence changes.
-          - Fresh verification is required before completion claims.
-          - Correctness/safety first; then minimize total tokens, tool calls, rereads, repair turns, and wall time.
-          - Verified installer and one-time developer preference onboarding remain included.
+          - Fast routing hot path reduced to a compact always-loaded control plane.
+          - Vague messages resolve from active conversation/workspace/repository evidence before clarification.
+          - One safe interpretation -> act; materially different unresolved interpretations -> one focused question.
+          - Local / Behavioral / Structural correction levels prevent stale trajectory lock-in.
+          - Structural corrections invalidate dependent decisions and re-route the affected slice.
+          - Repository discovery now has explicit stop conditions and risk-first history/blast-radius checks.
+          - Specialist loading uses a strict budget: one primary reference first, one deep specialist when earned.
+          - Failed fixes retire disproven hypotheses instead of stacking patches.
+          - Market-first maintenance protocol requires external skill research, license review, adaptation, regression testing, and evidence logging before material Plat changes.
+          - Correctness/safety first; then minimize total tokens, tool calls, rereads, repair turns, coordination, and wall time.
 
           The release asset `skill.zip` contains the complete Plat skill and MIT license.
           EOF
