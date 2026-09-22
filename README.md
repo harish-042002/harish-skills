@@ -20,7 +20,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/harish-042002/harish-ski
 iex (irm 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1')
 ```
 
-The installer asks for agent + global/project scope, verifies the real skill path, completes onboarding, and wires Plat into the agent instructions.
+The installer asks for the **skill install scope** (global or project-local), verifies the real agent path, creates only the developer profile at `~/.plat/profile.md`, and wires Plat into the agent instructions. It does **not** create a project profile during installation.
 
 <img src="assets/plat-onboarding.svg" alt="Plat preference-only onboarding" width="100%" />
 
