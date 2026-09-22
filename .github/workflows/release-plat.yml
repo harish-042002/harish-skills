@@ -1,0 +1,76 @@
+name: Release Plat
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - VERSION
+      - .github/workflows/release-plat.yml
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          test -n "$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Package Plat
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd skills
+          zip -qr ../skill.zip plat
+          cd ..
+          sha256sum skill.zip > SHA256SUMS.txt
+
+      - name: Create release if missing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; leaving it unchanged."
+            exit 0
+          fi
+
+          cat > release-notes.md <<EOF
+          # Plat $TAG
+
+          Adaptive engineering control plane for AI coding agents.
+
+          **What Plat does**
+          - Chooses task mode and depth automatically.
+          - Loads only the specialist engineering guidance the task needs.
+          - Supports backend, frontend, mobile, AI/RAG, testing, database, API, security, performance, delivery, system design, and UI/UX.
+          - Reuses optional developer/project/session context without overriding repository truth.
+          - Course-corrects when new evidence invalidates the current direction.
+          - Requires fresh verification before claiming completion.
+
+          **Install**
+          ```bash
+          npx skills add harish-042002/harish-skills --skill plat -g -a claude-code -y
+          ```
+
+          The release asset `skill.zip` contains the complete Plat skill, including the MIT license.
+          EOF
+
+          gh release create "$TAG" skill.zip SHA256SUMS.txt             --target "$GITHUB_SHA"             --title "Plat $TAG"             --notes-file release-notes.md
