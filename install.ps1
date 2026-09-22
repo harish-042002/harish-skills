@@ -27,8 +27,8 @@ function Ask-Agent {
 function Ask-Scope {
   Write-Host ""
   Write-Host "Install scope:"
-  Write-Host "  1. Global - use Plat across projects"
-  Write-Host "  2. Project - use Plat only in this project"
+  Write-Host "  1. Global skill install - use Plat across projects"
+  Write-Host "  2. Project-local skill install - install Plat only in this repo"
   $choice = Read-Host ">"
   if ($choice -eq "2") { return "project" }
   return "global"
@@ -144,7 +144,7 @@ if ($Scope -eq "global") {
 
 Write-Host ""
 Write-Host "Plat is ready."
-Write-Host "Preferences: $HOME/.plat/profile.md"
+Write-Host "Developer profile: $HOME/.plat/profile.md"
 Write-Host "Skill:       $skillDir"
 Write-Host ""
 Write-Host "Ask normally. Plat decides the smallest useful mode, depth, and specialist team."
