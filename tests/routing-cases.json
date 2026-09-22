@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "purpose": "Frozen routing scenarios for Plat fast-path, vague-intent, depth, and trajectory regression testing. These expected decisions are benchmark contracts; live model runs are evaluated separately.",
+  "cases": [
+    {
+      "id": "vague-continuation",
+      "message": "do it",
+      "evidence": "Previous unresolved request is to remove one identified README paragraph; it is still present.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "None",
+        "note": "inherit active artifact/scope"
+      }
+    },
+    {
+      "id": "vague-still-wrong",
+      "message": "still wrong",
+      "evidence": "Previous UI edit was rendered and the reported visual issue remains.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "Behavioral",
+        "note": "inspect evidence before another edit"
+      }
+    },
+    {
+      "id": "structural-metaphor",
+      "message": "use team, not office",
+      "evidence": "Office metaphor shaped characters, labels, layout and information hierarchy.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "Structural",
+        "note": "invalidate dependent design decisions"
+      }
+    },
+    {
+      "id": "deep-wording-trivial",
+      "message": "make it deep",
+      "evidence": "Only requested implementation is changing one known constant.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "None",
+        "note": "response detail must not force engineering depth"
+      }
+    },
+    {
+      "id": "duplicates-with-context",
+      "message": "fix duplicates",
+      "evidence": "Current task is duplicate invoice creation under concurrent workers.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "debug concurrency; load one relevant deep specialist first"
+      }
+    },
+    {
+      "id": "duplicates-no-referent",
+      "message": "fix duplicates",
+      "evidence": "Repository contains several unrelated duplicate behaviors and conversation has no active target.",
+      "expect": {
+        "clarify": true,
+        "depth": "Standard",
+        "correction": "None",
+        "note": "search narrowly first; ask one focused question only if still ambiguous"
+      }
+    },
+    {
+      "id": "tiny-copy",
+      "message": "change this label",
+      "evidence": "One known UI label and render path are already identified.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "Local",
+        "note": "target-act-proof"
+      }
+    },
+    {
+      "id": "public-api-compat",
+      "message": "change the response shape",
+      "evidence": "Public mobile clients on older versions still consume the endpoint.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "Behavioral",
+        "note": "compatibility/migration risk earns depth"
+      }
+    },
+    {
+      "id": "failed-fix-one",
+      "message": "that did not fix it",
+      "evidence": "One hypothesis-driven fix failed the original reproducer.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "Behavioral",
+        "note": "retire hypothesis; do not stack another patch"
+      }
+    },
+    {
+      "id": "failed-fix-three",
+      "message": "still failing",
+      "evidence": "Three evidence-backed materially different fixes failed and each exposed new coupling.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "Structural",
+        "note": "question boundary/architecture"
+      }
+    },
+    {
+      "id": "large-repo-known-file",
+      "message": "change this timeout",
+      "evidence": "Exact owning config and direct test are already known in a monorepo.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "Local",
+        "note": "repo size alone must not trigger deep"
+      }
+    },
+    {
+      "id": "small-repo-distributed",
+      "message": "why are jobs duplicated?",
+      "evidence": "Small repo, but workers retry across processes and durable state is shared.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "risk, not repo size, determines depth"
+      }
+    },
+    {
+      "id": "profile-mismatch",
+      "message": "fix the React state bug",
+      "evidence": "Developer profile says backend expert; current repo evidence is frontend React.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "None",
+        "note": "profile changes explanation, not domain routing"
+      }
+    },
+    {
+      "id": "resume-after-switch",
+      "message": "continue",
+      "evidence": "Fresh .plat/session.md exists plus a changed worktree matching its recorded next action.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "None",
+        "note": "rehydrate compactly; inspect diff, not full transcript"
+      }
+    },
+    {
+      "id": "quick-high-risk",
+      "message": "quickly fix duplicate payments",
+      "evidence": "Duplicate value transfer occurs under concurrent requests.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "communication may be concise; safety/correctness depth remains"
+      }
+    },
+    {
+      "id": "reference-overfit",
+      "message": "make ours like this reference",
+      "evidence": "Reference has a strong visual metaphor unrelated to the product's semantics.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "None",
+        "note": "abstract design principles; do not copy metaphor"
+      }
+    },
+    {
+      "id": "standard-feature",
+      "message": "add existing-pattern validation to this form",
+      "evidence": "Ownership, pattern and test location are clear.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "None",
+        "note": "one primary domain reference"
+      }
+    },
+    {
+      "id": "deep-one-specialist",
+      "message": "diagnose retry duplicates",
+      "evidence": "Evidence already localizes the issue to distributed backend retry/idempotency behavior.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "basic backend + backend-systems; do not load DB deep unless evidence crosses"
+      }
+    },
+    {
+      "id": "second-specialist-earned",
+      "message": "duplicates persist",
+      "evidence": "Distributed retry path is understood; DB isolation/constraint behavior is now the unresolved invariant boundary.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "Behavioral",
+        "note": "second deep specialist now earned"
+      }
+    },
+    {
+      "id": "safe-read-before-question",
+      "message": "remove that one",
+      "evidence": "Two nearby UI elements could be referent; current render/diff can cheaply identify which one was just added.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "Local",
+        "note": "inspect cheap evidence before asking"
+      }
+    }
+  ]
+}
