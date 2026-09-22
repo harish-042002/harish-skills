@@ -381,7 +381,7 @@ The v0.6.0 change passed:
 - **14 / 14** semantic mutation tests;
 - **20** updated course-correction scenarios;
 - skill validator and package integrity checks;
-- root-router growth held to about **+4.4%** (~78 proxy tokens) versus v0.5.0.
+- root router is about **1.4% smaller** (~24 proxy tokens fewer) than v0.5.0 despite the added frontend/mobile coverage.
 
 The 31/31 result is a static engineering-coverage checklist, not a claim that Plat replaces specialist visual-design or framework-specific skills.
 
