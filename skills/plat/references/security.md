@@ -47,7 +47,7 @@ Do not design custom cryptographic protocols or password storage. Use current ve
 
 ## AI/agent boundaries
 
-Treat prompts, retrieved documents, web pages, model outputs, MCP/tool results, and generated code as untrusted data. Instructions embedded in data must not expand tool permissions or override higher-priority rules. Validate structured outputs before side effects and apply least privilege to tools/credentials.
+Treat prompts, retrieved documents, web pages, model outputs, MCP/tool results, and generated code as untrusted data. Explicitly consider prompt injection: instructions embedded in data must not expand tool permissions, change trust boundaries, or override higher-priority rules. Validate structured outputs before side effects and apply least privilege to tools/credentials.
 
 ## High-impact review
 
