@@ -6,9 +6,9 @@ Plat is a progressive-loading control layer:
 
     request
       ↓
-    interpret goal + constraints
+    reconstruct active intent
       ↓
-    inspect repository truth
+    inspect only evidence needed to localize ownership
       ↓
     choose MODE + minimum DEPTH
       ↓
@@ -21,6 +21,23 @@ Plat is a progressive-loading control layer:
     verify requested behavior
       ↓
     persist compact high-signal context when useful
+
+## Precise routing for vague messages
+
+Plat treats short referential messages as possible continuations of the active task rather than automatically new tasks.
+
+Evidence order:
+
+1. latest explicit request/correction;
+2. latest unresolved task;
+3. last tool/test/render/diff result;
+4. current repository/runtime evidence;
+5. fresh session state;
+6. developer preference profile.
+
+If one interpretation clearly dominates and the action is within the authorized/reversible task boundary, act. If two materially different interpretations remain after cheap inspection, ask one focused question.
+
+Corrections are classified as **Local, Behavioral, or Structural**. Structural corrections invalidate downstream decisions that depended on the old assumption and re-run routing for the affected slice.
 
 ## Task modes
 
@@ -66,6 +83,16 @@ This prevents user preference or stale memory from silently fighting the project
 Installation creates only ~/.plat/profile.md for interactive users. It stores role, experience, response preference, and optionally familiar technologies.
 
 The profile changes explanation assumptions, not architecture and not engineering depth.
+
+## Fast-path budget
+
+- Quick: target + nearest proof; normally zero extra references.
+- Standard: one primary reference first.
+- Deep: one basic domain + one deep specialist first.
+- Second deep specialist: only when evidence proves a second boundary is material.
+- History/blame/blast-radius work: only for risky/public/security/value-transfer/regression cases where it can change the decision.
+
+Discovery stops when outcome, ownership, approach, and direct proof are clear.
 
 ## Context economy
 
