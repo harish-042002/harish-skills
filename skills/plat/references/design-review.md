@@ -8,21 +8,22 @@ Use for UI review, critique, polish, design QA, pre-ship visual verification, re
 2. Evidence setup
 3. Bounded review loop
 4. Review passes
-5. Severity model
-6. Hierarchy and composition
-7. Typography
-8. Color and contrast
-9. Layout and responsive integrity
-10. Interaction and states
-11. Accessibility
-12. Content and UX copy
-13. Motion
-14. Performance and stability
-15. Anti-generic inspection
-16. Existing-product consistency
-17. Mobile/native review
-18. Final report format
-19. Stop conditions
+5. Audience and framing review
+6. Severity model
+7. Hierarchy and composition
+8. Typography
+9. Color and contrast
+10. Layout and responsive integrity
+11. Interaction and states
+12. Accessibility
+13. Content and UX copy
+14. Motion
+15. Performance and stability
+16. Anti-generic inspection
+17. Existing-product consistency
+18. Mobile/native review
+19. Final report format
+20. Stop conditions
 
 ## Review philosophy
 
@@ -111,6 +112,22 @@ Do not enter an endless aesthetic self-polish loop.
 - error/empty/loading states
 - performance/layout stability
 - interaction edge cases
+
+## Audience and framing review
+
+For README, landing, docs-home, showcase, launch, portfolio, or other public-facing artifacts, inspect the artifact as a first-time visitor who has **none of the current conversation context**.
+
+Check:
+
+- Does the first screen explain the product/user value instead of the team's development history?
+- Does the metaphor fit the product semantics, or was it copied too literally from an inspiration source?
+- Are internal phrases such as "candidate", "pending", "v0.x was merged into v1", implementation notes, or benchmark-planning language occupying public narrative space without helping the reader?
+- Are important caveats attached to the relevant evidence rather than becoming the product headline?
+- Can a user distinguish product capability from maintenance/release bookkeeping?
+- Does the visible hierarchy answer: **what is this -> why use it -> how it works -> evidence -> how to start**?
+- If the developer corrected the framing/audience, did the review revisit all affected labels, visuals, and information hierarchy instead of performing a find/replace?
+
+Reference sites are evidence for composition, interaction, storytelling, density, and craft—not permission to copy their characters, names, metaphors, or information architecture.
 
 ## Severity model
 
