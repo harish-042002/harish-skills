@@ -46,6 +46,10 @@ Prefer focused readable assertions over tests coupled to implementation detail. 
 
 Mock true external boundaries when useful, but do not mock away semantics under test. Use realistic fakes/containers/integration tests when correctness depends on database transactions, serialization, queues, framework routing, or network contracts.
 
+## Converge on the current requirement
+
+Before completion, compare the implementation against the **latest** acceptance criteria, especially after user corrections or failed assumptions. Evidence for an obsolete interpretation is not proof of the current requirement. Re-run the smallest tests that distinguish the old direction from the corrected one.
+
 ## Verification map
 
 For a non-trivial change, be able to map each material completion claim to evidence: behavior claim -> direct test/reproducer, compatibility claim -> contract/integration evidence, migration claim -> migration/rollback evidence, performance claim -> comparable measurement. Do not let a broad green suite stand in for a risk it cannot observe.
