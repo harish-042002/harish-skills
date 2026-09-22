@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+<rect width="1200" height="720" fill="#f3efe4"/>
+<rect x="18" y="18" width="1164" height="684" rx="18" fill="#fffdf7" stroke="#4d5d54" stroke-width="4"/>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
+  <text x="52" y="67" font-size="27" font-weight="700" fill="#2f4238">SPECIALIST TEAM ROSTER</text>
+  <text x="52" y="96" font-size="13" fill="#6d7d73">P-01 assembles the smallest useful combination for the current task</text>
+  
+  <g transform="translate(48 125)">
+    <rect width="348" height="112" rx="9" fill="#e5efe3" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#d9a57c"/>
+    <rect x="14" y="14" width="66" height="14" fill="#5a463a"/>
+    <rect x="14" y="28" width="10" height="34" fill="#5a463a"/>
+    <rect x="70" y="28" width="10" height="34" fill="#5a463a"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#6d9476"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">BACKEND</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">services · queues · distributed</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values="1;.35;1" dur="2.2s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(426 125)">
+    <rect width="348" height="112" rx="9" fill="#e3edf6" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#e6b88f"/>
+    <rect x="14" y="14" width="66" height="14" fill="#3e4752"/>
+    <rect x="14" y="28" width="10" height="34" fill="#3e4752"/>
+    <rect x="70" y="28" width="10" height="34" fill="#3e4752"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#748da6"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">FRONTEND</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">state · browser · SSR</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values=".35;1;.35" dur="2.6s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(804 125)">
+    <rect width="348" height="112" rx="9" fill="#e4eee8" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#c98d67"/>
+    <rect x="14" y="14" width="66" height="14" fill="#4b4038"/>
+    <rect x="14" y="28" width="10" height="34" fill="#4b4038"/>
+    <rect x="70" y="28" width="10" height="34" fill="#4b4038"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#6f9a86"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">MOBILE</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">lifecycle · offline · platform</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values="1;.35;1" dur="3s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(48 259)">
+    <rect width="348" height="112" rx="9" fill="#f3e7d7" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#e2ad83"/>
+    <rect x="14" y="14" width="66" height="14" fill="#71543f"/>
+    <rect x="14" y="28" width="10" height="34" fill="#71543f"/>
+    <rect x="70" y="28" width="10" height="34" fill="#71543f"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#b68559"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">AI / RAG</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">retrieval · agents · evals</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values=".35;1;.35" dur="3.4000000000000004s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(426 259)">
+    <rect width="348" height="112" rx="9" fill="#f0eadf" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#d9a57c"/>
+    <rect x="14" y="14" width="66" height="14" fill="#4f453b"/>
+    <rect x="14" y="28" width="10" height="34" fill="#4f453b"/>
+    <rect x="70" y="28" width="10" height="34" fill="#4f453b"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#8b8e74"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">TESTING</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">property · mutation · fault</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values="1;.35;1" dur="2.2s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(804 259)">
+    <rect width="348" height="112" rx="9" fill="#e8eee3" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#e6b88f"/>
+    <rect x="14" y="14" width="66" height="14" fill="#56463b"/>
+    <rect x="14" y="28" width="10" height="34" fill="#56463b"/>
+    <rect x="70" y="28" width="10" height="34" fill="#56463b"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#7c9164"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">DATABASE</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">queries · locks · migrations</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values=".35;1;.35" dur="2.6s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(48 393)">
+    <rect width="348" height="112" rx="9" fill="#e4ecf2" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#c98d67"/>
+    <rect x="14" y="14" width="66" height="14" fill="#3f4852"/>
+    <rect x="14" y="28" width="10" height="34" fill="#3f4852"/>
+    <rect x="70" y="28" width="10" height="34" fill="#3f4852"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#70889a"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">API</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">contracts · events · webhooks</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values="1;.35;1" dur="3s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(426 393)">
+    <rect width="348" height="112" rx="9" fill="#f1e3e1" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#e2ad83"/>
+    <rect x="14" y="14" width="66" height="14" fill="#49383a"/>
+    <rect x="14" y="28" width="10" height="34" fill="#49383a"/>
+    <rect x="70" y="28" width="10" height="34" fill="#49383a"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#a5726d"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">SECURITY</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">auth · threats · isolation</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values=".35;1;.35" dur="3.4000000000000004s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(804 393)">
+    <rect width="348" height="112" rx="9" fill="#efe7d8" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#d9a57c"/>
+    <rect x="14" y="14" width="66" height="14" fill="#4c4038"/>
+    <rect x="14" y="28" width="10" height="34" fill="#4c4038"/>
+    <rect x="70" y="28" width="10" height="34" fill="#4c4038"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#a88459"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">PERFORMANCE</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">profiling · capacity · cost</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values="1;.35;1" dur="2.2s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(48 527)">
+    <rect width="348" height="112" rx="9" fill="#e5e8ef" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#e6b88f"/>
+    <rect x="14" y="14" width="66" height="14" fill="#3e414c"/>
+    <rect x="14" y="28" width="10" height="34" fill="#3e414c"/>
+    <rect x="70" y="28" width="10" height="34" fill="#3e414c"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#777f9a"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">DELIVERY</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">CI/CD · rollout · IaC</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values=".35;1;.35" dur="2.6s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(426 527)">
+    <rect width="348" height="112" rx="9" fill="#eee4f3" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#c98d67"/>
+    <rect x="14" y="14" width="66" height="14" fill="#51434e"/>
+    <rect x="14" y="28" width="10" height="34" fill="#51434e"/>
+    <rect x="70" y="28" width="10" height="34" fill="#51434e"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#907694"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">DESIGN</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">system · taste · motion</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values="1;.35;1" dur="3s" repeatCount="indefinite"/></circle>
+  </g>
+  <g transform="translate(804 527)">
+    <rect width="348" height="112" rx="9" fill="#e8e6dc" stroke="#7d897f" stroke-width="2"/>
+    <rect x="18" y="20" width="58" height="58" fill="#e2ad83"/>
+    <rect x="14" y="14" width="66" height="14" fill="#4a443e"/>
+    <rect x="14" y="28" width="10" height="34" fill="#4a443e"/>
+    <rect x="70" y="28" width="10" height="34" fill="#4a443e"/>
+    <rect x="28" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="58" y="40" width="7" height="7" fill="#28352f"/>
+    <rect x="42" y="58" width="16" height="4" fill="#815a49"/>
+    <rect x="18" y="80" width="58" height="20" fill="#7d8178"/>
+    <rect x="24" y="84" width="10" height="8" fill="#eef3ee"/>
+    <text x="98" y="34" font-size="13" font-weight="700" fill="#304239">DEBUG / RESEARCH</text>
+    <text x="98" y="59" font-size="10" fill="#65756b">root cause · repo map</text>
+    <rect x="98" y="78" width="130" height="18" rx="3" fill="#fffdf7" opacity=".8"/>
+    <text x="108" y="91" font-size="8" fill="#58675f">loads only when useful</text>
+    <circle cx="320" cy="24" r="6" fill="#6ca879"><animate attributeName="opacity" values=".35;1;.35" dur="3.4000000000000004s" repeatCount="indefinite"/></circle>
+  </g>
+  <rect x="48" y="670" width="1104" height="28" rx="5" fill="#f1ede4"/>
+  <text x="66" y="688" font-size="10" fill="#64736a">quick task → fewer members · hard task → deeper specialist(s) · repository truth decides the route</text>
+</g>
+</svg>
