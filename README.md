@@ -2,40 +2,121 @@
 
 <img src="assets/plat-team.svg" alt="Plat adaptive engineering team" width="100%" />
 
-<img src="assets/plat-activate.svg" alt="Verified one-command Plat installation flow" width="100%" />
+# Plat
+
+**Minimum sufficient engineering depth for AI coding agents.**
+
+Plat reduces unnecessary agent work caused by one-size-fits-all reasoning: overthinking easy tasks, underthinking hard ones, rereading repositories too broadly, continuing stale assumptions, and claiming completion without enough proof.
 
 </div>
+
+<img src="assets/plat-pain-solution.svg" alt="Pain points Plat targets and how Plat responds" width="100%" />
+
+## The problem Plat solves
+
+| Pain | Typical agent behavior | Plat response |
+| --- | --- | --- |
+| Simple task, too much ceremony | broad repo reads, plans, architecture discussion, extra tools | choose **Quick/Standard** and keep the task local |
+| Hard task, too little rigor | local patch ignores concurrency, migration, security, runtime, or AI uncertainty | escalate to **Deep** only when evidence earns it |
+| Repository rediscovery | reread broad areas and invent helpers that already exist | needle-first search + reuse local mechanisms |
+| Stale direction | user corrects intent but the agent keeps building on old assumptions | stop affected slice, re-check evidence, resume from corrected direction |
+| Generic expertise everywhere | unrelated instructions consume context | load only the specialist domain needed for the task |
+| “Done” without proof | plausible patch, weak evidence | require fresh verification matched to the requested behavior |
+
+> **Plat’s hypothesis:** the best coding-agent workflow is not “think more.” It is **use the smallest engineering team and depth that can solve the real problem correctly, then prove it.**
+
+<img src="assets/plat-activate.svg" alt="Verified one-command Plat installation flow" width="100%" />
 
 ## Install
 
 **macOS / Linux**
 
-```bash
+~~~bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.sh)"
-```
+~~~
 
 **Windows PowerShell**
 
-```powershell
+~~~powershell
 iex (irm 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1')
-```
+~~~
 
-The installer asks for the **skill install scope** (global or project-local), verifies the real agent path, creates only the developer profile at `~/.plat/profile.md`, and wires Plat into the agent instructions. It does **not** create a project profile during installation.
+The installer chooses the agent and skill install scope, copies Plat into the real agent skill directory, verifies the install, creates only the developer preference profile at **~/.plat/profile.md**, and wires Plat into the agent instructions. It does not create a project profile during installation.
 
 <img src="assets/plat-onboarding.svg" alt="Plat preference-only onboarding" width="100%" />
+
+## How Plat works
+
+~~~text
+request
+  ↓
+inspect repository truth
+  ↓
+choose MODE + minimum sufficient DEPTH
+  ↓
+load only relevant specialist guidance
+  ↓
+execute / investigate
+  ↓
+fresh verification
+~~~
+
+**Modes:** Build · Debug · Review · Research · Design · Optimize · Migrate  
+**Depths:** Quick · Standard · Deep · Research
+
+A request for a detailed explanation does **not** automatically trigger Deep engineering depth. Output preference and technical depth are separate.
 
 <img src="assets/plat-flow.svg" alt="How one engineering request moves through Plat" width="100%" />
 
 <img src="assets/plat-roster.svg" alt="Plat specialist engineering team roster" width="100%" />
 
+## Compatibility
+
+| Host | Install path supported by installer | Notes |
+| --- | --- | --- |
+| Claude Code | Global or project-local | persistent CLAUDE.md instruction wiring |
+| Codex | Global or project-local | persistent AGENTS.md instruction wiring |
+| Cursor | Global or project-local | persistent Cursor rule / project instruction wiring |
+
+Plat follows the standard Skill bundle shape: **SKILL.md + agents/openai.yaml + optional references/scripts/assets**. Host invocation details may differ, but the engineering instructions remain vendor-neutral.
+
+## Evidence so far
+
+Plat publishes positive results, mixed results, and failures together.
+
+| Evidence | Result | What it means |
+| --- | --- | --- |
+| Real full-stack build | cost **$3.22 → $1.72**, wall **9m → 6m**, cache read **12.2M → 5.7M** | strong efficiency signal, but only one manual comparison |
+| Independent 10-case pilot | reliable pass **Plat 9/10 vs No Plat 10/10** | no correctness advantage demonstrated |
+| Independent pilot mean cost | **-6.8%** | favorable mean, but median was worse |
+| Independent pilot median cost | **+7.3%** | mixed efficiency, no universal cost claim |
+| Structural gate | **305/305** checks, **38/38** mutations, **65** adaptive scenarios | routing/coverage evidence only, not live-agent performance |
+
+The course-correction case in the independent pilot **failed with Plat** and passed without it. That failure is documented rather than hidden, and it directly informed stronger repository-truth and course-correction rules.
+
 <img src="assets/plat-evidence.svg" alt="Plat benchmark evidence board with all ten pilot cases" width="100%" />
 
 <img src="assets/plat-regression.svg" alt="Plat regression benchmark scenarios" width="100%" />
 
-<img src="assets/plat-updates.svg" alt="Plat release notification and update flow" width="100%" />
+## Technical docs
+
+- **[Why Plat exists](docs/WHY_PLAT.md)** — pain points, response model, non-goals
+- **[Architecture](docs/ARCHITECTURE.md)** — routing, depth, truth order, specialist loading, verification
+- **[Benchmarks](docs/BENCHMARKS.md)** — methodology, all current numbers, failure case, next protocol
+- **[Limitations](docs/LIMITATIONS.md)** — evidence gaps, host differences, probabilistic behavior, community validation
+- **[Agent failure modes](skills/plat/references/agent-failure-modes.md)** — concrete behaviors Plat is designed to prevent
 
 ## Update
 
-Watch this repository using **Watch → Custom → Releases**. When a release arrives, rerun the same installer command above. Existing developer preferences are preserved.
+Plat does not spend engineering-session tokens checking the network for updates. Watch this repository using **Watch → Custom → Releases**. When a release arrives, rerun the same installer command; existing developer preferences are preserved.
+
+<img src="assets/plat-updates.svg" alt="Plat release notification and update flow" width="100%" />
+
+## Current limitations
+
+- Plat is early-stage and has limited community validation.
+- Current live A/B evidence is not enough to claim a universal correctness, token, cost, or time advantage.
+- Skill instructions improve behavior probabilistically; they cannot guarantee every agent follows every control perfectly.
+- A routing mistake can itself create overhead, which is why over-escalation is a first-class benchmark failure mode.
 
 <img src="assets/plat-license.svg" alt="Plat is released under the MIT License" width="100%" />
