@@ -4,7 +4,7 @@ Use for Flutter/Dart and mobile architecture, state, lifecycle, navigation, netw
 
 ## Responsibilities
 
-Mobile/client engineering is a first-class part of Plat. Preserve the repository's architecture and visual language unless redesign is requested, while keeping concerns distinct:
+Mobile/client engineering is a first-class part of Plat. Preserve the repository's architecture and visual language unless redesign is requested. For visual redesign, product styling, or interaction craft, combine this file with `design-system.md` / `design-taste.md`; add `design-motion.md` for meaningful motion and `design-review.md` for final rendered/device review. Keep concerns distinct:
 
 - **View/UI** - rendering, gestures, navigation, animation, semantics, responsive/adaptive behavior.
 - **State/controller/view-model** - user intent, screen state, orchestration.
