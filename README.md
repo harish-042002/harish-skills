@@ -41,7 +41,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/harish-042002/harish-ski
 iex (irm 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1')
 ~~~
 
-The installer chooses the agent and skill install scope, copies Plat into the real agent skill directory, verifies the install, creates only the developer preference profile at **~/.plat/profile.md**, and wires Plat into the agent instructions. It does not create a project profile during installation.
+The installer chooses the agent and skill install scope, copies Plat into the real agent skill directory, verifies the install, creates only the developer preference profile at **~/.plat/profile.md**, wires Plat into the agent instructions, and registers one user-level daily update checker. It does not create a project profile during installation.
 
 <img src="assets/plat-onboarding.svg" alt="Plat preference-only onboarding" width="100%" />
 
@@ -112,7 +112,9 @@ The course-correction case in the independent pilot **failed with Plat** and pas
 
 ## Update
 
-Plat does not spend engineering-session tokens checking the network for updates. Watch this repository using **Watch → Custom → Releases**. When a release arrives, rerun the same installer command; existing developer preferences are preserved.
+Plat does **not** spend engineering-session tokens checking the network for updates. The installer registers a user-level background task that checks GitHub Releases **once every 24 hours**, writes cached status to `~/.plat/update-status.json`, and shows an OS notification only when a newer version exists. To install the update, rerun the same installer command; existing developer preferences are preserved.
+
+The background checker sends only a normal GitHub release request. It does not send repository code, prompts, profile contents, or project data.
 
 <img src="assets/plat-updates.svg" alt="Plat release notification and update flow" width="100%" />
 
