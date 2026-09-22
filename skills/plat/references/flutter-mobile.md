@@ -27,7 +27,7 @@ Do not put network/database/business orchestration directly in widgets when the 
 - Use immutable/`const` construction where natural; keep identity/keys stable where list/widget identity matters.
 - Keep expensive synchronous work out of `build` and the UI isolate.
 - Reuse the project's state-management/navigation solution; do not add another package for one feature without evidence.
-- Treat deep links, nested navigation, back behavior, restoration/process death, and auth-gated routes as contracts when relevant.
+- Treat deep links, nested navigation, back behavior, state restoration, and auth-gated routes as contracts when relevant.
 - Account for keyboard/insets, safe areas, orientation/window-size changes, text scaling, semantics/screen readers, touch target size, and reduced-motion/platform accessibility settings where the feature is exposed to them.
 
 ## Network, local data, and offline behavior
@@ -56,7 +56,7 @@ Match proof to the behavior:
 
 - Unit tests for pure/state/domain logic.
 - Widget tests for rendering, semantics, input, tapping, scrolling, validation, and screen-state transitions.
-- Integration/device tests for multi-screen flows, lifecycle, navigation, permissions, deep links, notifications, platform integration, and behavior that widget tests cannot prove.
+- Integration/device tests for multi-screen flows, lifecycle, navigation, permissions, deep links, notifications, platform integration, and device/runtime behavior that widget tests cannot prove.
 - Profile/runtime inspection for performance-sensitive UI.
 
 Prefer one broad affected-flow/device-class pass plus one focused confirmation after fixes over open-ended polishing loops.
