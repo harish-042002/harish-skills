@@ -142,10 +142,21 @@ if ($Scope -eq "global") {
   }
 }
 
+$updateChecker = Join-Path $skillDir "scripts/update_check.py"
+if (Test-Path $updateChecker) {
+  & $py $updateChecker --register $skillDir --agent $Agent --scope $Scope
+  if ($LASTEXITCODE -ne 0) {
+    Write-Warning "Plat daily update checker setup did not complete. Plat itself is still installed."
+  }
+} else {
+  Write-Warning "Plat daily update checker was not found at $updateChecker"
+}
+
 Write-Host ""
 Write-Host "Plat is ready."
 Write-Host "Developer profile: $HOME/.plat/profile.md"
 Write-Host "Skill:       $skillDir"
 Write-Host ""
 Write-Host "Ask normally. Plat decides the smallest useful mode, depth, and specialist team."
-Write-Host "To update later, re-run this same installer command."
+Write-Host "Daily update checks run outside engineering sessions and notify only when a newer release exists."
+Write-Host "To install an available update, re-run this same installer command."
