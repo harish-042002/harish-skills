@@ -91,3 +91,28 @@ Plat adaptation:
 - structural corrections invalidate dependent decisions and re-route;
 - failed verification can invalidate the current model rather than trigger patch stacking;
 - repository/history/blast-radius exploration stops once ownership, impact, and direct proof are clear.
+
+
+### Daily update-check research
+
+#### vercel-labs/skills — update/check implementation
+
+Relevant material:
+- `src/update.ts`
+- update tests and CLI routing
+
+Useful principles:
+- update checks should be deterministic and non-interactive when automated;
+- source/version state should be tracked outside agent reasoning;
+- update failure should not corrupt or remove the current installed skill;
+- current installation scope/path matters when deciding what is outdated.
+
+Plat adaptation:
+- background checker uses the GitHub Releases API once per day;
+- installed Plat paths are registered in `~/.plat/installations.json`;
+- results are cached in `~/.plat/update-status.json`;
+- update-check failure is non-fatal and never affects engineering work;
+- the checker **notifies only**; it does not silently replace a skill mid-session.
+
+Market result:
+- the major skills inspected did not provide a cross-platform once-daily background update scheduler, so Plat implements this with native user schedulers (LaunchAgent / systemd-or-cron / Windows Scheduled Task) rather than adding runtime agent instructions.
