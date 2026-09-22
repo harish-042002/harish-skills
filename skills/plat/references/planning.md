@@ -10,6 +10,20 @@ Use for multi-file work, architecture, migrations, unclear requirements, or mean
 
 Do not create a large plan to avoid doing obvious work.
 
+## Compact working spec
+
+For a non-trivial feature/build, establish the current spec before implementation. Keep it compact unless risk demands more:
+
+```text
+Outcome: observable user/system result
+In scope: required behavior
+Out of scope: explicit non-goals when useful
+Constraints: compatibility/security/platform/cost limits
+Acceptance evidence: how completion will be proved
+```
+
+Treat this as a living contract, not paperwork. The latest explicit clarification/correction updates the spec; reconcile contradictions instead of carrying both old and new interpretations. Implementation follows the **current** spec, not the first interpretation.
+
 ## Planning sequence
 
 1. Define observable success and acceptance cases.
@@ -52,15 +66,16 @@ Consider only when applicable:
 
 ## Re-plan triggers
 
-Stop and update the plan when:
+Stop the affected path and update the spec/plan when:
 
+- The developer corrects a requirement/intent in a way that invalidates the current approach.
 - Repository evidence contradicts a core assumption.
 - A required public/data contract change was not anticipated.
 - The intended slice cannot be verified independently.
 - Repeated implementation friction reveals the chosen boundary is wrong.
 - The change grows materially beyond the accepted scope.
 
-Do not preserve a stale plan for consistency's sake.
+Do not preserve a stale plan for consistency's sake. Distinguish a **correction** (the previous interpretation was wrong) from a **new requirement** (scope genuinely changed). For a correction, replace the stale assumption and rework/undo only what no longer serves the current spec. Do not respond with agreement alone; identify the changed assumption and the next valid action.
 
 ## Task graph and delegation
 
