@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640">
+<rect width="1200" height="640" fill="#f4f0e6"/>
+<rect x="22" y="22" width="1156" height="596" rx="18" fill="#fffdf7" stroke="#506158" stroke-width="4"/>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
+<text x="58" y="72" font-size="25" font-weight="700" fill="#304239">HOW PLAT WORKS</text>
+<text x="58" y="100" font-size="13" fill="#718078">one request moves through only the team members it needs</text>
+
+<!-- vertical flow -->
+<g transform="translate(82 135)">
+ <rect width="212" height="82" rx="8" fill="#e8f0e5" stroke="#6f8273" stroke-width="3"/>
+ <text x="22" y="30" font-size="13" font-weight="700" fill="#3d5845">1 · UNDERSTAND</text>
+ <text x="22" y="53" font-size="10" fill="#65766a">goal · repo · constraints</text>
+ <text x="22" y="69" font-size="10" fill="#65766a">latest user intent wins</text>
+</g>
+<path d="M294 176H346" stroke="#b5aa98" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(346 135)">
+ <rect width="212" height="82" rx="8" fill="#e3edf6" stroke="#6d8294" stroke-width="3"/>
+ <text x="22" y="30" font-size="13" font-weight="700" fill="#425c70">2 · CHOOSE DEPTH</text>
+ <text x="22" y="53" font-size="10" fill="#708596">quick · standard</text>
+ <text x="22" y="69" font-size="10" fill="#708596">deep · research</text>
+</g>
+<path d="M558 176H610" stroke="#b5aa98" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(610 135)">
+ <rect width="248" height="82" rx="8" fill="#eee4f3" stroke="#866e90" stroke-width="3"/>
+ <text x="22" y="30" font-size="13" font-weight="700" fill="#654e6e">3 · ASSEMBLE TEAM</text>
+ <text x="22" y="53" font-size="10" fill="#817087">load only useful specialists</text>
+ <text x="22" y="69" font-size="10" fill="#817087">skip the rest</text>
+</g>
+<path d="M858 176H910" stroke="#b5aa98" stroke-width="5" stroke-dasharray="9 7"/>
+<g transform="translate(910 135)">
+ <rect width="208" height="82" rx="8" fill="#f3e7d7" stroke="#98795b" stroke-width="3"/>
+ <text x="22" y="30" font-size="13" font-weight="700" fill="#70533a">4 · PROVE</text>
+ <text x="22" y="53" font-size="10" fill="#8a755f">fresh verification</text>
+ <text x="22" y="69" font-size="10" fill="#8a755f">before "done"</text>
+</g>
+
+<!-- depths -->
+<text x="58" y="274" font-size="16" font-weight="700" fill="#304239">DEPTH CHANGES THE TEAM SIZE</text>
+<g transform="translate(58 300)">
+ <rect width="258" height="104" rx="8" fill="#f2eee5" stroke="#aaa08f" stroke-width="2"/>
+ <text x="20" y="30" font-size="13" font-weight="700" fill="#4e5d55">QUICK</text>
+ <text x="20" y="56" font-size="11" fill="#708078">tiny known change</text>
+ <text x="20" y="78" font-size="11" fill="#3d5845">P-01 + maybe 1 member</text>
+</g>
+<g transform="translate(336 300)">
+ <rect width="258" height="104" rx="8" fill="#e8f0e5" stroke="#6f8273" stroke-width="2"/>
+ <text x="20" y="30" font-size="13" font-weight="700" fill="#3d5845">STANDARD</text>
+ <text x="20" y="56" font-size="11" fill="#65766a">normal feature / bug</text>
+ <text x="20" y="78" font-size="11" fill="#3d5845">process + domain member</text>
+</g>
+<g transform="translate(614 300)">
+ <rect width="258" height="104" rx="8" fill="#e3edf6" stroke="#6d8294" stroke-width="2"/>
+ <text x="20" y="30" font-size="13" font-weight="700" fill="#425c70">DEEP</text>
+ <text x="20" y="56" font-size="11" fill="#708596">distributed / risky / unclear</text>
+ <text x="20" y="78" font-size="11" fill="#425c70">basic + earned specialist</text>
+</g>
+<g transform="translate(892 300)">
+ <rect width="250" height="104" rx="8" fill="#eee4f3" stroke="#866e90" stroke-width="2"/>
+ <text x="20" y="30" font-size="13" font-weight="700" fill="#654e6e">RESEARCH</text>
+ <text x="20" y="56" font-size="11" fill="#817087">large-codebase understanding</text>
+ <text x="20" y="78" font-size="11" fill="#654e6e">map + evidence, not repo dump</text>
+</g>
+
+<!-- memory -->
+<g transform="translate(160 456)">
+ <rect width="880" height="106" rx="8" fill="#f3efe7" stroke="#aa9f8f" stroke-width="2"/>
+ <text x="24" y="28" font-size="11" fill="#6e7b73">OPTIONAL MEMORY SHELF · makes the next task cheaper</text>
+ <rect x="24" y="46" width="250" height="36" fill="#e3edf6"/><text x="40" y="69" font-size="11" fill="#425c70">developer profile</text>
+ <rect x="314" y="46" width="250" height="36" fill="#e4efe3"/><text x="330" y="69" font-size="11" fill="#3d5845">project profile</text>
+ <rect x="604" y="46" width="250" height="36" fill="#eee4f3"/><text x="620" y="69" font-size="11" fill="#654e6e">session state</text>
+ </g>
+
+<!-- moving pixel -->
+<rect x="300" y="168" width="16" height="16" fill="#c48251">
+ <animate attributeName="x" values="300;352;566;616;866;916;1092;300" dur="8s" repeatCount="indefinite"/>
+</rect>
+</g>
+</svg>
