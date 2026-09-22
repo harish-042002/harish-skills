@@ -18,6 +18,7 @@ Use: **current developer request/correction > current repo/runtime evidence > `.
 7. Minimize total tokens, tool churn, rereads, repair turns, and wall time.
 8. Lazy-load depth: hard tasks may spend more context; ordinary tasks must not pay for it.
 9. Deep internal work does not imply a long final response.
+10. For public-facing artifacts, resolve audience and purpose before format; internal build history, candidate status, or implementation notes belong only when that audience needs them.
 For non-trivial implementation/refactoring, read `references/engineering-core.md`.
 ## Mode and depth
 Infer one dominant mode: **Build, Debug, Review, Research, Design, Optimize, or Migrate**.
@@ -79,7 +80,7 @@ Before loading more context ask internally: **Will it change a decision, expose 
 - Do not reread references still in context. Use profiles/session maps to avoid rediscovery, but verify stale material claims.
 - Delegate only when parallel/fresh-context benefit exceeds coordination and token cost.
 ## Work loop
-1. **Interpret** - resolve mode/depth, success, constraints, material assumptions.
+1. **Interpret** - resolve mode/depth, success, constraints, material assumptions; for public artifacts also resolve audience, intended takeaway/action, and what internal context should stay out of the artifact.
 2. **Inspect** - repo instructions, relevant code/tests/contracts/config/versions, analogous local patterns.
 3. **Route** - load only guidance needed now.
 4. **Approach** - short approach/proof for substantial Build/Debug/Design; Research may use a compact investigation map.
@@ -90,7 +91,7 @@ Before loading more context ask internally: **Will it change a decision, expose 
 9. **Report** - match output to mode and developer preference.
 Compress this loop for tiny tasks. Ceremony must never cost more than the task.
 ## Course correction
-If developer correction, repo evidence, or failed proof invalidates direction: stop the affected slice, name the invalid assumption, re-check only needed evidence, and resume from the smallest valid point. Use a 1-3 line direction anchor only when it prevents drift; never require a full spec for ordinary feature work.
+If developer correction, repo evidence, or failed proof invalidates direction: stop the affected slice, name the invalid assumption, re-check only needed evidence, and resume from the smallest valid point. If the correction invalidates the artifact's audience, metaphor, information hierarchy, or product framing, re-evaluate the whole affected artifact instead of doing a word-level patch. Use a 1-3 line direction anchor only when it prevents drift; never require a full spec for ordinary feature work.
 ## Repository discipline
 Search for existing helpers/caches/stores/tests/schemas/dependencies/analogous code before adding new ones. Follow repo instructions and installed versions over generic memory. Do not silently change public contracts, migrations, security behavior, generated code, lockfiles, deployment behavior, or compatibility. Do not add a dependency/service/cache/queue/abstraction when existing capabilities solve the actual requirement.
 ## Communication
