@@ -1,4 +1,4 @@
 interface:
   display_name: "Plat"
-  short_description: "Engineering and UI/UX control plane for coding agents"
-  default_prompt: "Use Plat to solve this engineering or interface task: infer the workflow, load only relevant guidance, make the simplest correct change, use deep design craft only when the visual experience is actually in scope, and verify with fresh evidence."
+  short_description: "Adaptive engineering control plane with specialist depth"
+  default_prompt: "Use Plat to infer this task's mode and depth, honor current repository truth and any relevant Plat profile, load only specialist guidance that can improve the outcome, make the simplest correct change or investigation, and verify with fresh evidence."
