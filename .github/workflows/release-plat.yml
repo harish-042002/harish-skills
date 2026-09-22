@@ -7,7 +7,12 @@ on:
       - main
     paths:
       - VERSION
+      - skills/plat/VERSION
       - .github/workflows/release-plat.yml
+
+concurrency:
+  group: release-plat
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -16,8 +21,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout latest main
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Read version
         id: version
