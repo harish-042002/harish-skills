@@ -67,13 +67,14 @@ jobs:
 
           ## Highlights
 
-          - Verified direct-copy installation into the selected agent's real skill directory.
-          - Mandatory one-time developer preference onboarding for interactive users.
-          - Onboarding is preference-only: role, experience, response style, optional familiar stack.
-          - Engineering depth remains evidence-driven; asking for a deep answer does not force expensive specialist loading.
+          - Clear pain-point positioning: prevent over-engineering simple tasks and under-engineering difficult ones.
+          - Machine-readable architecture, benchmark, limitation, and failure-mode documentation.
+          - Minimum-sufficient-depth routing remains the core mechanism.
+          - Repository truth and local mechanisms are checked before invention.
+          - Course correction stops stale trajectories when user intent or evidence changes.
+          - Fresh verification is required before completion claims.
           - Correctness/safety first; then minimize total tokens, tool calls, rereads, repair turns, and wall time.
-          - Re-running the installer updates Plat while preserving the existing developer profile.
-          - GitHub Release notifications provide update awareness without per-task network/token overhead.
+          - Verified installer and one-time developer preference onboarding remain included.
 
           The release asset `skill.zip` contains the complete Plat skill and MIT license.
           EOF
