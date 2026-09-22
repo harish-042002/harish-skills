@@ -6,7 +6,15 @@ Use for web UI, React/Next.js or similar client frameworks, browser behavior, ac
 
 Frontend is a first-class engineering surface, not decoration. Server authoritative; client responsive.
 
-Frontend owns interaction, presentation state, accessibility, loading/error/empty states, responsive behavior, optimistic UX where safe, and browser execution. Backend owns protected durable invariants and privileged side effects. Preserve the product's design system/visual language unless redesign is requested; Plat is not a substitute for a dedicated visual-design skill.
+Frontend owns interaction, presentation state, accessibility, loading/error/empty states, responsive behavior, optimistic UX where safe, and browser execution. Backend owns protected durable invariants and privileged side effects. Preserve the product's design system/visual language unless redesign is requested. When visual direction, art direction, or polish is materially part of the task, route into Plat's deeper design references instead of stretching engineering guidance into design advice.
+
+## Design-depth routing
+
+- Behavior/state/API-only frontend change: stay in this file unless visual behavior is materially affected.
+- New page/screen or explicit redesign: add `design-system.md` and `design-taste.md`.
+- Complex forms, navigation, tables, charts, onboarding, or responsive pattern choice: add `design-patterns.md`.
+- Motion/animation/interaction feel: add `design-motion.md`.
+- Visual critique, polish, or pre-ship UI verification: add `design-review.md` late, after implementation exists.
 
 ## Start from the existing product
 
