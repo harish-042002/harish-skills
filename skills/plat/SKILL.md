@@ -32,7 +32,7 @@ Read `references/adaptive-depth.md` when Deep/Research may apply, several domain
 For an **interactive human session**, a developer preference profile is required once per machine/user before substantive Plat engineering work.
 
 1. If `~/.plat/profile.md` exists, use it as preference context.
-2. If it is missing, read `references/profile.md` and complete the compact four-choice developer onboarding before continuing substantive work.
+2. If it is missing, read `references/profile.md` and complete the compact three-choice developer onboarding before continuing substantive work.
 3. The recommended Plat installer performs this onboarding during installation. A raw third-party skill install may not, so enforce it on first Plat use.
 4. In non-interactive CI/automation, do not block waiting for answers; use neutral defaults for that run and do not persist a profile unless configured explicitly.
 
