@@ -47,9 +47,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          cat > release-notes.md <<EOF
-          # Plat $TAG
-
+          printf '# Plat %s\n\n' "$TAG" > release-notes.md
+          cat >> release-notes.md <<'EOF'
           Adaptive engineering control plane for AI coding agents.
 
           ## Install
@@ -57,7 +56,7 @@ jobs:
           macOS / Linux:
 
           ```bash
-          bash -c "\$(curl -fsSL https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.sh)"
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.sh)"
           ```
 
           Windows PowerShell:
@@ -66,7 +65,7 @@ jobs:
           iex (irm 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1')
           ```
 
-          ## $VERSION highlights
+          ## Highlights
 
           - Verified direct-copy installation into the selected agent's real skill directory.
           - Mandatory one-time developer preference onboarding for interactive users.
