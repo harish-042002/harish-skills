@@ -1,62 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470">
-<rect width="1200" height="470" fill="#f3efe4"/>
-<rect x="18" y="18" width="1164" height="434" rx="18" fill="#fffdf7" stroke="#4d5d54" stroke-width="4"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500">
+<rect width="1200" height="500" fill="#f3efe4"/>
+<rect x="18" y="18" width="1164" height="464" rx="18" fill="#fffdf7" stroke="#4d5d54" stroke-width="4"/>
 <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
-  <text x="54" y="68" font-size="27" font-weight="700" fill="#2f4238">UPDATES WITHOUT TASK OVERHEAD</text>
-  <text x="54" y="98" font-size="13" fill="#6d7d73">Plat does not spend coding-session tokens checking the network for itself</text>
+  <text x="54" y="68" font-size="27" font-weight="700" fill="#2f4238">UPDATES WITHOUT ENGINEERING-SESSION COST</text>
+  <text x="54" y="98" font-size="13" fill="#6d7d73">one background check every 24h · no prompt tokens · no agent tool call</text>
 
-  <!-- release signal -->
-  <g transform="translate(56 138)">
-    <rect width="316" height="220" rx="10" fill="#e3edf6" stroke="#6d8394" stroke-width="3"/>
-    <text x="20" y="32" font-size="13" font-weight="700" fill="#425d70">1 · GET NOTIFIED</text>
-    <!-- bell -->
-    <rect x="123" y="66" width="66" height="64" fill="#738da6"/>
-    <rect x="113" y="112" width="86" height="16" fill="#738da6"/>
-    <rect x="139" y="132" width="34" height="12" fill="#425d70"/>
-    <rect x="146" y="54" width="20" height="16" fill="#738da6"/>
-    <circle cx="212" cy="66" r="7" fill="#d18154">
-      <animate attributeName="opacity" values="1;.3;1" dur="2.2s" repeatCount="indefinite"/>
+  <g transform="translate(54 132)">
+    <rect width="300" height="230" rx="10" fill="#e3edf6" stroke="#6d8394" stroke-width="3"/>
+    <text x="20" y="32" font-size="13" font-weight="700" fill="#425d70">1 · DAILY CHECK</text>
+    <rect x="78" y="60" width="144" height="116" rx="8" fill="#fffdf7" stroke="#718899" stroke-width="3"/>
+    <rect x="94" y="42" width="18" height="34" fill="#718899"/>
+    <rect x="188" y="42" width="18" height="34" fill="#718899"/>
+    <rect x="94" y="86" width="112" height="10" fill="#dbe7ef"/>
+    <text x="113" y="130" font-size="28" font-weight="700" fill="#425d70">24h</text>
+    <circle cx="236" cy="64" r="7" fill="#6ca879">
+      <animate attributeName="opacity" values="1;.35;1" dur="2.2s" repeatCount="indefinite"/>
     </circle>
-    <text x="20" y="174" font-size="10" fill="#708596">GitHub Watch</text>
-    <text x="20" y="194" font-size="10" font-weight="700" fill="#425d70">Custom → Releases</text>
+    <text x="20" y="202" font-size="9" fill="#708596">GitHub Releases API only</text>
+    <text x="20" y="218" font-size="9" fill="#708596">runs outside coding sessions</text>
   </g>
 
-  <path d="M386 248H440" stroke="#b7ab99" stroke-width="5" stroke-dasharray="9 7"/>
+  <path d="M370 246H432" stroke="#b7ab99" stroke-width="5" stroke-dasharray="9 7"/>
 
-  <!-- update action -->
-  <g transform="translate(444 138)">
-    <rect width="316" height="220" rx="10" fill="#e8f0e5" stroke="#6f8273" stroke-width="3"/>
-    <text x="20" y="32" font-size="13" font-weight="700" fill="#3d5845">2 · RE-RUN INSTALLER</text>
-    <rect x="22" y="60" width="272" height="90" rx="7" fill="#34433d"/>
-    <text x="38" y="88" font-size="9" fill="#dce9e1">$ same Plat install command</text>
-    <text x="38" y="112" font-size="9" fill="#9fc6aa">✓ newest skill copied</text>
-    <text x="38" y="132" font-size="9" fill="#9fc6aa">✓ destination verified</text>
-    <text x="20" y="176" font-size="10" fill="#65766a">existing ~/.plat/profile.md</text>
-    <text x="20" y="196" font-size="10" font-weight="700" fill="#3d5845">is preserved</text>
-  </g>
-
-  <path d="M774 248H828" stroke="#b7ab99" stroke-width="5" stroke-dasharray="9 7"/>
-
-  <!-- ready -->
-  <g transform="translate(832 138)">
-    <rect width="310" height="220" rx="10" fill="#eee4f3" stroke="#876f91" stroke-width="3"/>
-    <text x="20" y="32" font-size="13" font-weight="700" fill="#654e6e">3 · CONTINUE</text>
-    <!-- p01 mini -->
-    <rect x="118" y="62" width="64" height="54" fill="#e4b78d"/>
-    <rect x="112" y="56" width="76" height="14" fill="#453831"/>
-    <rect x="112" y="70" width="10" height="32" fill="#453831"/>
-    <rect x="178" y="70" width="10" height="32" fill="#453831"/>
-    <rect x="134" y="78" width="7" height="7" fill="#29372f"/>
-    <rect x="159" y="78" width="7" height="7" fill="#29372f"/>
-    <rect x="143" y="100" width="14" height="4" fill="#805947"/>
-    <rect x="120" y="116" width="60" height="46" fill="#748fa0"/>
-    <circle cx="214" cy="78" r="7" fill="#6ca879">
-      <animate attributeName="opacity" values="1;.35;1" dur="2.4s" repeatCount="indefinite"/>
+  <g transform="translate(444 132)">
+    <rect width="300" height="230" rx="10" fill="#eee4f3" stroke="#876f91" stroke-width="3"/>
+    <text x="20" y="32" font-size="13" font-weight="700" fill="#654e6e">2 · CACHE + NOTIFY</text>
+    <rect x="70" y="62" width="160" height="92" rx="8" fill="#fffdf7" stroke="#8b7692" stroke-width="3"/>
+    <rect x="88" y="82" width="124" height="9" fill="#ded1e3"/>
+    <rect x="88" y="102" width="100" height="9" fill="#ded1e3"/>
+    <rect x="88" y="122" width="114" height="9" fill="#ded1e3"/>
+    <circle cx="238" cy="70" r="7" fill="#d18154">
+      <animate attributeName="opacity" values=".35;1;.35" dur="2.6s" repeatCount="indefinite"/>
     </circle>
-    <text x="20" y="186" font-size="10" fill="#817087">no onboarding repeat</text>
-    <text x="20" y="204" font-size="10" font-weight="700" fill="#654e6e">unless you reconfigure</text>
+    <text x="20" y="184" font-size="9" fill="#817087">~/.plat/update-status.json</text>
+    <text x="20" y="202" font-size="9" fill="#817087">OS notification only if newer</text>
+    <text x="20" y="218" font-size="9" fill="#817087">same version → silent</text>
   </g>
 
-  <text x="54" y="410" font-size="10" fill="#718078">No per-prompt update checks → no hidden network/tool/token cost during engineering work.</text>
+  <path d="M760 246H822" stroke="#b7ab99" stroke-width="5" stroke-dasharray="9 7"/>
+
+  <g transform="translate(834 132)">
+    <rect width="312" height="230" rx="10" fill="#e8f0e5" stroke="#6f8273" stroke-width="3"/>
+    <text x="20" y="32" font-size="13" font-weight="700" fill="#3d5845">3 · UPDATE WHEN READY</text>
+    <rect x="22" y="60" width="268" height="94" rx="7" fill="#34433d"/>
+    <text x="38" y="88" font-size="9" fill="#dce9e1">$ same Plat installer</text>
+    <text x="38" y="112" font-size="9" fill="#9fc6aa">✓ latest skill copied</text>
+    <text x="38" y="134" font-size="9" fill="#9fc6aa">✓ profile preserved</text>
+    <text x="20" y="184" font-size="9" fill="#65766a">no silent mid-session replacement</text>
+    <text x="20" y="202" font-size="9" fill="#65766a">one scheduler handles all installs</text>
+    <text x="20" y="218" font-size="9" fill="#65766a">global + project paths registered</text>
+  </g>
+
+  <rect x="54" y="398" width="1092" height="42" rx="7" fill="#f1ede4" stroke="#aaa08f" stroke-width="2"/>
+  <text x="74" y="416" font-size="9" fill="#5f7066">NETWORK PRIVACY</text>
+  <text x="74" y="431" font-size="9" fill="#5f7066">checker sends no prompts, code, profile, or project data — only a normal GitHub release request</text>
 </g>
 </svg>
