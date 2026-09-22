@@ -73,6 +73,7 @@ Bound work that can grow with traffic/data:
 - Background task creation and fan-out.
 - Per-tenant/user/global concurrency where one workload can starve others.
 - Request/body/file size and expensive operations where abuse or accidents are possible.
+- Under saturation, prefer bounded admission/backpressure/load shedding over unbounded queue or task growth; define which work may be rejected/deferred.
 
 ## Lifecycle
 
