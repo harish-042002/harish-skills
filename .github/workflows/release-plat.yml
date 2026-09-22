@@ -48,6 +48,16 @@ jobs:
           cd ..
           sha256sum skill.zip > SHA256SUMS.txt
 
+      - name: Upload packaged skill artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plat-skill-${{ steps.version.outputs.version }}
+          path: |
+            skill.zip
+            SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Create or refresh release
         env:
           GH_TOKEN: ${{ github.token }}
