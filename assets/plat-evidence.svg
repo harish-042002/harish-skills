@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="1200" height="760" fill="#f4f0e6"/>
+<rect x="22" y="22" width="1156" height="716" rx="18" fill="#fffdf7" stroke="#506158" stroke-width="4"/>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
+<text x="58" y="72" font-size="25" font-weight="700" fill="#304239">EVIDENCE BOARD</text>
+<text x="58" y="100" font-size="13" fill="#718078">wins + mixed results + failures stay visible</text>
+
+<!-- manual build -->
+<g transform="translate(58 126)">
+ <rect width="520" height="176" rx="10" fill="#e8f0e5" stroke="#6f8273" stroke-width="3"/>
+ <text x="22" y="34" font-size="15" font-weight="700" fill="#3d5845">REAL FULL-STACK BUILD</text>
+ <text x="22" y="56" font-size="10" fill="#65766a">same prompt · fresh Sonnet 5 sessions</text>
+ <text x="22" y="88" font-size="12" fill="#304239">COST      $3.22 → $1.72     (-46.6%)</text>
+ <text x="22" y="112" font-size="12" fill="#304239">CACHE     12.2M → 5.7M      (-53.3%)</text>
+ <text x="22" y="136" font-size="12" fill="#304239">WALL      9m → 6m           (-33.3%)</text>
+ <text x="22" y="158" font-size="9" fill="#65766a">both CRUD flows worked · one run = signal, not universal claim</text>
+</g>
+
+<!-- pilot aggregate -->
+<g transform="translate(622 126)">
+ <rect width="520" height="176" rx="10" fill="#e3edf6" stroke="#6d8294" stroke-width="3"/>
+ <text x="22" y="34" font-size="15" font-weight="700" fill="#425c70">INDEPENDENT 10-CASE PILOT</text>
+ <text x="22" y="56" font-size="10" fill="#708596">20 real trajectories · one repetition per arm</text>
+ <text x="22" y="88" font-size="12" fill="#304239">RELIABLE PASS   Plat 9/10 · No Plat 10/10</text>
+ <text x="22" y="112" font-size="12" fill="#304239">MEAN COST       Plat -6.8%</text>
+ <text x="22" y="136" font-size="12" fill="#304239">MEDIAN COST     Plat +7.3%</text>
+ <text x="22" y="158" font-size="9" fill="#8a5f48">mixed efficiency · course-correction failure was real</text>
+</g>
+
+<text x="58" y="342" font-size="15" font-weight="700" fill="#304239">ALL 10 PILOT CASES</text>
+<g font-size="10">
+ <rect x="58" y="362" width="1084" height="38" fill="#f1ede4"/>
+ <text x="76" y="386" fill="#617168">CASE</text><text x="410" y="386" fill="#617168">PLAT</text><text x="500" y="386" fill="#617168">CONTROL</text><text x="620" y="386" fill="#617168">TOKEN Δ</text><text x="760" y="386" fill="#617168">COST Δ</text><text x="900" y="386" fill="#617168">TIME Δ</text>
+ <rect x="58" y="403" width="1084" height="24" fill="#f7f3ea"/><text x="76" y="420" fill="#405148">Bug root-cause</text><text x="410" y="420" fill="#3f6b4b">PASS</text><text x="500" y="420" fill="#3f6b4b">PASS</text><text x="620" y="420" fill="#5c6a63">-180</text><text x="760" y="420" fill="#5c6a63">-$0.0325</text><text x="900" y="420" fill="#5c6a63">-2.7s</text><rect x="58" y="428" width="1084" height="24" fill="#fffdf7"/><text x="76" y="445" fill="#405148">Existing-repo feature</text><text x="410" y="445" fill="#3f6b4b">PASS</text><text x="500" y="445" fill="#3f6b4b">PASS</text><text x="620" y="445" fill="#5c6a63">-540</text><text x="760" y="445" fill="#5c6a63">-$0.0433</text><text x="900" y="445" fill="#5c6a63">-6.4s</text><rect x="58" y="453" width="1084" height="24" fill="#f7f3ea"/><text x="76" y="470" fill="#405148">Backend idempotency</text><text x="410" y="470" fill="#3f6b4b">PASS</text><text x="500" y="470" fill="#3f6b4b">PASS</text><text x="620" y="470" fill="#5c6a63">+689</text><text x="760" y="470" fill="#5c6a63">+$0.0516</text><text x="900" y="470" fill="#5c6a63">+15.6s</text><rect x="58" y="478" width="1084" height="24" fill="#fffdf7"/><text x="76" y="495" fill="#405148">Frontend states</text><text x="410" y="495" fill="#3f6b4b">PASS</text><text x="500" y="495" fill="#3f6b4b">PASS</text><text x="620" y="495" fill="#5c6a63">-67</text><text x="760" y="495" fill="#5c6a63">-$0.0012</text><text x="900" y="495" fill="#5c6a63">-0.5s</text><rect x="58" y="503" width="1084" height="24" fill="#f7f3ea"/><text x="76" y="520" fill="#405148">Tiny edit</text><text x="410" y="520" fill="#3f6b4b">PASS</text><text x="500" y="520" fill="#3f6b4b">PASS</text><text x="620" y="520" fill="#5c6a63">+8</text><text x="760" y="520" fill="#5c6a63">+$0.0001</text><text x="900" y="520" fill="#5c6a63">-1.5s</text><rect x="58" y="528" width="1084" height="24" fill="#fffdf7"/><text x="76" y="545" fill="#405148">Performance reasoning</text><text x="410" y="545" fill="#3f6b4b">PASS</text><text x="500" y="545" fill="#3f6b4b">PASS</text><text x="620" y="545" fill="#5c6a63">+11</text><text x="760" y="545" fill="#5c6a63">-$0.0122</text><text x="900" y="545" fill="#5c6a63">+2.3s</text><rect x="58" y="553" width="1084" height="24" fill="#f7f3ea"/><text x="76" y="570" fill="#405148">Verify before claim</text><text x="410" y="570" fill="#3f6b4b">PASS</text><text x="500" y="570" fill="#3f6b4b">PASS</text><text x="620" y="570" fill="#5c6a63">+7</text><text x="760" y="570" fill="#5c6a63">+$0.0002</text><text x="900" y="570" fill="#5c6a63">-0.3s</text><rect x="58" y="578" width="1084" height="24" fill="#f7e7df"/><text x="76" y="595" fill="#405148">Course correction</text><text x="410" y="595" fill="#a65042">FAIL</text><text x="500" y="595" fill="#3f6b4b">PASS</text><text x="620" y="595" fill="#5c6a63">-986</text><text x="760" y="595" fill="#5c6a63">-$0.0618</text><text x="900" y="595" fill="#5c6a63">-20.6s</text><rect x="58" y="603" width="1084" height="24" fill="#f7f3ea"/><text x="76" y="620" fill="#405148">Negative control</text><text x="410" y="620" fill="#3f6b4b">PASS</text><text x="500" y="620" fill="#3f6b4b">PASS</text><text x="620" y="620" fill="#5c6a63">-25</text><text x="760" y="620" fill="#5c6a63">-$0.0003</text><text x="900" y="620" fill="#5c6a63">-0.5s</text><rect x="58" y="628" width="1084" height="24" fill="#fffdf7"/><text x="76" y="645" fill="#405148">Lightweight feature</text><text x="410" y="645" fill="#3f6b4b">PASS</text><text x="500" y="645" fill="#3f6b4b">PASS</text><text x="620" y="645" fill="#5c6a63">+88</text><text x="760" y="645" fill="#5c6a63">+$0.0019</text><text x="900" y="645" fill="#5c6a63">+2.5s</text>
+</g>
+
+<g transform="translate(58 682)">
+ <rect width="1084" height="36" rx="6" fill="#eee4f3" stroke="#866e90" stroke-width="2"/>
+ <text x="18" y="23" font-size="10" fill="#654e6e">v1 static gate: 305/305 checks · 38/38 mutations · 65 adaptive scenarios · live v1 A/B evidence must be measured separately</text>
+</g>
+</g>
+</svg>
