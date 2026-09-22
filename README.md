@@ -10,8 +10,8 @@ It is designed to make coding agents behave more like disciplined software engin
 
 Plat is intentionally **backend-first**, while still covering frontend, Flutter/mobile, AI systems, delivery, and cross-agent workflows.
 
-> Current release: **v0.4.0**  
-> Status: **Frozen for live A/B benchmarking**
+> Current release: **v0.5.0**  
+> Status: **Course-correction hardened; ready for live A/B benchmarking**
 
 ---
 
@@ -22,6 +22,7 @@ Coding agents are already good at generating code. The harder problem is getting
 - understand an existing repository before editing it;
 - avoid speculative architecture and unnecessary dependencies;
 - diagnose root causes instead of patching symptoms;
+- course-correct when user feedback or fresh evidence disproves the current direction instead of defending sunk work;
 - protect API, database, security, and compatibility boundaries;
 - test the actual behavior they changed;
 - verify with fresh evidence before saying "done";
@@ -202,6 +203,12 @@ DOCUMENT STATE
 
 The loop compresses for tiny changes. Plat should never create more process than the task requires.
 
+### Spec builds and course correction
+
+For non-trivial feature work, Plat keeps a compact living spec: outcome, scope, constraints, and acceptance evidence. For substantial bugs it states one short diagnostic approach before editing and finishes with root cause, fix, and verified evidence.
+
+When a developer correction or fresh evidence invalidates the current direction, Plat should stop only the affected slice, name the invalid assumption, update the current spec/plan, preserve valid work, and continue. It should not merely say "you're right," keep extending the old path, or run a reflection ceremony every few messages.
+
 ---
 
 ## Engineering Principles
@@ -341,7 +348,7 @@ Architecture, shared contracts, integration, destructive/security-sensitive deci
 
 Plat is designed around **minimum sufficient context**.
 
-Current v0.4.0 static load model:
+v0.4.0 baseline static load model (v0.5 adds about 82 proxy root tokens for spec/course-correction control):
 
 | Scenario | Approx. Plat context |
 | --- | ---: |
@@ -363,11 +370,21 @@ A slightly larger first pass can be cheaper than a small prompt that causes repe
 
 ## Benchmark Status
 
-Plat v0.4.0 is currently frozen for live A/B testing.
+Plat v0.5.0 is the current live A/B candidate. v0.4.0 remains the prior frozen benchmark baseline.
 
-### Pre-runtime validation
+### v0.5.0 targeted course-correction validation
 
-The current release passed:
+The v0.5.0 course-correction change passed:
+
+- **34 / 34** targeted behavioral/structural checks;
+- **13 / 13** semantic mutation tests;
+- **20** frozen multi-turn course-correction scenarios;
+- skill validator and package integrity checks;
+- root router growth limited to **+4.9%** (~82 proxy tokens) versus v0.4.0.
+
+### v0.4.0 pre-runtime baseline
+
+The prior v0.4.0 release passed:
 
 - **25 / 25** focused hardening rounds;
 - **112 / 112** deterministic review assertions;
@@ -402,7 +419,7 @@ same task
 same model/settings
 
 CONTROL     -> agent without Plat
-TREATMENT   -> same agent with Plat v0.4.0
+TREATMENT   -> same agent with Plat v0.5.0
 ```
 
 The benchmark will compare correctness, hidden tests, total tokens, cost, wall time, repair turns, files/lines changed, dependency/abstraction growth, verification quality, and final response overhead.
@@ -477,7 +494,7 @@ Analyze failures
 Next version
 ```
 
-Once a benchmark release is frozen, it should not be edited midway through that experiment. Findings become inputs to the next version.
+Once a benchmark release is frozen, it should not be edited midway through that experiment. Findings become inputs to the next version. v0.5.0 should now remain unchanged during the upcoming live A/B runs.
 
 ---
 
