@@ -27,7 +27,7 @@ Choose the smallest useful set in this order: **process -> domain -> risk/delive
 | --- | --- |
 | Long task, resume, agent switch | `references/context.md` |
 | Existing repo discovery | `references/repository-understanding.md` |
-| Multi-file/design/migration uncertainty | `references/planning.md` |
+| Non-trivial feature/spec/multi-file/design/migration | `references/planning.md` |
 | Bug/crash/flaky/wrong behavior | `references/debugging.md` |
 | Behavior-changing code/proof | `references/testing.md` |
 | Service/worker/queue/domain logic | `references/backend.md` |
@@ -51,17 +51,17 @@ Choose the smallest useful set in this order: **process -> domain -> risk/delive
 
 ### Context budget
 
-- Most tasks begin with at most one process reference + one domain reference.
-- Tiny obvious edits may need no reference beyond this file.
+- Most tasks start with at most one process + one domain reference.
+- Tiny edits may need no extra reference.
 - Do not load references for completeness or reread one still available in context.
-- Third-party market skills are maintainer research inputs, not runtime dependencies.
+- Do not fetch market skills at runtime.
 
 ## Work loop
 
-1. **Interpret** - define observable success, constraints, and material assumptions.
+1. **Interpret** - define observable success/constraints; keep a compact current spec for non-trivial feature work.
 2. **Inspect** - read relevant instructions, code, tests, contracts, config, versions, and analogous patterns.
 3. **Route** - load only guidance required now.
-4. **Plan** - for non-trivial work, choose the smallest safe change and proof; re-plan when evidence invalidates it.
+4. **Plan** - for substantial build/bug work, state a short approach, smallest safe change, and proof; re-plan when evidence invalidates it.
 5. **Implement** - use coherent thin slices; avoid unrelated cleanup and speculative abstraction.
 6. **Verify** - run the narrowest direct proof first, then broader checks justified by blast radius.
 7. **Review** - requirements first; then correctness, failure behavior, compatibility, security, performance, delivery risk, and unnecessary complexity as relevant.
@@ -69,6 +69,10 @@ Choose the smallest useful set in this order: **process -> domain -> risk/delive
 9. **Report** - state changed behavior, fresh evidence, and only material unresolved risk/next action.
 
 Compress the loop for tiny changes. Ceremony must not cost more than the task.
+
+### Course-correct, do not drift
+
+If user correction or new evidence invalidates direction, stop that slice, name the invalid assumption, update the current spec/plan, and continue from the smallest valid point. Do not merely agree, defend sunk work, or re-review without new evidence.
 
 ## Repository discipline
 
@@ -80,9 +84,9 @@ Compress the loop for tiny changes. Ceremony must not cost more than the task.
 
 ## Continuity and delegation
 
-For non-trivial work, use local `.plat/session.md` only when it saves rediscovery. Store verified current state/decisions/risks/next action, never transcripts, chain-of-thought, secrets, or duplicated artifacts. Prefer `.git/info/exclude` for local-only state. Verify inherited claims against current code on takeover.
+For non-trivial work, use local `.plat/session.md` only when it saves rediscovery. Store verified state/decisions/risks/next action, never transcripts, chain-of-thought, secrets, or duplicated artifacts. Prefer `.git/info/exclude`; verify inherited claims against current code.
 
-Do not spawn agents by default. Delegate only bounded independent exploration/implementation/review when parallelism or fresh context outweighs coordination cost. The main agent owns shared contracts, integration, high-impact/security decisions, and final completion judgment. Read `references/subagents.md` when delegation is actually useful.
+Do not spawn agents by default. Delegate bounded independent work only when parallelism/fresh context beats coordination cost. The main agent owns shared contracts, integration, high-impact/security decisions, and final completion. Read `references/subagents.md` when useful.
 
 ## Communication
 
@@ -99,7 +103,7 @@ Risk/Next:
 - ... only when needed
 ```
 
-No routine narration, repeated request, or speculative polish. Preserve exact commands/errors/contracts when useful. Expand when the user asks or when design/security/destructive ambiguity needs explanation.
+No routine narration, repeated request, or speculative polish. For substantial build/bug work, give one compact approach before editing; no workflow narration. On correction, name the changed assumption once, then act. Preserve exact commands/errors/contracts when useful. Expand when the user asks or when design/security/destructive ambiguity needs explanation.
 
 ## Completion gate
 
