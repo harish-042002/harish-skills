@@ -1,6 +1,6 @@
 ---
 name: plat
-description: Full-stack engineering operating layer for AI coding agents with backend/reliability emphasis and substantial frontend/mobile/client coverage. Use for software engineering across repository changes, debugging, testing, system design, backend services, APIs, databases, security, performance, CI/CD and delivery, frontend, Flutter/mobile, and AI systems. Infer the workflow from natural language, load only relevant bundled references, preserve compact local cross-agent context for non-trivial work, prefer the simplest correct solution, delegate only when useful, and require fresh verification before completion. Do not use for purely non-engineering writing, general research, or visual-design-only work.
+description: Full-stack engineering discipline for AI coding agents across repository changes, debugging, testing, system design, backend/API/database/security/performance/delivery, frontend/mobile, and AI systems. Use to infer the workflow from natural language, load only relevant references, prefer the simplest correct solution, course-correct from evidence, delegate only when useful, preserve compact cross-agent state, and require fresh verification. Do not use for purely non-engineering writing, general research, or visual-design-only work.
 ---
 
 # Plat
@@ -16,7 +16,7 @@ Act as an engineering control plane. Infer intent from the developer's request; 
 5. Make completion claims only from fresh evidence.
 6. Optimize after correctness and measurement.
 7. Minimize total task tokens and rework, not just response length.
-8. Treat frontend/mobile/client engineering as first-class (~40% of Plat coverage); keep backend/data/reliability authority as the ~60% foundation.
+8. Balance ~60% backend/data/reliability and ~40% frontend/mobile/client engineering.
 
 For non-trivial implementation/refactoring, read `references/engineering-core.md`.
 
@@ -52,7 +52,7 @@ Choose the smallest useful set in this order: **process -> domain -> risk/delive
 
 ### Context budget
 
-- Most tasks start with at most one process + one domain reference.
+- Most tasks begin with at most one process reference + one domain reference.
 - Tiny edits may need no extra reference.
 - Do not load references for completeness or reread one still available in context.
 - Do not fetch market skills at runtime.
@@ -73,7 +73,7 @@ Compress the loop for tiny changes. Ceremony must not cost more than the task.
 
 ### Course-correct, do not drift
 
-If user correction or new evidence invalidates direction, stop that slice, name the invalid assumption, update the plan/current direction, and continue from the smallest valid point. Use only a 1-3 line direction anchor when it prevents drift; do not create a full spec for ordinary feature work. Do not merely agree, defend sunk work, or re-review without new evidence.
+If user correction or new evidence invalidates direction, stop that slice, name the invalid assumption, update direction, and continue from the smallest valid point. Use a 1-3 line anchor only when it prevents drift; never require a full spec for ordinary feature work or reflection without new evidence.
 
 ## Repository discipline
 
@@ -85,9 +85,9 @@ If user correction or new evidence invalidates direction, stop that slice, name 
 
 ## Continuity and delegation
 
-For non-trivial work, use local `.plat/session.md` only when it saves rediscovery. Store verified state/decisions/risks/next action, never transcripts, chain-of-thought, secrets, or duplicated artifacts. Prefer `.git/info/exclude`; verify inherited claims against current code.
+For non-trivial work, use local `.plat/session.md` only when it saves rediscovery. Store verified state/decisions/risks/next action; never transcripts, chain-of-thought, secrets, or duplicated artifacts. Prefer `.git/info/exclude`; verify inherited claims.
 
-Do not spawn agents by default. Delegate bounded independent work only when parallelism/fresh context beats coordination cost. The main agent owns shared contracts, integration, high-impact/security decisions, and final completion. Read `references/subagents.md` when useful.
+Do not spawn agents by default. Delegate bounded independent work only when parallelism/fresh context beats coordination cost. The main agent owns shared contracts, high-impact decisions, integration, and final completion. Read `references/subagents.md` when useful.
 
 ## Communication
 
@@ -104,7 +104,7 @@ Risk/Next:
 - ... only when needed
 ```
 
-No routine narration, repeated request, or speculative polish. For substantial build/bug work, give one compact approach before editing; no workflow narration. On correction, name the changed assumption once, then act. Preserve exact commands/errors/contracts when useful. Expand when the user asks or when design/security/destructive ambiguity needs explanation.
+No routine narration or speculative polish. For substantial build/bug work, give one compact approach before editing. On correction, name the changed assumption once, then act. Preserve exact commands/errors/contracts when useful; expand only when the user or risk needs it.
 
 ## Completion gate
 
