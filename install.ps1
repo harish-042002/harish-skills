@@ -49,7 +49,6 @@ function Add-InstructionBlock([string]$Path) {
 
 <!-- plat:start -->
 For software engineering requests, use the installed Plat skill.
-If the Plat developer profile is missing in an interactive session, complete Plat onboarding before substantive engineering work.
 <!-- plat:end -->
 "@
   Write-Host "Added Plat instruction: $Path"
@@ -65,9 +64,29 @@ alwaysApply: true
 ---
 
 For software engineering requests, use the installed Plat skill.
-If the Plat developer profile is missing in an interactive session, complete Plat onboarding before substantive engineering work.
 "@
   Write-Host "Added Plat Cursor rule: $Path"
+}
+
+function Expected-SkillDir {
+  if ($Scope -eq "global") {
+    switch ($Agent) {
+      "claude-code" {
+        if ($env:CLAUDE_CONFIG_DIR) { return (Join-Path $env:CLAUDE_CONFIG_DIR "skills/plat") }
+        return (Join-Path $HOME ".claude/skills/plat")
+      }
+      "codex" {
+        if ($env:CODEX_HOME) { return (Join-Path $env:CODEX_HOME "skills/plat") }
+        return (Join-Path $HOME ".codex/skills/plat")
+      }
+      "cursor" { return (Join-Path $HOME ".cursor/skills/plat") }
+    }
+  }
+
+  if ($Agent -eq "claude-code") {
+    return (Join-Path (Get-Location) ".claude/skills/plat")
+  }
+  return (Join-Path (Get-Location) ".agents/skills/plat")
 }
 
 if (-not $Agent) { $Agent = Ask-Agent }
@@ -77,14 +96,22 @@ if (-not (Get-Command npx -ErrorAction SilentlyContinue)) { throw "npx is requir
 if (-not (Get-Command python -ErrorAction SilentlyContinue) -and -not (Get-Command python3 -ErrorAction SilentlyContinue)) { throw "Python 3 is required." }
 
 Write-Host ""
-Write-Host "PLAT · INSTALL"
+Write-Host "PLAT · INSTALL / UPDATE"
 Write-Host "Agent: $Agent"
 Write-Host "Scope: $Scope"
 Write-Host ""
 
-$args = @("skills","add",$Repo,"--skill","plat","-a",$Agent,"-y")
+$args = @("-y","skills@latest","add",$Repo,"--skill","plat","-a",$Agent,"--copy","-y")
 if ($Scope -eq "global") { $args += "-g" }
 & npx @args
+if ($LASTEXITCODE -ne 0) { throw "Skills CLI install failed." }
+
+$skillDir = Expected-SkillDir
+$skillFile = Join-Path $skillDir "SKILL.md"
+if (-not (Test-Path $skillFile)) {
+  throw "Plat install verification failed. Expected: $skillFile"
+}
+Write-Host "Verified Plat skill: $skillFile"
 
 $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("plat-setup-" + [guid]::NewGuid().ToString() + ".py")
 Invoke-WebRequest -Uri "$RawBase/skills/plat/scripts/setup.py" -OutFile $tmp
@@ -93,12 +120,19 @@ $py = if (Get-Command python -ErrorAction SilentlyContinue) { "python" } else { 
 $setupArgs = @($tmp)
 if ($Reconfigure) { $setupArgs += "--force" }
 & $py @setupArgs
+if ($LASTEXITCODE -ne 0) { throw "Plat onboarding failed." }
 Remove-Item -Force $tmp -ErrorAction SilentlyContinue
 
 if ($Scope -eq "global") {
   switch ($Agent) {
-    "claude-code" { Add-InstructionBlock (Join-Path $HOME ".claude/CLAUDE.md") }
-    "codex" { Add-InstructionBlock (Join-Path $HOME ".codex/AGENTS.md") }
+    "claude-code" {
+      $base = if ($env:CLAUDE_CONFIG_DIR) { $env:CLAUDE_CONFIG_DIR } else { Join-Path $HOME ".claude" }
+      Add-InstructionBlock (Join-Path $base "CLAUDE.md")
+    }
+    "codex" {
+      $base = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME ".codex" }
+      Add-InstructionBlock (Join-Path $base "AGENTS.md")
+    }
     "cursor" { Install-CursorRule (Join-Path $HOME ".cursor/rules/plat.mdc") }
   }
 } else {
@@ -110,9 +144,8 @@ if ($Scope -eq "global") {
 
 Write-Host ""
 Write-Host "Plat is ready."
-Write-Host "Update check: npx skills check"
-if ($Scope -eq "global") {
-  Write-Host "Update:       npx skills update plat -g"
-} else {
-  Write-Host "Update:       npx skills update plat -p"
-}
+Write-Host "Preferences: $HOME/.plat/profile.md"
+Write-Host "Skill:       $skillDir"
+Write-Host ""
+Write-Host "Ask normally. Plat decides the smallest useful mode, depth, and specialist team."
+Write-Host "To update later, re-run this same installer command."
