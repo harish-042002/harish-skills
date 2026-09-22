@@ -142,7 +142,7 @@ def main() -> int:
     path.write_text("\n".join(lines), encoding="utf-8")
 
     print(f"\n✓ Plat preferences saved: {path}")
-    print("  Project architecture is learned from each repository, not asked from you.")
+    print("  Install onboarding creates only this developer profile; no project profile is created.")
     return 0
 
 
