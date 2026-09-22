@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <rect width="1200" height="520" fill="#f8f4e8"/>
+  <rect x="24" y="24" width="1152" height="472" rx="18" fill="#fffdf6" stroke="#4e5b52" stroke-width="4"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" shape-rendering="crispEdges">
+    <text x="58" y="72" fill="#33443b" font-size="23" font-weight="700">BENCHMARK WALL</text>
+    <text x="58" y="98" fill="#728078" font-size="13">real results stay visible — wins, mixed signals, and failures</text>
+
+    <g transform="translate(58 128)">
+      <rect width="330" height="262" fill="#eaf0e5" stroke="#687a6d" stroke-width="3"/>
+      <text x="22" y="34" fill="#3f5145" font-size="16" font-weight="700">REAL FULL-STACK BUILD</text>
+      <text x="22" y="60" fill="#68786d" font-size="11">same task · fresh Sonnet 5 sessions</text>
+      <text x="22" y="98" fill="#33443b" font-size="13">COST</text>
+      <text x="116" y="98" fill="#8a5f48" font-size="13">$3.22 → $1.72</text>
+      <text x="22" y="126" fill="#33443b" font-size="13">WALL</text>
+      <text x="116" y="126" fill="#8a5f48" font-size="13">9m → 6m</text>
+      <text x="22" y="154" fill="#33443b" font-size="13">CACHE READ</text>
+      <text x="116" y="154" fill="#8a5f48" font-size="13">12.2M → 5.7M</text>
+      <text x="22" y="182" fill="#33443b" font-size="13">OUTPUT</text>
+      <text x="116" y="182" fill="#8a5f48" font-size="13">1.7k → 464</text>
+      <text x="22" y="220" fill="#2f6940" font-size="12" font-weight="700">46.6% lower cost</text>
+      <text x="22" y="242" fill="#6a786f" font-size="10">UI: comparable; no-Plat had slight micro-polish edge</text>
+    </g>
+
+    <g transform="translate(414 128)">
+      <rect width="330" height="262" fill="#e3edf6" stroke="#6b8093" stroke-width="3"/>
+      <text x="22" y="34" fill="#425c70" font-size="16" font-weight="700">v0.6 INDEPENDENT PILOT</text>
+      <text x="22" y="60" fill="#708596" font-size="11">10 cases · 20 real trajectories · 1 rep</text>
+      <text x="22" y="98" fill="#33443b" font-size="13">RELIABLE PASS</text>
+      <text x="160" y="98" fill="#7a5a32" font-size="13">9/10 vs 10/10</text>
+      <text x="22" y="126" fill="#33443b" font-size="13">MEAN COST</text>
+      <text x="160" y="126" fill="#2f6940" font-size="13">-6.8%</text>
+      <text x="22" y="154" fill="#33443b" font-size="13">MEDIAN COST</text>
+      <text x="160" y="154" fill="#8a5f48" font-size="13">+7.3%</text>
+      <text x="22" y="182" fill="#33443b" font-size="13">MEAN TOKENS</text>
+      <text x="160" y="182" fill="#2f6940" font-size="13">-10.1%</text>
+      <text x="22" y="220" fill="#8a5f48" font-size="12" font-weight="700">course-correction case failed</text>
+      <text x="22" y="242" fill="#6a786f" font-size="10">pilot = mixed efficiency, no correctness lift proven</text>
+    </g>
+
+    <g transform="translate(770 128)">
+      <rect width="372" height="262" fill="#eee4f4" stroke="#816e86" stroke-width="3"/>
+      <text x="22" y="34" fill="#62516a" font-size="16" font-weight="700">v1 STATIC RELEASE GATE</text>
+      <text x="22" y="60" fill="#7c6d81" font-size="11">adaptive specialist architecture</text>
+      <text x="22" y="98" fill="#33443b" font-size="13">305 / 305</text>
+      <text x="140" y="98" fill="#6e5e74" font-size="11">architecture + behavior</text>
+      <text x="22" y="126" fill="#33443b" font-size="13">38 / 38</text>
+      <text x="140" y="126" fill="#6e5e74" font-size="11">semantic mutations killed</text>
+      <text x="22" y="154" fill="#33443b" font-size="13">65</text>
+      <text x="140" y="154" fill="#6e5e74" font-size="11">adaptive edge scenarios</text>
+      <text x="22" y="182" fill="#33443b" font-size="13">~2,075</text>
+      <text x="140" y="182" fill="#6e5e74" font-size="11">root proxy tokens</text>
+      <text x="22" y="220" fill="#7a5a32" font-size="12" font-weight="700">live v1 A/B still pending</text>
+      <text x="22" y="242" fill="#6a786f" font-size="10">no speed/cost/correctness claim yet</text>
+    </g>
+
+    <text x="58" y="448" fill="#78867e" font-size="11">principle: publish the failure too · benchmark the task, not the marketing claim</text>
+  </g>
+</svg>
