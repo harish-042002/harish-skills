@@ -115,4 +115,4 @@ If proof cannot run, state exactly what remains unverified and why.
 
 ## Updates
 
-Do not spend normal task tokens/network calls checking Plat versions. Version discovery is maintenance work, not engineering-task overhead.
+Do not spend normal task tokens/network calls checking Plat versions. The installer registers one user-level OS scheduler that checks GitHub Releases once per day, caches status under `~/.plat/`, and notifies only when a newer release exists. Engineering sessions never perform that network check.
