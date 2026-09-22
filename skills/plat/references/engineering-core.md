@@ -1,5 +1,4 @@
 # Engineering Core
-
 Use for non-trivial implementation, refactoring, architecture, and code-quality decisions.
 
 ## Priority order
