@@ -3,7 +3,7 @@
 <rect x="22" y="22" width="1156" height="716" rx="18" fill="#fffdf7" stroke="#506158" stroke-width="4"/>
 <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
 <text x="58" y="72" font-size="25" font-weight="700" fill="#304239">EVIDENCE BOARD</text>
-<text x="58" y="100" font-size="13" fill="#718078">wins + mixed results + failures stay visible</text>
+<text x="58" y="100" font-size="13" fill="#718078">real runs · mixed signals · failures stay visible</text>
 
 <!-- manual build -->
 <g transform="translate(58 126)">
@@ -36,7 +36,7 @@
 
 <g transform="translate(58 682)">
  <rect width="1084" height="36" rx="6" fill="#eee4f3" stroke="#866e90" stroke-width="2"/>
- <text x="18" y="23" font-size="10" fill="#654e6e">v1 static gate: 305/305 checks · 38/38 mutations · 65 adaptive scenarios · live v1 A/B evidence must be measured separately</text>
+ <text x="18" y="23" font-size="10" fill="#654e6e">STRUCTURAL GATE · 305/305 checks · 38/38 mutations · 65 adaptive scenarios</text>
 </g>
 </g>
 </svg>
