@@ -38,6 +38,18 @@ After the fix, report **Root cause -> Fix -> Verified evidence**.
 
 Do not fix a flaky test by adding arbitrary sleeps or retries unless the product contract itself is eventual. Capture repetition rate, timing/order/concurrency evidence, clocks/timeouts, shared state, and environment differences. Make the test wait for the real condition or fix the race.
 
+## Ambiguous-cause discipline
+
+Use competing hypotheses only when several causes remain plausible after cheap evidence.
+
+- Keep a small set (typically 2-4), not a brainstorm dump.
+- Prefer direct evidence over correlational evidence; treat testimony/assumption as weak until verified.
+- Choose the next check by how well it distinguishes hypotheses.
+- Retire falsified hypotheses explicitly.
+- Parallelize investigations only when independent evidence can be collected without duplicated repository discovery.
+
+Once one causal explanation clearly dominates, stop hypothesis expansion and test that explanation minimally.
+
 ## Failed-fix discipline
 
 A failed hypothesis or developer correction is new evidence, not permission to stack another patch on top.
