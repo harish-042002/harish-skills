@@ -50,7 +50,6 @@ Earlier plans/code are provisional when new evidence appears. On a developer cor
 Do not periodically second-guess a valid path without new evidence; course correction should reduce rework, not create a reflection loop.
 
 ## Thin-slice rule
-
 For multi-step work, prefer the smallest vertical slice that can be verified end-to-end. Verify it before expanding the pattern. If a slice disproves an assumption, update the plan rather than scaling the wrong approach.
 
 ## Complexity rule
@@ -98,5 +97,4 @@ Check only what is relevant. Rank findings by impact: correctness/security/data-
 - Dead code, duplication, wrappers, dependencies, or abstractions that can be removed.
 
 ## Delivery
-
 Prefer atomic, reviewable, reversible changes. Do not create commits unless requested or required by repository workflow. Never infer production readiness from unit tests alone when runtime, integration, migration, concurrency, or deployment behavior is material.
