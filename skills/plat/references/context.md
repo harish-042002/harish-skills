@@ -4,11 +4,11 @@ Use for long/non-trivial work, context pressure, agent switching, or resuming un
 
 ## Principle
 
-Repository/code/tests/specs are durable truth. `.plat/session.md` is a compact pointer to current truth for the **same developer/project** across agents or context resets; it is not team documentation or project history.
+Repository/code/tests/specs are durable truth. `.plat/project.md` may cache verified project structure/conventions, while `.plat/session.md` is a compact pointer to current task truth for the **same developer/project** across agents or context resets. Neither overrides current repository evidence. Read `profile.md` for global/project setup rules.
 
 ## When to create/update
 
-Create only when important discoveries would be expensive to rediscover, work spans several steps/boundaries, switching/reset is plausible, or work remains unfinished. Skip tiny one-shot changes.
+Create session state only when important discoveries would be expensive to rediscover, work spans several steps/boundaries, switching/reset is plausible, or work remains unfinished. Skip tiny one-shot changes. Do not create a project/global profile merely because a session exists.
 
 Update only when approach/state materially changes, a slice is verified, a blocker/risk appears, or before a switch/unfinished stop.
 
