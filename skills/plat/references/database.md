@@ -12,7 +12,7 @@ Identify:
 - Read/write access patterns and expected cardinality/growth.
 - Concurrency/consistency requirements.
 - Retention, audit, tenant/security boundaries when relevant.
-- Which layer is authoritative for tenant isolation/access control; if the database uses RLS/policies, treat policy behavior as part of the schema contract and test it.
+- Which layer is authoritative for tenant isolation/access control; if the database uses RLS/policies, treat policy behavior as part of the schema contract, test it, and ensure policy predicates have suitable access paths at expected scale.
 
 Use durable DB constraints for invariants the database can enforce: PK/FK, uniqueness, checks, and appropriate not-null constraints.
 
