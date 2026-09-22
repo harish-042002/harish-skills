@@ -1,78 +1,112 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640">
-<rect width="1200" height="640" fill="#f4f0e6"/>
-<rect x="22" y="22" width="1156" height="596" rx="18" fill="#fffdf7" stroke="#506158" stroke-width="4"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650">
+<rect width="1200" height="650" fill="#f3efe4"/>
+<rect x="18" y="18" width="1164" height="614" rx="18" fill="#fffdf7" stroke="#4d5d54" stroke-width="4"/>
 <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
-<text x="58" y="72" font-size="25" font-weight="700" fill="#304239">HOW PLAT WORKS</text>
-<text x="58" y="100" font-size="13" fill="#718078">one request moves through only the team members it needs</text>
+  <text x="54" y="68" font-size="27" font-weight="700" fill="#2f4238">HOW ONE REQUEST MOVES THROUGH PLAT</text>
+  <text x="54" y="98" font-size="13" fill="#6d7d73">one task packet · four stations · only required specialists load</text>
 
-<!-- vertical flow -->
-<g transform="translate(82 135)">
- <rect width="212" height="82" rx="8" fill="#e8f0e5" stroke="#6f8273" stroke-width="3"/>
- <text x="22" y="30" font-size="13" font-weight="700" fill="#3d5845">1 · UNDERSTAND</text>
- <text x="22" y="53" font-size="10" fill="#65766a">goal · repo · constraints</text>
- <text x="22" y="69" font-size="10" fill="#65766a">latest user intent wins</text>
-</g>
-<path d="M294 176H346" stroke="#b5aa98" stroke-width="5" stroke-dasharray="9 7"/>
-<g transform="translate(346 135)">
- <rect width="212" height="82" rx="8" fill="#e3edf6" stroke="#6d8294" stroke-width="3"/>
- <text x="22" y="30" font-size="13" font-weight="700" fill="#425c70">2 · CHOOSE DEPTH</text>
- <text x="22" y="53" font-size="10" fill="#708596">quick · standard</text>
- <text x="22" y="69" font-size="10" fill="#708596">deep · research</text>
-</g>
-<path d="M558 176H610" stroke="#b5aa98" stroke-width="5" stroke-dasharray="9 7"/>
-<g transform="translate(610 135)">
- <rect width="248" height="82" rx="8" fill="#eee4f3" stroke="#866e90" stroke-width="3"/>
- <text x="22" y="30" font-size="13" font-weight="700" fill="#654e6e">3 · ASSEMBLE TEAM</text>
- <text x="22" y="53" font-size="10" fill="#817087">load only useful specialists</text>
- <text x="22" y="69" font-size="10" fill="#817087">skip the rest</text>
-</g>
-<path d="M858 176H910" stroke="#b5aa98" stroke-width="5" stroke-dasharray="9 7"/>
-<g transform="translate(910 135)">
- <rect width="208" height="82" rx="8" fill="#f3e7d7" stroke="#98795b" stroke-width="3"/>
- <text x="22" y="30" font-size="13" font-weight="700" fill="#70533a">4 · PROVE</text>
- <text x="22" y="53" font-size="10" fill="#8a755f">fresh verification</text>
- <text x="22" y="69" font-size="10" fill="#8a755f">before "done"</text>
-</g>
+  <!-- conveyor -->
+  <path d="M88 430H1110" stroke="#c6baa6" stroke-width="10" stroke-dasharray="16 10"/>
+  <rect x="90" y="420" width="18" height="18" fill="#c57f50">
+    <animate attributeName="x" values="90;340;610;880;1090;90" dur="8s" repeatCount="indefinite"/>
+  </rect>
 
-<!-- depths -->
-<text x="58" y="274" font-size="16" font-weight="700" fill="#304239">DEPTH CHANGES THE TEAM SIZE</text>
-<g transform="translate(58 300)">
- <rect width="258" height="104" rx="8" fill="#f2eee5" stroke="#aaa08f" stroke-width="2"/>
- <text x="20" y="30" font-size="13" font-weight="700" fill="#4e5d55">QUICK</text>
- <text x="20" y="56" font-size="11" fill="#708078">tiny known change</text>
- <text x="20" y="78" font-size="11" fill="#3d5845">P-01 + maybe 1 member</text>
-</g>
-<g transform="translate(336 300)">
- <rect width="258" height="104" rx="8" fill="#e8f0e5" stroke="#6f8273" stroke-width="2"/>
- <text x="20" y="30" font-size="13" font-weight="700" fill="#3d5845">STANDARD</text>
- <text x="20" y="56" font-size="11" fill="#65766a">normal feature / bug</text>
- <text x="20" y="78" font-size="11" fill="#3d5845">process + domain member</text>
-</g>
-<g transform="translate(614 300)">
- <rect width="258" height="104" rx="8" fill="#e3edf6" stroke="#6d8294" stroke-width="2"/>
- <text x="20" y="30" font-size="13" font-weight="700" fill="#425c70">DEEP</text>
- <text x="20" y="56" font-size="11" fill="#708596">distributed / risky / unclear</text>
- <text x="20" y="78" font-size="11" fill="#425c70">basic + earned specialist</text>
-</g>
-<g transform="translate(892 300)">
- <rect width="250" height="104" rx="8" fill="#eee4f3" stroke="#866e90" stroke-width="2"/>
- <text x="20" y="30" font-size="13" font-weight="700" fill="#654e6e">RESEARCH</text>
- <text x="20" y="56" font-size="11" fill="#817087">large-codebase understanding</text>
- <text x="20" y="78" font-size="11" fill="#654e6e">map + evidence, not repo dump</text>
-</g>
+  <!-- station 1 -->
+  <g transform="translate(52 132)">
+    <rect width="250" height="260" rx="10" fill="#e8f0e5" stroke="#6f8273" stroke-width="3"/>
+    <text x="18" y="31" font-size="14" font-weight="700" fill="#3d5845">01 · UNDERSTAND</text>
+    <!-- repo shelf -->
+    <rect x="28" y="64" width="120" height="100" fill="#fffdf7" stroke="#7f8f84" stroke-width="2"/>
+    <rect x="42" y="80" width="92" height="12" fill="#d8e6d7"/>
+    <rect x="42" y="102" width="72" height="8" fill="#b6c7b8"/>
+    <rect x="42" y="118" width="82" height="8" fill="#b6c7b8"/>
+    <rect x="42" y="134" width="60" height="8" fill="#b6c7b8"/>
+    <!-- magnifier -->
+    <circle cx="171" cy="118" r="34" fill="none" stroke="#597061" stroke-width="8"/>
+    <rect x="194" y="144" width="50" height="10" transform="rotate(45 194 144)" fill="#597061"/>
+    <text x="22" y="202" font-size="10" fill="#617168">goal · repo · constraints</text>
+    <text x="22" y="222" font-size="10" fill="#617168">latest user intent wins</text>
+    <rect x="22" y="236" width="206" height="8" fill="#cad9cb"/>
+  </g>
 
-<!-- memory -->
-<g transform="translate(160 456)">
- <rect width="880" height="106" rx="8" fill="#f3efe7" stroke="#aa9f8f" stroke-width="2"/>
- <text x="24" y="28" font-size="11" fill="#6e7b73">OPTIONAL MEMORY SHELF · makes the next task cheaper</text>
- <rect x="24" y="46" width="250" height="36" fill="#e3edf6"/><text x="40" y="69" font-size="11" fill="#425c70">developer profile</text>
- <rect x="314" y="46" width="250" height="36" fill="#e4efe3"/><text x="330" y="69" font-size="11" fill="#3d5845">project profile</text>
- <rect x="604" y="46" width="250" height="36" fill="#eee4f3"/><text x="620" y="69" font-size="11" fill="#654e6e">session state</text>
- </g>
+  <!-- station 2 -->
+  <g transform="translate(330 132)">
+    <rect width="250" height="260" rx="10" fill="#e3edf6" stroke="#6d8394" stroke-width="3"/>
+    <text x="18" y="31" font-size="14" font-weight="700" fill="#425d70">02 · CHOOSE DEPTH</text>
+    <!-- gauge -->
+    <rect x="28" y="66" width="194" height="22" rx="4" fill="#fffdf7" stroke="#899aa6" stroke-width="2"/>
+    <rect x="34" y="72" width="38" height="10" fill="#8fb29a"/>
+    <rect x="78" y="72" width="38" height="10" fill="#7f9db0"/>
+    <rect x="122" y="72" width="38" height="10" fill="#a68aa8"/>
+    <rect x="166" y="72" width="50" height="10" fill="#ba875f"/>
+    <text x="28" y="114" font-size="10" fill="#708596">QUICK</text>
+    <text x="86" y="114" font-size="10" fill="#708596">STANDARD</text>
+    <text x="160" y="114" font-size="10" fill="#708596">DEEP</text>
+    <!-- scale cases -->
+    <rect x="28" y="140" width="194" height="30" rx="4" fill="#f7fbfd"/>
+    <text x="40" y="159" font-size="9" fill="#425d70">tiny task → tiny context</text>
+    <rect x="28" y="180" width="194" height="30" rx="4" fill="#f7fbfd"/>
+    <text x="40" y="199" font-size="9" fill="#425d70">hard task → specialist depth</text>
+    <rect x="28" y="220" width="194" height="20" fill="#d3e1eb"/>
+  </g>
 
-<!-- moving pixel -->
-<rect x="300" y="168" width="16" height="16" fill="#c48251">
- <animate attributeName="x" values="300;352;566;616;866;916;1092;300" dur="8s" repeatCount="indefinite"/>
-</rect>
+  <!-- station 3 -->
+  <g transform="translate(608 132)">
+    <rect width="250" height="260" rx="10" fill="#eee4f3" stroke="#876f91" stroke-width="3"/>
+    <text x="18" y="31" font-size="14" font-weight="700" fill="#654e6e">03 · ASSEMBLE</text>
+    <!-- mini team -->
+    <g transform="translate(26 62)">
+      <rect x="0" y="0" width="54" height="72" fill="#e5efe3" stroke="#7a897e" stroke-width="2"/>
+      <rect x="12" y="10" width="30" height="28" fill="#ddb18a"/><rect x="9" y="6" width="36" height="9" fill="#59473b"/>
+      <rect x="16" y="21" width="5" height="5" fill="#293831"/><rect x="33" y="21" width="5" height="5" fill="#293831"/>
+      <rect x="10" y="42" width="34" height="18" fill="#6d9476"/>
+      <text x="13" y="69" font-size="7" fill="#3d5845">BE</text>
+    </g>
+    <g transform="translate(89 62)">
+      <rect x="0" y="0" width="54" height="72" fill="#e3edf6" stroke="#7a897e" stroke-width="2"/>
+      <rect x="12" y="10" width="30" height="28" fill="#e1b68f"/><rect x="9" y="6" width="36" height="9" fill="#3e4752"/>
+      <rect x="16" y="21" width="5" height="5" fill="#293831"/><rect x="33" y="21" width="5" height="5" fill="#293831"/>
+      <rect x="10" y="42" width="34" height="18" fill="#748da6"/>
+      <text x="13" y="69" font-size="7" fill="#425d70">FE</text>
+    </g>
+    <g transform="translate(152 62)">
+      <rect x="0" y="0" width="54" height="72" fill="#f3e7d7" stroke="#7a897e" stroke-width="2"/>
+      <rect x="12" y="10" width="30" height="28" fill="#dab087"/><rect x="9" y="6" width="36" height="9" fill="#71543f"/>
+      <rect x="16" y="21" width="5" height="5" fill="#293831"/><rect x="33" y="21" width="5" height="5" fill="#293831"/>
+      <rect x="10" y="42" width="34" height="18" fill="#b68559"/>
+      <text x="13" y="69" font-size="7" fill="#705239">AI</text>
+    </g>
+    <rect x="28" y="157" width="194" height="30" rx="4" fill="#f8f4fa"/>
+    <text x="40" y="176" font-size="9" fill="#654e6e">load only useful specialists</text>
+    <rect x="28" y="197" width="194" height="30" rx="4" fill="#f8f4fa"/>
+    <text x="40" y="216" font-size="9" fill="#654e6e">skip the rest</text>
+  </g>
+
+  <!-- station 4 -->
+  <g transform="translate(886 132)">
+    <rect width="250" height="260" rx="10" fill="#f3e7d7" stroke="#987a5d" stroke-width="3"/>
+    <text x="18" y="31" font-size="14" font-weight="700" fill="#705239">04 · PROVE</text>
+    <!-- terminal -->
+    <rect x="28" y="62" width="194" height="122" rx="7" fill="#38433f"/>
+    <rect x="28" y="62" width="194" height="24" rx="7" fill="#4c5b55"/>
+    <circle cx="44" cy="74" r="4" fill="#d66d61"/>
+    <circle cx="58" cy="74" r="4" fill="#d8a94f"/>
+    <circle cx="72" cy="74" r="4" fill="#69a977"/>
+    <text x="42" y="112" font-size="10" fill="#dbe8df">$ test</text>
+    <text x="42" y="134" font-size="10" fill="#83be91">✓ requested behavior</text>
+    <text x="42" y="154" font-size="10" fill="#83be91">✓ regression path</text>
+    <text x="42" y="174" font-size="10" fill="#83be91">✓ fresh evidence</text>
+    <rect x="28" y="204" width="194" height="28" rx="4" fill="#ead9c5"/>
+    <text x="42" y="222" font-size="9" font-weight="700" fill="#705239">claim done only after proof</text>
+  </g>
+
+  <!-- memory strip -->
+  <g transform="translate(132 486)">
+    <rect width="936" height="104" rx="9" fill="#f2eee5" stroke="#aaa08f" stroke-width="2"/>
+    <text x="22" y="28" font-size="11" fill="#6d7a72">OPTIONAL MEMORY SHELF · makes later work cheaper without becoming truth</text>
+    <rect x="22" y="48" width="270" height="34" fill="#e3edf6"/><text x="38" y="70" font-size="10" fill="#425d70">~/.plat/profile.md · developer</text>
+    <rect x="333" y="48" width="270" height="34" fill="#e5efe3"/><text x="349" y="70" font-size="10" fill="#3d5845">.plat/project.md · codebase</text>
+    <rect x="644" y="48" width="270" height="34" fill="#eee4f3"/><text x="660" y="70" font-size="10" fill="#654e6e">.plat/session.md · current work</text>
+  </g>
 </g>
 </svg>
