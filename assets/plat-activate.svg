@@ -1,90 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="610" viewBox="0 0 1200 610">
-<rect width="1200" height="610" fill="#f3efe4"/>
-<rect x="18" y="18" width="1164" height="574" rx="18" fill="#fffdf7" stroke="#4d5d54" stroke-width="4"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560">
+<rect width="1200" height="560" fill="#f3efe4"/>
+<rect x="18" y="18" width="1164" height="524" rx="18" fill="#fffdf7" stroke="#4d5d54" stroke-width="4"/>
 <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" shape-rendering="crispEdges">
-  <text x="54" y="68" font-size="26" font-weight="700" fill="#2f4238">SET UP ONCE · THEN JUST ENGINEER</text>
-  <text x="54" y="97" font-size="13" fill="#6d7d73">global or project instructions make Plat the default engineering team</text>
+  <text x="54" y="68" font-size="27" font-weight="700" fill="#2f4238">ONE COMMAND · COMPLETE SETUP</text>
+  <text x="54" y="98" font-size="13" fill="#6d7d73">the recommended installer handles skill placement + verification + preferences + agent wiring</text>
 
-  <!-- P-01 guide -->
-  <g transform="translate(70 162)">
-    <rect x="26" y="70" width="84" height="72" fill="#748fa0"/>
-    <rect x="34" y="12" width="68" height="62" fill="#e4b78d"/>
-    <rect x="28" y="8" width="80" height="14" fill="#453831"/>
-    <rect x="28" y="20" width="12" height="38" fill="#453831"/>
-    <rect x="96" y="20" width="12" height="38" fill="#453831"/>
-    <rect x="50" y="35" width="8" height="8" fill="#29372f"/>
-    <rect x="80" y="35" width="8" height="8" fill="#29372f"/>
-    <rect x="64" y="56" width="14" height="4" fill="#805947"/>
-    <rect x="18" y="98" width="18" height="12" fill="#e4b78d"/>
-    <rect x="100" y="98" width="18" height="12" fill="#e4b78d"/>
-    <rect x="36" y="142" width="28" height="30" fill="#3e4d55"/>
-    <rect x="74" y="142" width="28" height="30" fill="#3e4d55"/>
-    <rect x="30" y="170" width="38" height="12" fill="#2f383c"/>
-    <rect x="72" y="170" width="38" height="12" fill="#2f383c"/>
-    <text x="12" y="208" font-size="13" font-weight="700" fill="#2f4238">P-01 GUIDE</text>
-    <text x="0" y="228" font-size="10" fill="#6d7d73">choose one setup path</text>
+  <!-- terminal -->
+  <g transform="translate(54 132)">
+    <rect width="430" height="300" rx="10" fill="#34433d"/>
+    <rect width="430" height="34" rx="10" fill="#4b5b54"/>
+    <circle cx="22" cy="17" r="5" fill="#d76e61"/>
+    <circle cx="40" cy="17" r="5" fill="#d6a84c"/>
+    <circle cx="58" cy="17" r="5" fill="#6ba878"/>
+    <text x="78" y="21" font-size="10" fill="#c8d3cd">plat installer</text>
+
+    <text x="24" y="70" font-size="11" fill="#e7efe9">$ run Plat installer</text>
+    <text x="24" y="100" font-size="10" fill="#9fc6aa">✓ choose agent</text>
+    <text x="24" y="124" font-size="10" fill="#9fc6aa">✓ choose global / project</text>
+    <text x="24" y="148" font-size="10" fill="#9fc6aa">✓ direct copy into real agent path</text>
+    <text x="24" y="172" font-size="10" fill="#9fc6aa">✓ verify SKILL.md exists</text>
+    <text x="24" y="196" font-size="10" fill="#9fc6aa">✓ run developer preferences</text>
+    <text x="24" y="220" font-size="10" fill="#9fc6aa">✓ wire CLAUDE.md / AGENTS.md / Cursor rule</text>
+    <rect x="24" y="246" width="8" height="14" fill="#8ec49a">
+      <animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/>
+    </rect>
   </g>
 
-  <!-- always on panel -->
-  <g transform="translate(250 132)">
-    <rect width="430" height="360" rx="12" fill="#e6efe3" stroke="#6b826e" stroke-width="3"/>
-    <rect x="18" y="18" width="104" height="28" rx="4" fill="#6d9275"/>
-    <text x="35" y="37" font-size="12" font-weight="700" fill="#fffdf7">ALWAYS ON</text>
-    <text x="22" y="72" font-size="11" fill="#66776c">global or project agent instructions</text>
+  <!-- flow cards -->
+  <g transform="translate(530 132)">
+    <rect width="610" height="300" rx="10" fill="#f2eee5" stroke="#aaa08f" stroke-width="2"/>
 
-    <!-- file stack -->
-    <rect x="30" y="100" width="158" height="114" fill="#fffdf7" stroke="#889a8d" stroke-width="2"/>
-    <rect x="42" y="88" width="158" height="114" fill="#f7fbf6" stroke="#889a8d" stroke-width="2"/>
-    <rect x="54" y="76" width="158" height="114" fill="#fffdf7" stroke="#6f8273" stroke-width="3"/>
-    <rect x="54" y="76" width="158" height="26" fill="#d7e7d6"/>
-    <text x="70" y="94" font-size="10" font-weight="700" fill="#3d5845">CLAUDE.md</text>
-    <text x="70" y="124" font-size="9" fill="#617168">For software engineering</text>
-    <text x="70" y="142" font-size="9" fill="#617168">requests, use the installed</text>
-    <text x="70" y="160" font-size="9" font-weight="700" fill="#3d5845">Plat skill.</text>
+    <g transform="translate(24 28)">
+      <rect width="168" height="74" rx="7" fill="#e3edf6" stroke="#6d8394" stroke-width="2"/>
+      <text x="18" y="28" font-size="11" font-weight="700" fill="#425d70">1 · AGENT</text>
+      <text x="18" y="50" font-size="9" fill="#708596">Claude · Codex · Cursor</text>
+    </g>
 
-    <!-- second file -->
-    <rect x="232" y="92" width="158" height="98" fill="#fffdf7" stroke="#6f8273" stroke-width="3"/>
-    <rect x="232" y="92" width="158" height="26" fill="#d7e7d6"/>
-    <text x="248" y="110" font-size="10" font-weight="700" fill="#3d5845">AGENTS.md</text>
-    <text x="248" y="140" font-size="9" fill="#617168">same one-line rule</text>
-    <text x="248" y="158" font-size="9" fill="#617168">or agent equivalent</text>
+    <g transform="translate(220 28)">
+      <rect width="168" height="74" rx="7" fill="#e8f0e5" stroke="#6f8273" stroke-width="2"/>
+      <text x="18" y="28" font-size="11" font-weight="700" fill="#3d5845">2 · SCOPE</text>
+      <text x="18" y="50" font-size="9" fill="#65766a">global · project</text>
+    </g>
 
-    <!-- everyday prompts -->
-    <text x="22" y="246" font-size="10" fill="#66776c">THEN ASK NORMALLY</text>
-    <rect x="22" y="264" width="386" height="34" rx="5" fill="#fffdf7" stroke="#a8b2a9" stroke-width="2"/>
-    <text x="36" y="286" font-size="10" fill="#2f4238">fix the invoice race</text>
-    <rect x="22" y="310" width="386" height="34" rx="5" fill="#fffdf7" stroke="#a8b2a9" stroke-width="2"/>
-    <text x="36" y="332" font-size="10" fill="#2f4238">understand this repo before we change it</text>
+    <g transform="translate(416 28)">
+      <rect width="168" height="74" rx="7" fill="#f3e7d7" stroke="#987a5d" stroke-width="2"/>
+      <text x="18" y="28" font-size="11" font-weight="700" fill="#705239">3 · VERIFY</text>
+      <text x="18" y="50" font-size="9" fill="#8a745e">real skill path exists</text>
+    </g>
+
+    <g transform="translate(122 132)">
+      <rect width="168" height="82" rx="7" fill="#eee4f3" stroke="#876f91" stroke-width="2"/>
+      <text x="18" y="28" font-size="11" font-weight="700" fill="#654e6e">4 · ONBOARD</text>
+      <text x="18" y="50" font-size="9" fill="#817087">3 preference choices</text>
+      <text x="18" y="66" font-size="9" fill="#817087">+ optional stack</text>
+    </g>
+
+    <g transform="translate(318 132)">
+      <rect width="168" height="82" rx="7" fill="#e4efe3" stroke="#6b836f" stroke-width="2"/>
+      <text x="18" y="28" font-size="11" font-weight="700" fill="#3d5845">5 · WIRE</text>
+      <text x="18" y="50" font-size="9" fill="#65766a">Plat becomes default</text>
+      <text x="18" y="66" font-size="9" fill="#65766a">for engineering requests</text>
+    </g>
+
+    <path d="M108 102V125H206M304 102V125H206M500 102V125H402M290 173H318" stroke="#b6aa98" stroke-width="4" stroke-dasharray="8 6"/>
+
+    <rect x="116" y="244" width="376" height="34" rx="6" fill="#fffdf7" stroke="#9da99f" stroke-width="2"/>
+    <text x="138" y="266" font-size="10" font-weight="700" fill="#2f4238">DONE → ask normally; Plat chooses the team + depth</text>
   </g>
 
-  <!-- explicit panel -->
-  <g transform="translate(710 132)">
-    <rect width="430" height="360" rx="12" fill="#e3edf6" stroke="#6d8394" stroke-width="3"/>
-    <rect x="18" y="18" width="106" height="28" rx="4" fill="#738da6"/>
-    <text x="34" y="37" font-size="12" font-weight="700" fill="#fffdf7">EXPLICIT</text>
-    <text x="22" y="72" font-size="11" fill="#708596">force Plat for one request</text>
-
-    <!-- terminal -->
-    <rect x="22" y="94" width="386" height="142" rx="8" fill="#34434b"/>
-    <rect x="22" y="94" width="386" height="28" rx="8" fill="#455861"/>
-    <circle cx="42" cy="108" r="5" fill="#d66d61"/>
-    <circle cx="58" cy="108" r="5" fill="#d8a94f"/>
-    <circle cx="74" cy="108" r="5" fill="#69a977"/>
-    <text x="40" y="154" font-size="13" font-weight="700" fill="#e9f0ec">/plat fix the invoice race</text>
-    <rect x="40" y="173" width="8" height="14" fill="#86b899"><animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/></rect>
-    <text x="40" y="208" font-size="9" fill="#b9c9c0">when slash-skill invocation is supported</text>
-
-    <!-- fallback -->
-    <text x="22" y="270" font-size="10" fill="#708596">PORTABLE FALLBACK</text>
-    <rect x="22" y="288" width="386" height="44" rx="5" fill="#fffdf7" stroke="#9eacb5" stroke-width="2"/>
-    <text x="38" y="316" font-size="11" font-weight="700" fill="#425d70">Use Plat: fix the invoice race</text>
-  </g>
-
-  <!-- result banner -->
-  <g transform="translate(250 516)">
-    <rect width="890" height="46" rx="7" fill="#f3eee4" stroke="#aa9f8f" stroke-width="2"/>
-    <text x="26" y="20" font-size="10" fill="#6d7a72">RESULT</text>
-    <text x="26" y="37" font-size="11" font-weight="700" fill="#2f4238">you type the task · Plat chooses mode + depth + team + verification</text>
-  </g>
+  <text x="54" y="486" font-size="11" fill="#718078">Installer uses copy mode and verifies the destination so a “successful” install cannot silently miss the agent path.</text>
 </g>
 </svg>
