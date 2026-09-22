@@ -58,12 +58,13 @@ Treat short messages such as these as likely **continuations**, not automaticall
 - "now update"
 - "still wrong"
 
-Before asking a question:
+Before asking a question, use this ambiguity ladder:
 
-1. identify the most recent unresolved action;
-2. identify what changed since that action;
-3. inspect the narrowest evidence that can resolve the referent;
-4. check whether one interpretation clearly dominates.
+1. identify the most recent unresolved action/correction;
+2. inspect what changed since it: last tool result, failing command, diff/worktree, screenshot/render, or test output;
+3. inspect the narrowest repository evidence that can resolve the referent;
+4. check whether one interpretation clearly dominates;
+5. only then ask one focused question if materially different interpretations remain.
 
 A vague message can safely inherit **scope**, **artifact**, and **accepted constraints** from the active task. It must not inherit assumptions that the developer already corrected.
 
@@ -76,7 +77,9 @@ Act without clarification when all are true enough:
 - the action is reversible or already authorized;
 - no unresolved choice materially changes behavior, compatibility, cost, security, data, or a hard-to-reverse design decision.
 
-Ask **one concise question** only when two or more plausible interpretations would cause materially different work and inspection cannot cheaply resolve them.
+Ask **one concise question** only when two or more plausible interpretations would cause materially different work and cheap evidence cannot resolve them.
+
+Prefer direct evidence (current code/test/runtime/diff) over recollection or inference. Treat old plans, summaries, comments, and session notes as leads until material claims are rechecked.
 
 If a safe read/test/render can disambiguate the request, inspect first instead of asking.
 
@@ -202,7 +205,9 @@ Stop discovery when ownership and direct proof are clear.
 
 ### Deep / Research
 
-Expand to callers, data/event flow, history, deployment boundaries, concurrency, compatibility, or broader subsystem map only when the unresolved risk requires it.
+Expand to callers, data/event flow, deployment boundaries, concurrency, compatibility, or broader subsystem map only when the unresolved risk requires it.
+
+Use **history/blame** only when current code cannot explain why a risky/public/security/value-transfer behavior exists or when regression evidence matters. Estimate **blast radius** from callers/consumers only when the change can cross a contract or high-impact boundary.
 
 Do not read top-level docs/manifests repeatedly if the current task is already localized.
 
@@ -217,6 +222,17 @@ Default load budget:
 - **Research:** task-scoped map; expand high-signal branches only.
 
 A user's request for a "deep explanation" changes response detail, not specialist loading.
+
+## Ambiguous debugging
+
+If several plausible causes remain after the cheapest evidence:
+
+- keep 2-4 competing hypotheses instead of committing early to one;
+- collect one discriminating piece of evidence per hypothesis;
+- retire falsified hypotheses;
+- parallelize only when the investigations are genuinely independent and coordination cost is justified.
+
+Do not create competing hypotheses for a deterministic bug whose cause is already localized.
 
 ## Stop conditions
 
