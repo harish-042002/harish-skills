@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Interactive developer-profile onboarding for Plat."""
+"""Interactive developer-preference onboarding for Plat."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 import sys
 
-PROFILE_VERSION = "1"
+PROFILE_VERSION = "2"
 
 ROLE_OPTIONS = [
     ("backend", "Backend"),
@@ -32,11 +32,6 @@ RESPONSE_OPTIONS = [
     ("explanatory", "Explanatory — teach important concepts while working"),
 ]
 
-DEEP_OPTIONS = [
-    ("automatic", "Automatic — Plat escalates when task evidence justifies it"),
-    ("ask", "Ask first — ask before an expensive deep investigation when safe"),
-]
-
 
 def choose(title: str, options: list[tuple[str, str]], default_index: int = 0) -> str:
     print(f"\n{title}")
@@ -57,12 +52,11 @@ def choose(title: str, options: list[tuple[str, str]], default_index: int = 0) -
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Create or update the Plat developer profile.")
+    p = argparse.ArgumentParser(description="Create or update the Plat developer preference profile.")
     p.add_argument("--profile", help="Override profile path (mainly for testing).")
     p.add_argument("--role", choices=[x[0] for x in ROLE_OPTIONS])
     p.add_argument("--experience", choices=[x[0] for x in EXPERIENCE_OPTIONS])
     p.add_argument("--response", choices=[x[0] for x in RESPONSE_OPTIONS])
-    p.add_argument("--deep-mode", choices=[x[0] for x in DEEP_OPTIONS])
     p.add_argument("--stack", default=None, help="Optional comma-separated familiar technologies.")
     p.add_argument("--force", action="store_true", help="Replace an existing profile.")
     p.add_argument("--non-interactive", action="store_true", help="Require all profile choices as flags.")
@@ -74,8 +68,8 @@ def main() -> int:
     path = Path(args.profile).expanduser() if args.profile else Path.home() / ".plat" / "profile.md"
 
     if path.exists() and not args.force:
-        print(f"Plat profile already exists: {path}")
-        print("Keeping it. Re-run setup with --force to reconfigure.")
+        print(f"✓ Existing Plat preferences kept: {path}")
+        print("  Re-run setup with --force only when you want to change them.")
         return 0
 
     if args.non_interactive:
@@ -83,19 +77,18 @@ def main() -> int:
             ("--role", args.role),
             ("--experience", args.experience),
             ("--response", args.response),
-            ("--deep-mode", args.deep_mode),
         ] if value is None]
         if missing:
             print("Missing required non-interactive options: " + ", ".join(missing), file=sys.stderr)
             return 2
 
-    print("\nPLAT · DEVELOPER SETUP")
-    print("Four choices. No secrets, employer data, or unrelated personal information.")
+    print("\nPLAT · DEVELOPER PREFERENCES")
+    print("Three quick choices. They personalize assistance; they never force architecture or reasoning depth.")
+    print("Plat always prefers the lowest-cost path that preserves correctness.")
 
-    role = args.role or choose("1/4 — What best describes your primary work?", ROLE_OPTIONS, 2)
-    experience = args.experience or choose("2/4 — Your overall engineering experience?", EXPERIENCE_OPTIONS, 1)
-    response = args.response or choose("3/4 — How should Plat communicate?", RESPONSE_OPTIONS, 0)
-    deep_mode = args.deep_mode or choose("4/4 — How should expensive deep investigations start?", DEEP_OPTIONS, 0)
+    role = args.role or choose("1/3 — What best describes your primary work?", ROLE_OPTIONS, 2)
+    experience = args.experience or choose("2/3 — Your overall engineering experience?", EXPERIENCE_OPTIONS, 1)
+    response = args.response or choose("3/3 — How should Plat communicate?", RESPONSE_OPTIONS, 0)
 
     if args.stack is None and not args.non_interactive:
         stack = input("\nOptional — familiar technologies (comma-separated, Enter to skip):\n> ").strip()
@@ -107,11 +100,6 @@ def main() -> int:
         "balanced": "balanced; explain decisions that materially affect the task",
         "explanatory": "explanatory; teach important concepts while working",
     }[response]
-
-    deep_desc = {
-        "automatic": "automatic when task evidence justifies deeper work",
-        "ask": "ask before expensive deep investigation when correctness/safety allows",
-    }[deep_mode]
 
     lines = [
         "# Plat Developer Profile",
@@ -127,7 +115,11 @@ def main() -> int:
         "## Assistance",
         f"Default response: {response}",
         f"Explanation: {response_desc}",
-        f"Deep mode: {deep_desc}",
+        "",
+        "## Efficiency",
+        "- Correctness and required safety/compatibility come first.",
+        "- After that, minimize total tokens, tool calls, wall time, rereads, and repair work.",
+        "- Developer requests for deep/detailed output do not force Deep specialist routing when the task does not need it.",
         "",
     ]
 
@@ -140,7 +132,7 @@ def main() -> int:
 
     lines.extend([
         "## Guardrails",
-        "- Current repository evidence and explicit developer requests override this profile.",
+        "- Current repository evidence and explicit developer requirements override this profile.",
         "- Familiar technologies are explanation context, not architecture mandates.",
         "- Do not store secrets, credentials, customer data, or unrelated personal information here.",
         "",
@@ -149,8 +141,8 @@ def main() -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")
 
-    print(f"\n✓ Plat developer profile created: {path}")
-    print("  Project-specific architecture will be learned from each repository, not asked from you.")
+    print(f"\n✓ Plat preferences saved: {path}")
+    print("  Project architecture is learned from each repository, not asked from you.")
     return 0
 
 
