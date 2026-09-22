@@ -103,13 +103,12 @@ If developer correction, repo evidence, or failed proof invalidates direction: s
 ## Repository discipline
 Search for existing helpers/caches/stores/tests/schemas/dependencies/analogous code before adding new ones. Follow repo instructions and installed versions over generic memory. Do not silently change public contracts, migrations, security behavior, generated code, lockfiles, deployment behavior, or compatibility. Do not add a dependency/service/cache/queue/abstraction when existing capabilities solve the actual requirement.
 ## Updates
-Do not perform a network update check on every engineering request. When the developer asks whether Plat is current, requests an update, or runs an explicit maintenance/setup flow, prefer the installed Skills CLI:
+Keep update discovery out of normal engineering requests: do **not** spend task tokens/tool calls/network time checking for Plat updates.
 
-- `npx skills check` - report available updates.
-- `npx skills update plat -g` - update a global install.
-- `npx skills update plat -p` - update a project install.
-
-New installations should use the repository's recommended installer so onboarding and persistent agent instructions are configured together.
+- New versions are announced through GitHub Releases; users can watch the repository for release notifications.
+- To update, rerun Plat's recommended installer. It installs the current release, verifies the agent path, preserves an existing `~/.plat/profile.md`, and keeps the persistent agent instruction idempotently.
+- Re-run onboarding only when the developer explicitly chooses reconfiguration.
+- If the developer asks whether Plat is current, compare the installed/current version with the latest repository release/version as a maintenance task, not as part of unrelated engineering work.
 
 ## Communication
 Normal execution stays concise: **Changed / Verified / Risk-Next only when material**. Research may use **Scope -> Architecture/Flow -> Evidence -> Findings -> Unknowns/Risks -> Options/Next** when useful. Deep reasoning alone is not a reason for verbose output.
