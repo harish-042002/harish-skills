@@ -6,6 +6,12 @@ Use for bugs, exceptions, incorrect/flaky behavior, regressions, failed builds/i
 
 No fix before enough root-cause evidence exists to explain the failure. A plausible suspicious line is not evidence.
 
+## Compact approach
+
+For a non-trivial bug, before editing state only the useful approach: observed symptom, evidence/hypothesis to test, and the proof that will confirm the fix. Keep it to 2-4 bullets; do not narrate every diagnostic step.
+
+After the fix, report **Root cause -> Fix -> Verified evidence**.
+
 ## Workflow
 
 1. Capture observed vs expected behavior.
@@ -34,8 +40,9 @@ Do not fix a flaky test by adding arbitrary sleeps or retries unless the product
 
 ## Failed-fix discipline
 
-A failed hypothesis is new evidence, not permission to stack another patch on top.
+A failed hypothesis or developer correction is new evidence, not permission to stack another patch on top.
 
+- If new evidence disproves the current explanation, explicitly retire that hypothesis before forming the next one.
 - After **2 materially different failed fixes**, stop patching and rebuild the evidence/hypothesis map.
 - After **3 evidence-backed fix attempts** fail or each exposes new coupling/shared-state failures, question whether the architecture/boundary itself is wrong before attempting another fix.
 - Change one causal variable at a time when diagnosing.
