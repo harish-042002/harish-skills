@@ -141,13 +141,14 @@ Use `context.md` for session rules.
 
 ### Mandatory developer onboarding
 
-The interactive onboarding has **four required choices** and one optional field:
+The interactive onboarding has **three required preference choices** and one optional field:
 
 1. Primary work: backend / frontend / full-stack / mobile / AI / design / platform / data.
 2. Overall engineering experience: beginner / intermediate / advanced.
 3. Response preference: concise / balanced / explanatory.
-4. Deep-mode preference: automatic / ask first when safe.
-5. Optional familiar technologies.
+4. Optional familiar technologies.
+
+Do **not** ask for a preferred reasoning depth. Depth is decided from task evidence. A developer may ask for a detailed answer, but that does not justify loading Deep specialists when the problem is simple.
 
 Do not ask for employer, personal life, credentials, customer data, or information unrelated to engineering assistance.
 
@@ -157,7 +158,7 @@ If a valid profile already exists, preserve it during normal upgrades. Reconfigu
 
 ### Global setup result
 
-Write `~/.plat/profile.md` with role, experience, assistance preferences, optional familiar stack, schema version, and guardrails. Familiar technologies affect explanation/search shortcuts only; they never mandate architecture.
+Write `~/.plat/profile.md` with role, experience, assistance preferences, optional familiar stack, schema version, fixed efficiency policy, and guardrails. Familiar technologies affect explanation/search shortcuts only; they never mandate architecture. The fixed efficiency policy is: after correctness and required safety/compatibility, minimize total tokens, tool calls, rereads, repair turns, and wall time.
 
 ### Project setup
 
