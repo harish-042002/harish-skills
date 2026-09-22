@@ -8,10 +8,10 @@ Reusable, vendor-neutral Agent Skills for software engineering.
 
 It is designed to make coding agents behave more like disciplined software engineers: understand the repository before changing it, choose the simplest correct design, debug from evidence, verify before claiming completion, delegate only when useful, and keep context/token usage under control.
 
-Plat is intentionally **backend-first**, while still covering frontend, Flutter/mobile, AI systems, delivery, and cross-agent workflows.
+Plat is intentionally **backend-weighted but full-stack**: roughly **60% backend/data/reliability** and **40% frontend/mobile/client engineering**. Frontend is treated as a first-class engineering surface rather than a visual-design afterthought.
 
-> Current release: **v0.5.0**  
-> Status: **Course-correction hardened; ready for live A/B benchmarking**
+> Current release: **v0.6.0**  
+> Status: **60/40 full-stack rebalance + lightweight course-correction; ready for live A/B benchmarking**
 
 ---
 
@@ -203,11 +203,11 @@ DOCUMENT STATE
 
 The loop compresses for tiny changes. Plat should never create more process than the task requires.
 
-### Spec builds and course correction
+### Lightweight course correction
 
-For non-trivial feature work, Plat keeps a compact living spec: outcome, scope, constraints, and acceptance evidence. For substantial bugs it states one short diagnostic approach before editing and finishes with root cause, fix, and verified evidence.
+Normal feature work does **not** require a formal spec. Plat keeps ordinary builds lightweight: understand the outcome, give a short approach when the work is substantial, implement, and prove.
 
-When a developer correction or fresh evidence invalidates the current direction, Plat should stop only the affected slice, name the invalid assumption, update the current spec/plan, preserve valid work, and continue. It should not merely say "you're right," keep extending the old path, or run a reflection ceremony every few messages.
+Only when a developer correction or fresh evidence invalidates the current direction does Plat use a tiny 1-3 line direction anchor: current outcome, changed assumption, next valid slice. It then preserves valid work, reworks only what depended on the wrong assumption, and continues. It should not merely say "you're right," keep extending the old path, or run periodic reflection without new evidence.
 
 ---
 
@@ -280,8 +280,8 @@ Plat currently contains focused guidance for:
 | Security | Auth, authorization, trust boundaries, secrets and abuse paths |
 | Performance | Latency, throughput, cost, memory and capacity |
 | Delivery | CI/CD, deployment, IaC, release and Git integration |
-| Frontend | Web/client state, async flows, SSR and accessibility |
-| Flutter / Mobile | Lifecycle, state, networking, offline and platform behavior |
+| Frontend | Web/client state, forms, async flows, responsive behavior, SSR/hydration, accessibility and browser verification |
+| Flutter / Mobile | Lifecycle, state, navigation, responsive/adaptive UI, accessibility, networking, offline, performance and device verification |
 | AI Engineering | LLMs, RAG, agents, tools, evals and model economics |
 | Context | Compact same-developer cross-agent continuation |
 | Subagents | Bounded scouting, implementation, review and parallel work |
@@ -348,7 +348,7 @@ Architecture, shared contracts, integration, destructive/security-sensitive deci
 
 Plat is designed around **minimum sufficient context**.
 
-v0.4.0 baseline static load model (v0.5 adds about 82 proxy root tokens for spec/course-correction control):
+v0.4.0 baseline static load model. v0.6 keeps the router compact while adding first-class frontend/mobile coverage and lightweight correction control:
 
 | Scenario | Approx. Plat context |
 | --- | ---: |
@@ -370,7 +370,20 @@ A slightly larger first pass can be cheaper than a small prompt that causes repe
 
 ## Benchmark Status
 
-Plat v0.5.0 is the current live A/B candidate. v0.4.0 remains the prior frozen benchmark baseline.
+Plat v0.6.0 is the current live A/B candidate. v0.5.0 remains the prior course-correction baseline.
+
+### v0.6.0 frontend + lightweight course-correction validation
+
+The v0.6.0 change passed:
+
+- **46 / 46** targeted structural/behavior checks;
+- **31 / 31** engineering categories derived from current Anthropic/Vercel/Flutter frontend/mobile skills;
+- **14 / 14** semantic mutation tests;
+- **20** updated course-correction scenarios;
+- skill validator and package integrity checks;
+- root-router growth held to about **+4.4%** (~78 proxy tokens) versus v0.5.0.
+
+The 31/31 result is a static engineering-coverage checklist, not a claim that Plat replaces specialist visual-design or framework-specific skills.
 
 ### v0.5.0 targeted course-correction validation
 
@@ -419,7 +432,7 @@ same task
 same model/settings
 
 CONTROL     -> agent without Plat
-TREATMENT   -> same agent with Plat v0.5.0
+TREATMENT   -> same agent with Plat v0.6.0
 ```
 
 The benchmark will compare correctness, hidden tests, total tokens, cost, wall time, repair turns, files/lines changed, dependency/abstraction growth, verification quality, and final response overhead.
@@ -494,7 +507,7 @@ Analyze failures
 Next version
 ```
 
-Once a benchmark release is frozen, it should not be edited midway through that experiment. Findings become inputs to the next version. v0.5.0 should now remain unchanged during the upcoming live A/B runs.
+Once a benchmark release is frozen, it should not be edited midway through that experiment. Findings become inputs to the next version. v0.6.0 should now remain unchanged during the upcoming live A/B runs.
 
 ---
 
