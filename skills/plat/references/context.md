@@ -4,61 +4,43 @@ Use for long/non-trivial work, context pressure, agent switching, or resuming un
 
 ## Principle
 
-Repository/code/tests/specs are durable truth. `.plat/session.md` is a compact routing layer to that truth, not a second project history. It exists for the same developer/project to continue across agents or context resets; it is not a team communication channel.
+Repository/code/tests/specs are durable truth. `.plat/session.md` is a compact pointer to current truth for the **same developer/project** across agents or context resets; it is not team documentation or project history.
 
-Store decisions and verified current state, not conversation.
+## When to create/update
 
-## Local state
+Create only when important discoveries would be expensive to rediscover, work spans several steps/boundaries, switching/reset is plausible, or work remains unfinished. Skip tiny one-shot changes.
 
-Default:
+Update only when approach/state materially changes, a slice is verified, a blocker/risk appears, or before a switch/unfinished stop.
 
-```text
-.plat/session.md
-```
-
-Prefer local-only exclusion through `.git/info/exclude`:
+Prefer local exclusion through `.git/info/exclude`:
 
 ```text
 .plat/
 ```
 
-Do not alter shared `.gitignore` solely for Plat unless the developer wants session state shared.
-
-## Create/update only when useful
-
-Create a session when work spans meaningful steps, important discoveries would be expensive to rediscover, several files/boundaries are involved, context reset/agent switching is plausible, or work remains unfinished.
-
-Skip it for tiny one-shot changes.
-
-Update at checkpoints, not after every tool call:
-
-- Plan/approach materially changes.
-- Important verified discovery changes the task model.
-- A slice is completed/verified.
-- A blocker/risk appears.
-- Before an agent/context switch or unfinished stop.
+Do not change shared `.gitignore` solely for Plat unless shared state is intentional.
 
 ## Session format
 
-Keep it decision-dense; target under 60 lines and treat 100 lines as a warning that durable artifacts should be referenced instead of copied:
+Target <60 lines:
 
 ```markdown
 # Plat Session
 
 ## Goal
-Observable outcome in 1-2 lines.
+Observable outcome.
 
 ## Constraints
 Only implementation-changing constraints.
 
 ## Verified State
-- Current facts, with file/function/artifact pointers.
+- Current facts with file/function/artifact pointers.
 
 ## Decisions
 - Decision - short reason.
 
 ## Assumptions / Risks
-- Anything not yet verified or still uncertain.
+- Unverified or unresolved items.
 
 ## Verification
 - Exact check - result.
@@ -67,42 +49,37 @@ Only implementation-changing constraints.
 - Exact next action, or Done.
 ```
 
-When practical, note a cheap workspace anchor such as branch plus HEAD/commit. If the workspace diverges materially on takeover, re-verify inherited state instead of reconciling from memory.
+When cheap, record branch + HEAD/commit as a freshness anchor.
 
 ## Truth discipline
 
-- Put claims in **Verified State** only when supported by current code/tests/tool evidence.
-- Put uncertain inherited claims under **Assumptions / Risks** until checked.
-- On takeover, validate material session claims against current repository state before changing code.
-- If the session conflicts with code/tests/config, current repository evidence wins.
+- Put claims under **Verified State** only when current code/tests/tool evidence supports them.
+- Keep inherited uncertainty under **Assumptions / Risks** until checked.
+- On takeover, compare the freshness anchor/current workspace and re-verify material claims before editing.
+- Current repository evidence wins over session notes.
 
-## Do not duplicate
+## Keep only high-signal state
 
-Do not copy content already represented by specs, plans, ADRs, issues, commits, diffs, tests, or source files. Reference path/identifier instead.
-
-Keep a rejected alternative only when forgetting it would likely repeat an expensive mistake; record one-line reason.
+Reference specs/plans/ADRs/issues/commits/diffs/tests/source by path or identifier instead of copying them. Keep a rejected alternative only when forgetting it would likely repeat an expensive mistake.
 
 Never store:
 
-- Hidden reasoning/chain-of-thought or chat transcript.
+- Hidden reasoning/chain-of-thought or chat transcripts.
 - Secrets, credentials, private keys, or sensitive user data.
-- Large code/tool output already available elsewhere.
-- Historical state no longer relevant to continuation.
+- Large code/tool output available elsewhere.
+- Obsolete history.
 
-## Context budget
+When context is crowded:
 
-When attention becomes crowded:
+1. Keep goal, constraints, interfaces, decisive evidence, decisions, risks, next action.
+2. Replace long outputs with shortest decisive result + source/path.
+3. Drop explored paths that no longer constrain the solution.
+4. Use targeted search/reads instead of broad reloads.
+5. Give subagents task-specific context; merge back compact findings.
+6. Do not reread Plat references still available in context.
 
-1. Keep goal/constraints/interfaces/current failure evidence/decisions/next action.
-2. Replace long tool output with the shortest decisive result plus source/path.
-3. Drop narration and explored paths that no longer constrain the solution.
-4. Use targeted symbol/search/file reads instead of reloading broad directories.
-5. Send subagents only task-specific context and merge back compact findings.
-6. Do not re-read a Plat reference already available in the current context unless material state changed or context compaction removed it.
-7. Load another Plat reference only when a concrete decision needs it.
-
-Do not add a large compression protocol merely to save a few output words; optimize total input + output + rework across the task.
+Optimize total input + output + rework, not compression for its own sake.
 
 ## Completion cleanup
 
-When the task is fully complete, remove the session unless near-term continuation has clear value; otherwise leave only a tiny verified final state. Never let `.plat/session.md` become an append-only diary.
+When fully complete, delete the session unless near-term continuation has clear value; otherwise leave only a tiny verified final state. Never let it become append-only history.
