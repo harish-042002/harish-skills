@@ -8,7 +8,7 @@ Repository/code/tests/specs are durable truth. `.plat/project.md` may cache veri
 
 ## When to create/update
 
-Create session state only when important discoveries would be expensive to rediscover, work spans several steps/boundaries, switching/reset is plausible, or work remains unfinished. Skip tiny one-shot changes. Do not create a project/global profile merely because a session exists.
+Create session state only when important discoveries would be expensive to rediscover, work spans several steps/boundaries, switching/reset is plausible, or work remains unfinished. Skip tiny one-shot changes. Persistent planning/state has a real token and coordination cost; never create it "just in case". Do not create a project/global profile merely because a session exists.
 
 Update only when approach/state materially changes, a slice is verified, a blocker/risk appears, or before a switch/unfinished stop.
 
@@ -55,7 +55,7 @@ When cheap, record branch + HEAD/commit as a freshness anchor.
 
 - Put claims under **Verified State** only when current code/tests/tool evidence supports them.
 - Keep inherited uncertainty under **Assumptions / Risks** until checked.
-- On takeover, compare the freshness anchor/current workspace and re-verify material claims before editing.
+- On takeover, compare the freshness anchor/current workspace, inspect the current diff/worktree when relevant, and re-verify material claims before editing.
 - Current repository evidence wins over session notes.
 - When the developer materially corrects intent, replace stale Goal/Constraints/Decisions/Next entries rather than appending contradictory history. Preserve an old decision only if its rejection still prevents repeated work.
 
@@ -84,3 +84,15 @@ Optimize total input + output + rework, not compression for its own sake.
 ## Completion cleanup
 
 When fully complete, delete the session unless near-term continuation has clear value; otherwise leave only a tiny verified final state. Never let it become append-only history.
+
+
+## Resume fast path
+
+When resuming after compaction/agent switch:
+
+1. read the compact session state if it exists;
+2. inspect current branch/HEAD and the smallest useful diff/worktree summary;
+3. verify only material facts that could have changed;
+4. resume at the recorded next action if evidence still agrees.
+
+Do not replay the whole prior conversation or reinject a long plan every turn.
