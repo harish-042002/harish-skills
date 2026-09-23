@@ -139,6 +139,7 @@ Plat publishes positive results, mixed results, and failures together.
 | Independent pilot mean cost | **-6.8%** | favorable mean, but median was worse |
 | Independent pilot median cost | **+7.3%** | mixed efficiency, no universal cost claim |
 | Structural gate | **305/305** checks, **38/38** mutations, **65** adaptive scenarios | routing/coverage evidence only, not live-agent performance |
+| Orchestration gate | **24** frozen policy cases + **>10,000** exhaustive structured states | protects caps, handoff, parallelism, federation, and circuit breakers; still not a live A/B claim |
 
 The course-correction case in the independent pilot **failed with Plat** and passed without it. That failure is documented rather than hidden, and it directly informed stronger repository-truth and course-correction rules.
 
