@@ -27,7 +27,7 @@ Prefer targeted discovery:
 - Nearby analogous code.
 - Config/environment boundaries only when relevant.
 
-Use symbol/search tooling before broad recursive reading.
+Use symbol/search tooling before broad recursive reading. For many same-shape peers/adapters, derive the comparison matrix from the golden/reference implementation once, then inspect peers against that matrix instead of rediscovering each flow independently.
 
 ## Dependency/source freshness
 
@@ -70,4 +70,4 @@ Stop repository exploration when all are true:
 - the direct verification path is known;
 - another search/read is unlikely to change the decision.
 
-Large repository size alone is not permission for broad reading.
+Large repository size alone is not permission for broad reading. Keep an evidence ledger of accepted facts + pointers during long Research so unchanged large files are not reopened merely to recover context.
