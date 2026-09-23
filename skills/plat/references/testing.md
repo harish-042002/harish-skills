@@ -16,6 +16,8 @@ Run the cheapest check that directly proves the changed behavior, then widen onl
 
 Do not start with an enormous suite when a narrow check can fail faster.
 
+For merge/integration work, prefer: fail-fast syntax/import/static checks -> focused changed-boundary tests -> related suite -> full suite once when blast radius justifies it. If a broad suite fails, baseline **the failing tests** against the clean branch/worktree first; do not rerun the entire baseline suite unless those failures imply broader contamination or final release evidence requires it.
+
 ## Regression-first when practical
 
 For a reproducible behavior change or bug:
