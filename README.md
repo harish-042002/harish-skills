@@ -72,6 +72,32 @@ Short follow-ups such as **"do it"**, **"continue"**, **"still wrong"**, or **"r
 
 <img src="assets/plat-roster.svg" alt="Plat specialist engineering team roster" width="100%" />
 
+## External specialist bench
+
+Plat does **not** try to copy every deep specialist skill into its own hot path. For ordinary work it stays self-contained. For genuinely complex **Deep/Research** tasks, it can discover already-installed skills, select the one that matches the unresolved specialty, consult it with a bounded evidence packet, and integrate the result.
+
+~~~text
+active task
+  ↓
+Plat internal specialist
+  ↓
+still one concrete unresolved specialty?
+  ├─ no  → continue
+  └─ yes → discover installed skills (metadata only)
+             ↓
+          consult one best specialist
+             ↓
+          evidence + confidence
+             ↓
+          P-01 arbitration
+             ↓
+          direct verification
+~~~
+
+External skills are **consultants, not authority**. Current developer intent and current repository/runtime evidence stay above specialist recommendations. Plat does not vote when specialists disagree; it runs the smallest discriminating check and follows the strongest evidence.
+
+Quick and normal Standard tasks should normally invoke **zero external skills**.
+
 ## Compatibility
 
 | Host | Install path supported by installer | Notes |
@@ -107,6 +133,7 @@ The course-correction case in the independent pilot **failed with Plat** and pas
 - **[Benchmarks](docs/BENCHMARKS.md)** — methodology, all current numbers, failure case, next protocol
 - **[Limitations](docs/LIMITATIONS.md)** — evidence gaps, host differences, probabilistic behavior, community validation
 - **[Agent failure modes](skills/plat/references/agent-failure-modes.md)** — concrete behaviors Plat is designed to prevent
+- **[Specialist orchestration](skills/plat/references/orchestration.md)** — external skill discovery, bounded communication, evidence arbitration
 - **[Maintenance protocol](docs/MAINTENANCE.md)** — mandatory market scan → license check → adapt → test → release workflow for Plat changes
 - **[Research log](docs/RESEARCH_LOG.md)** — public sources inspected and which principles were adopted/rejected
 
