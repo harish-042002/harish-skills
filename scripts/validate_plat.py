@@ -80,6 +80,7 @@ for heading in [
     "## Dispatch contract",
     "## Result contract",
     "## Evidence arbitration",
+    "## Integration and output fidelity",
     "## Parallel vs sequential scheduling",
     "## Mutation ownership",
     "## Cost/token/time discipline",
