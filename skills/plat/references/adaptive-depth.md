@@ -119,6 +119,7 @@ Load the **basic domain reference first** when it is small enough to orient the 
 - Security/threat/abuse review -> `security-deep.md`
 - Profiling/capacity -> `performance-deep.md`
 - Complex delivery/rollout/IaC -> `delivery-deep.md`
+- AWS-specific architecture/operations/IAM/serverless/event/data/IaC -> `aws-deep.md`
 - Advanced verification -> `testing-deep.md`
 - RAG/agent/eval/memory economics -> `ai-deep.md`
 
@@ -143,6 +144,10 @@ Load the smallest useful pair, not the whole neighborhood.
 ### Authentication migration
 
 `security.md` + `planning.md` -> add `security-deep.md`; add `api-deep.md` or `delivery-deep.md` only for contract/rollout coexistence concerns.
+
+### AWS serverless duplicate side effect
+
+`backend.md` + `delivery.md` -> if evidence localizes the unresolved boundary to AWS retry/event-source/IAM/service semantics, add `aws-deep.md`; add database/security deep guidance only when that boundary is separately earned.
 
 ## Context ROI
 
