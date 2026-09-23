@@ -207,3 +207,147 @@ External skills are consultants, not authority. Current developer intent and rep
 - A second specialist must be evidence-earned.
 - Parallel specialists require independent work and critical-path benefit.
 - Stop orchestration once another specialist is unlikely to change the decision.
+
+
+## v1.6 — Lead orchestrator, specialist communication, and evidence arbitration
+
+### Problem
+
+The v1.5 federation layer could discover and consult specialist skills, but the orchestration contract was still too loose for Plat's most important job: deciding **who should work, what they are allowed to decide, how specialists communicate, when parallelism is worth the cost, and how conflicting recommendations are resolved without drifting away from the developer's actual request**.
+
+The main risks were:
+
+- uncontrolled specialist fan-out;
+- duplicated repository discovery across agents;
+- specialists implicitly owning architecture/integration decisions;
+- majority-vote behavior when reports conflict;
+- parallel mutation of shared state;
+- repeated specialist rounds on the same unresolved question;
+- invoking every installed skill simply because it is available;
+- context and token growth erasing the speed benefit of specialization.
+
+### Sources inspected first
+
+#### OpenAI Agents SDK — MIT
+
+Relevant material:
+- `docs/multi_agent.md`
+- manager-style agents-as-tools vs handoffs
+
+Adopted principles:
+- keep a lead/manager in control when multiple specialists contribute to one integrated answer;
+- use handoff only when a specialist should actually own the rest of a separable interaction;
+- deterministic/code-style routing is preferable where predictable speed/cost behavior matters;
+- parallelism only helps independent work.
+
+Plat adaptation:
+- manager topology is now the default;
+- true handoff is rare and explicitly gated;
+- P-01 owns integration, arbitration, and final proof.
+
+#### Anthropic managed multi-agent guidance — Apache 2.0 for the claude-api skill
+
+Relevant material:
+- coordinator roster design;
+- context-isolated worker threads;
+- self-contained task briefs;
+- cheaper workers for reading-heavy bounded work;
+- one-level delegation;
+- poor fit for small single-step tasks.
+
+Adopted principles:
+- specialists receive only the paths, constraints, question, and report contract they need;
+- the lead keeps architecture and final synthesis;
+- one-level delegation prevents recursive fan-out;
+- context-heavy reading can be moved to bounded workers when that actually saves lead context;
+- small tasks stay single-agent.
+
+Plat adaptation:
+- explicit dispatch/result contracts;
+- recursive specialists report `Needs: <capability>` back to P-01 instead of spawning another specialist;
+- soft specialist caps and circuit breakers.
+
+#### obra/superpowers — MIT
+
+Relevant material:
+- `subagent-driven-development`;
+- `dispatching-parallel-agents`;
+- fresh-context workers, scoped briefs, review loops, batching same-shape work, model/cost selection.
+
+Adopted principles:
+- isolate independent tasks;
+- batch tiny same-shape work rather than over-dispatching;
+- keep the controller responsible for integration;
+- fresh review is valuable for high-risk work;
+- cheapest model is not always cheapest overall when it causes more turns/rework.
+
+Not adopted:
+- mandatory per-task review/subagent ceremony for ordinary Plat work;
+- permanent ledgers for every task.
+
+Plat adaptation:
+- review and worker use are evidence/risk gated;
+- 2 failed rounds on the same question trigger re-routing instead of another automatic dispatch.
+
+#### LangGraph Swarm — MIT
+
+Relevant material:
+- active-agent routing;
+- explicit handoff tools carrying a task description;
+- shared state vs isolated agent state.
+
+Adopted principles:
+- handoffs should carry an explicit bounded task, not assume shared understanding;
+- shared conversation state can cause unnecessary context exposure;
+- active specialist state should be explicit when handoffs are used.
+
+Plat adaptation:
+- specialists get self-contained minimal briefs;
+- no assumption that subagents inherit the current conversation;
+- P-01 remains the active integration owner by default.
+
+#### Microsoft AutoGen swarm code — MIT for code
+
+Relevant material:
+- handoff target validation;
+- explicit current-speaker state;
+- termination/max-turn concepts.
+
+Adopted principles:
+- specialist transitions need explicit ownership and termination;
+- orchestration requires circuit breakers rather than open-ended loops.
+
+Plat adaptation:
+- explicit specialist limits, same-question circuit breaker, parallel cap, and stop conditions.
+
+#### Trail of Bits skills — CC BY-SA 4.0 documentation
+
+Relevant concept:
+- risk-first analysis and blast-radius awareness.
+
+License decision:
+- concepts only; no copied/adapted text or code is included in Plat.
+
+Plat adaptation:
+- history/blast-radius expansion remains conditional on actual risk and is not part of the normal orchestration path.
+
+### v1.6 design decisions
+
+1. **P-01 is always the engineering lead** for integrated software work.
+2. **Manager topology first**; handoff is only for a truly separable specialist-owned interaction.
+3. **One-level delegation only**; specialists cannot recursively federate skills/agents.
+4. **External skill federation remains metadata-first** and specific specialists outrank broad orchestrators.
+5. **Dispatch packets are bounded** to goal, unresolved question, evidence pointers, scope, constraints, proof, and return format.
+6. **Specialist outputs are evidence packets**, not final decisions.
+7. **No voting**; conflicts are reduced to a concrete proposition and resolved by the smallest discriminating check.
+8. **Parallelism is read-only/independence-first**; shared mutations are sequential unless isolation is explicit.
+9. **Soft budgets:** Quick 0, Standard normally 0, Deep starts at 1, Research up to 3 independent read-only specialists initially.
+10. **Circuit breaker:** two unsuccessful rounds on the same question force re-localization/re-routing.
+11. **Total economics** means tokens + tool calls + duplicate reads + repair turns + integration + wall time.
+
+### Tests added
+
+- deterministic orchestration policy script;
+- 24 frozen orchestration cases covering caps, parallelism, external-skill selection, handoff gating, recursive-delegation prevention, and circuit breakers;
+- skill discovery tests proving a specific specialist outranks a broad orchestrator;
+- structural validation for manager ownership, arbitration, specialist contracts, and stop conditions.
