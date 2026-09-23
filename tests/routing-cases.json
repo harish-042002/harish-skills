@@ -221,6 +221,61 @@
         "correction": "Local",
         "note": "inspect cheap evidence before asking"
       }
+    },
+    {
+      "id": "external-skill-simple-skip",
+      "message": "fix this CSS spacing",
+      "evidence": "Exact component and render proof are known; a frontend-design skill is installed.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "Local",
+        "note": "do not invoke external skill just because it exists"
+      }
+    },
+    {
+      "id": "external-skill-deep-rag",
+      "message": "retrieval quality regressed after index change",
+      "evidence": "Plat AI deep localized the unresolved issue to hybrid retrieval ranking; a matching installed retrieval skill exists.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "consult one matching external specialist after internal localization"
+      }
+    },
+    {
+      "id": "external-skill-conflict",
+      "message": "which recommendation should we follow?",
+      "evidence": "Two specialists disagree; one recommendation conflicts with direct current runtime/repository evidence.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "arbitrate by evidence, not vote"
+      }
+    },
+    {
+      "id": "external-skill-second-earned",
+      "message": "bring in database expertise too",
+      "evidence": "Backend specialist resolved retries; the remaining unresolved invariant is DB isolation/constraint behavior.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "Behavioral",
+        "note": "second specialist is now evidence-earned"
+      }
+    },
+    {
+      "id": "external-skill-no-match",
+      "message": "deeply inspect this vendor-specific edge case",
+      "evidence": "No installed specialist directly matches; repository and official version-specific docs are available.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "fall back to repo/official evidence; do not force irrelevant skill"
+      }
     }
   ]
 }
