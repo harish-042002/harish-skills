@@ -5,16 +5,20 @@ on:
     branches: [main]
     paths:
       - "skills/plat/**"
-      - "tests/routing-cases.json"
+      - "tests/**"
       - "scripts/validate_plat.py"
       - "VERSION"
+      - "install.sh"
+      - "install.ps1"
       - ".github/workflows/validate-plat.yml"
   pull_request:
     paths:
       - "skills/plat/**"
-      - "tests/routing-cases.json"
+      - "tests/**"
       - "scripts/validate_plat.py"
       - "VERSION"
+      - "install.sh"
+      - "install.ps1"
       - ".github/workflows/validate-plat.yml"
 
 jobs:
@@ -22,9 +26,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python scripts/validate_plat.py
-      - run: python tests/test_update_check.py
-      - run: bash -n install.sh
+
+      - name: Structural validation
+        run: python scripts/validate_plat.py
+
+      - name: Runtime unit tests
+        run: python -m unittest discover -s tests -p "test_*.py"
+
+      - name: Shell syntax
+        run: bash -n install.sh
+
+      - name: Build validation snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .ci-snapshot
+          cp -R skills .ci-snapshot/
+          cp -R tests .ci-snapshot/
+          cp -R scripts .ci-snapshot/
+          cp VERSION install.sh install.ps1 .ci-snapshot/
+          cd .ci-snapshot
+          zip -qr ../plat-validation-snapshot.zip .
+
+      - name: Upload validation snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: plat-validation-snapshot
+          path: plat-validation-snapshot.zip
+          retention-days: 2
