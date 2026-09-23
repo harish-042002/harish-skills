@@ -134,7 +134,7 @@ P-01 checks the evidence before accepting the result.
 
 ## Parallel execution
 
-Parallelize only independent work.
+Parallelize only independent work. For broad Research, P-01 orients and partitions first; do not use a general-purpose scout as the orientation step.
 
 1. Resolve shared contracts and ownership first.
 2. Group work by independent problem domain.
@@ -143,7 +143,7 @@ Parallelize only independent work.
 5. Use isolation/worktrees/file ownership when the host supports them.
 6. Reconcile each wave before launching dependent work.
 
-Start with at most **3 concurrent specialists**. More is normally only justified for clearly partitioned Research.
+For Deep work, start with at most **2 concurrent specialists** unless a third clearly shortens a partitioned critical path. For Research, start with **0 during orientation**, then normally 1 batched scout; use 2 concurrently only for genuinely independent partitions. A third is exceptional.
 
 Batch small same-shape independent edits into one worker instead of spawning one worker per file.
 
@@ -163,10 +163,13 @@ Prefer:
 
 - file paths and symbols over pasted files;
 - concise evidence reports over narration;
+- one batched scout for same-shape peers instead of one worker per file/adapter;
 - low-cost models for bounded reading/mechanical work when quality is adequate;
 - stronger models for architecture, subtle debugging, integration, or high-risk review.
 
-Optimize total turns and repair cost, not price per token. A cheap worker that requires several retries is not cheap.
+When the host supports model selection, **name the worker model/tier explicitly on every dispatch**. Do not omit it when omission inherits the lead session's most expensive model. If the host cannot select a cheaper worker model, raise the delegation bar.
+
+Optimize total turns and repair cost, not price per token. A cheap worker that requires several retries is not cheap. A parallel wave that saves wall time but multiplies aggregate model/API time may still be too expensive.
 
 ## Failure and circuit breakers
 
