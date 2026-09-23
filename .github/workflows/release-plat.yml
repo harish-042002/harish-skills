@@ -36,6 +36,8 @@ jobs:
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Validate Plat
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
         run: |
           python scripts/validate_plat.py
           python -m unittest tests/test_update_check.py
@@ -44,10 +46,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          find skills/plat -type d -name __pycache__ -prune -exec rm -rf {} +
+          find skills/plat -type f -name '*.pyc' -delete
           cd skills
           zip -qr ../skill.zip plat
           cd ..
           sha256sum skill.zip > SHA256SUMS.txt
+          if unzip -l skill.zip | grep -E '(__pycache__|\.pyc$)'; then
+            echo "Packaged skill contains Python bytecode/cache files" >&2
+            exit 1
+          fi
 
       - name: Upload packaged skill artifact
         uses: actions/upload-artifact@v4
