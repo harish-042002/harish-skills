@@ -150,3 +150,62 @@ Priority orchestration tasks:
 3. frontend feature with independent rendered QA and backend contract review;
 4. high-risk security/performance review with independent read-only specialists;
 5. negative control where many relevant skills are installed but the task is a trivial local edit.
+
+
+## 5. v1.7 industry hardening rerun — scope fidelity + external-skill trust
+
+This rerun was created from the independent industry benchmark that found two concrete classes of failure in v1.6:
+
+1. **scope substitution / over-engineering** — a bounded correction could still grow into adjacent learning, telemetry, confidence, persistence, or architectural work even when the developer narrowed the request with language such as "only", "no need", or "work on these alone";
+2. **external-skill federation trust** — discovery accepted malformed/non-conformant metadata, followed a symlinked `SKILL.md`, exposed raw instruction-like descriptions, and could allow a broad keyword-stuffed orchestrator to outrank a focused specialist.
+
+v1.7 adds a hot-path **Required / Forbidden / Proof** scope lock, explicit negative-constraint handling, a diff-expansion circuit breaker, correction purge, external-skill trust rules, safe path confinement, Agent Skills metadata validation, metadata-only output, and stronger broad-orchestrator resistance.
+
+### Fresh benchmark rerun
+
+These results are from benchmark lanes separate from the repository's frozen routing/orchestration tests.
+
+| Lane | v1.6 | v1.7 | Result |
+|---|---:|---:|---|
+| External-skill adversarial red-team | 4/12 | **12/12** | All previously observed federation failures closed |
+| 26-scenario industry policy coverage | 24/26 | **26/26** | Runtime license/provenance + standard-validation gaps covered |
+| New scope-fidelity holdout | not present | **20/20** | Explicit narrowing/correction/anti-productization controls present |
+| Comparable 100-point industry-readiness rubric | 64.5 | **75.5** | +11.0 points |
+| Architecture/design score excluding live behavioral-evidence maturity | 77.4% | **90.9%** | Security/trust + scope controls materially improved |
+
+### v1.7 external-skill red-team cases
+
+The 12-case rerun covers:
+
+- valid `>-` folded YAML metadata;
+- valid multi-line quoted descriptions;
+- symlinked `SKILL.md` escape;
+- invalid skill names;
+- directory/name mismatch;
+- descriptions above the 1024-character Agent Skills limit;
+- broad keyword-stuffed orchestrator vs focused specialist;
+- instruction-like/prompt-injection metadata containment;
+- large-body metadata discovery latency/completion;
+- deterministic ordering;
+- malformed-frontmatter fail-closed behavior.
+
+Result: **12/12 passed**.
+
+### v1.7 scope-fidelity holdout
+
+A separate 20-case policy holdout was created around bounded engineering requests and corrections, including:
+
+- exact quantity/state variants with an explicit request to remove confidence gating;
+- engaging/emotional copy that must not imply a learning/telemetry system;
+- named-file / "these alone" constraints;
+- no schema/API/config/refactor/docs expansion;
+- corrections that remove previously invented mechanisms;
+- new-subsystem and future-use-case circuit breakers;
+- proportional review/proof for copy/catalogue-only work;
+- tiny work remaining tiny even when many specialists are installed.
+
+Result: **20/20 documented-policy coverage**.
+
+### Important limitation
+
+The 75.5/100 score is still **not a live coding-agent certification**. The comparable rubric intentionally keeps the behavioral-evaluation category at **1/18** because v1.7 has not yet been run through a repeated fresh-session with-Plat vs no-Plat coding benchmark with external verifiers, token/cost/time capture, and cross-agent variance. The deterministic/security benchmark proves the specific v1.6 failure classes were addressed; it does not prove universal live-agent uplift.
