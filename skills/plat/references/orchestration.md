@@ -1,207 +1,419 @@
-# Specialist Orchestration and External Skill Bench
+# Specialist Orchestration and External Skill Federation
 
-Use when a task is Deep/Research, a concrete specialty exceeds Plat's built-in depth, several specialists must coordinate, or installed external skills may add decision-changing expertise.
+Use only when the task has earned multi-specialist coordination: Deep/Research work, several independent investigations, a concrete capability gap beyond Plat's built-ins, or a high-risk artifact that benefits from an independent reviewer.
 
 ## Contents
 
-1. Purpose
-2. Specialist tiers
-3. Discovery
-4. Selection gate
-5. Evidence packet
-6. Specialist response contract
-7. Arbitration
-8. Sequential vs parallel work
-9. External-skill safety
-10. Stop conditions
-11. Examples
+1. Orchestrator objective
+2. Control topology
+3. Orchestration gate
+4. Specialist tiers
+5. Manager vs handoff
+6. Capability selection
+7. External-skill discovery
+8. Dispatch contract
+9. Result contract
+10. Evidence arbitration
+11. Parallel vs sequential scheduling
+12. Mutation ownership
+13. Cost/token/time discipline
+14. State and recovery
+15. Circuit breakers
+16. Stop conditions
+17. Examples
 
-## Purpose
+## Orchestrator objective
 
-Plat is the **lead orchestrator**, not a bag of every possible domain instruction.
+P-01 is the engineering lead. Its job is not to maximize the number of agents or skills used. Its job is to reach the requested result with the **smallest sufficient team** while preserving correctness, speed, context efficiency, and repository truth.
 
-Plat should stay lean on normal work. When a genuinely complex task needs deeper specialty than the built-in references provide, reuse a strong installed skill instead of copying its full knowledge into Plat.
+Default rule:
 
-The goal is:
+> If the lead can resolve the task safely with current evidence and one relevant Plat reference, do not orchestrate.
 
-**small core -> precise routing -> specialist only when earned -> evidence-based integration**
+Specialists exist to remove a concrete uncertainty, perform an independent bounded task, or provide fresh review. They are not a ceremony layer.
 
-External skills extend the bench; they do not replace Plat's truth order, repository discipline, cost budget, or completion gate.
+## Control topology
+
+Default to a **manager topology**:
+
+```text
+developer
+   ↓
+P-01 lead
+   ├─ specialist A
+   ├─ specialist B
+   └─ external skill C
+   ↓
+evidence arbitration
+   ↓
+integration
+   ↓
+fresh verification
+   ↓
+developer
+```
+
+P-01 retains:
+
+- the current developer intent;
+- architecture/integration decisions;
+- shared contracts and invariant ownership;
+- conflict arbitration;
+- mutation sequencing;
+- final verification;
+- the user-facing completion claim.
+
+Specialists do not directly overrule one another and do not recursively spawn more specialists. If a specialist discovers another capability is needed, it reports **Needs: <capability>** to P-01.
+
+Keep delegation depth to **one level** unless the host itself hides deeper implementation behind a tool. Plat must not create open-ended delegation trees.
+
+## Orchestration gate
+
+Before adding a specialist, identify the unresolved decision in one sentence.
+
+A specialist is earned only when all are true enough:
+
+1. a concrete unresolved question exists;
+2. that question materially affects correctness, risk, architecture, compatibility, or expensive rework;
+3. the candidate specialist has a specific capability advantage over P-01's current context;
+4. the work can be bounded with a clear return contract;
+5. expected value exceeds dispatch/context/integration cost.
+
+Skip orchestration when the task is already localized and direct proof is known.
+
+### Default budgets
+
+These are **soft caps**, not goals:
+
+- **Quick:** 0 specialists.
+- **Standard:** 0 specialists by default; at most 1 bounded consultant when a concrete capability gap blocks progress.
+- **Deep:** start with 1 specialist; add a second only when evidence reveals a second material boundary; normally stop at 3 total.
+- **Research:** up to 3 independent read-only specialists can run in parallel when that clearly shortens the critical path.
+
+A developer saying "use all skills", "go deep", or "bring everyone in" does not remove the evidence gate.
 
 ## Specialist tiers
 
-Use the cheapest sufficient tier:
+Choose the cheapest sufficient tier:
 
-1. **Core Plat routing** - resolve intent, depth, ownership, proof.
-2. **Built-in Plat reference** - first choice for Quick/Standard and most Deep tasks.
-3. **Installed external skill** - when a concrete unresolved specialty needs materially deeper expertise.
-4. **Subagent/parallel specialist** - only when independent investigations can reduce critical path enough to justify coordination.
-5. **External research/docs** - when installed knowledge is absent, stale, version-sensitive, or the user explicitly requests research.
+1. **P-01 + built-in Plat reference** — preferred for most work.
+2. **Installed external skill** — when a matching installed skill has materially deeper specialty.
+3. **Fresh subagent specialist** — when isolated context, independent investigation, or parallel work adds value.
+4. **Independent reviewer/verifier** — after a stable implementation when risk justifies fresh judgment.
+5. **External docs/research** — when installed skills are absent, stale, version-sensitive, or the developer asks for current research.
 
-Do not jump to tier 3+ for ordinary tasks.
+Do not confuse "external skill" with "subagent". A skill is specialist guidance. A subagent is a separate execution context. Plat may use either or both depending on host capabilities.
 
-## Discovery
+## Manager vs handoff
 
-When an external specialist may help, run the bundled deterministic inventory first:
+Prefer **manager-style orchestration** for engineering work: P-01 stays in control and specialists return bounded results.
+
+Use a true handoff only when all are true:
+
+- the host supports handoffs natively;
+- one specialist should own the remainder of a clearly separable interaction;
+- shared integration decisions are not required during that handoff;
+- P-01 can regain control or receive a final report before the overall completion claim.
+
+For normal code changes, migrations, debugging, architecture, and cross-domain feature work, keep P-01 as manager.
+
+Do not hand off merely because a specialist is stronger in one domain.
+
+## Capability selection
+
+Select by the **unresolved question**, not by broad task labels.
+
+Examples:
+
+- "backend task" is too broad;
+- "is retry idempotency broken across workers?" is a useful specialist question;
+- "AI issue" is too broad;
+- "did the index change reduce hybrid retrieval recall?" is useful;
+- "frontend bug" is too broad;
+- "is hydration causing server/client state divergence?" is useful.
+
+Before dispatch:
+
+1. localize the problem as far as cheap evidence allows;
+2. choose the narrowest capability that can answer the remaining question;
+3. prefer one strong specialist over several overlapping specialists.
+
+## External-skill discovery
+
+When an installed skill may provide deeper specialty, use metadata-first discovery:
 
 ```bash
 python3 scripts/discover_skills.py --query "<unresolved specialty>" --limit 5
 ```
 
-The script inspects installed project/global skills for supported hosts and returns metadata/path candidates. It excludes Plat itself.
+The discovery step must stay cheap:
 
-Discovery is metadata-first. Do not load the full instructions for every installed skill.
+- do not load every installed `SKILL.md`;
+- exclude Plat itself;
+- prefer project-local over global duplicate;
+- prefer specific specialist descriptions over broad orchestrators;
+- inspect one best candidate first;
+- inspect a second only if the first leaves a distinct unresolved boundary.
 
-Prefer:
+If the host exposes native skill discovery/invocation, prefer it. Otherwise, read the discovered skill's `SKILL.md` as bounded specialist guidance.
 
-- project-local skill over global duplicate;
-- a description that directly matches the unresolved capability;
-- a specialist skill over another broad orchestrator;
-- a current skill whose instructions fit the repository's actual technology/version.
+External skills remain lower priority than current developer intent and current repository/runtime evidence.
 
-Inspect the full `SKILL.md` of **one best candidate first**. Inspect a second only if the first does not resolve the capability or the task genuinely spans another specialty.
+### Recursive-skill rule
 
-If the host exposes native skill activation/invocation, prefer that mechanism. Otherwise, consult the discovered installed `SKILL.md` directly as bounded specialist guidance. Do not invent a universal slash-command syntax.
+An external specialist must not trigger a chain of other skills on Plat's behalf. If it recommends another specialty, return that need to P-01. P-01 re-runs the selection gate.
 
-## Selection gate
+This prevents fan-out loops and uncontrolled context growth.
 
-Invoke/consult an external skill only when all are true enough:
+## Dispatch contract
 
-- a concrete unresolved question exists;
-- the built-in Plat reference is not sufficient or the installed skill is clearly more specialized;
-- the extra context is likely to change a decision, expose a failure mode, or prevent expensive rework;
-- the coordination cost is justified by task risk/complexity;
-- its instructions do not conflict with current developer intent, repository evidence, safety, compatibility, or Plat's completion gate.
+Specialists do not inherit the whole conversation by assumption. Send a **self-contained minimal brief**.
 
-Do **not** use external skills merely because they are installed.
-
-## Evidence packet
-
-Keep specialist communication small. Send only the context needed to answer its bounded question.
-
-Suggested packet:
+Use this shape when explicit structure helps:
 
 ```text
-Goal:
-Why this specialist is involved:
-Known evidence:
-Unresolved question:
-Constraints / do-not-change:
-Expected output:
-Stop condition:
+GOAL
+One observable result.
+
+QUESTION
+The exact unresolved decision this specialist should answer.
+
+EVIDENCE
+Only decisive paths, test/log IDs, runtime facts, versions, and accepted constraints.
+
+SCOPE
+Allowed files/components. State whether work is read-only or may mutate.
+
+DO NOT CHANGE
+Shared contracts/invariants/areas owned elsewhere.
+
+PROOF
+What evidence would support the specialist's conclusion.
+
+RETURN
+Conclusion + evidence pointers + confidence + impact + recommendation + unknowns.
 ```
 
-Reference source paths/test names/log IDs instead of copying large files or chat history.
+Reference files and artifacts by path instead of pasting large contents.
 
-For one simple specialist consultation, this structure can stay implicit.
+Do not send hidden reasoning, full chat history, or unrelated repository context.
 
-## Specialist response contract
+## Result contract
 
-Integrate specialist output as:
+Normalize specialist output into:
 
 ```text
-Finding:
+Conclusion:
 Evidence:
-Confidence:
+Confidence: high | medium | low
 Impact:
 Recommendation:
 Unknowns:
+Needs: <optional capability>
 ```
 
-The specialist should return evidence and domain judgment, not take ownership of the whole task.
+A specialist's confidence is not proof. P-01 checks whether the evidence actually supports the conclusion.
 
-A specialist recommendation without evidence is guidance, not authority.
+For implementation workers also require:
 
-## Arbitration
+```text
+Changed:
+Verified:
+Unverified:
+```
 
-Plat/P-01 owns final integration.
+A worker saying "done" never closes the parent task by itself.
 
-When specialists disagree, **do not vote**. Rank evidence:
+## Evidence arbitration
 
-1. direct current runtime/test/data/repository evidence;
-2. authoritative documentation for the actual installed version/contract;
-3. current local analogous implementation/history that explains the boundary;
-4. specialist reasoning supported by evidence;
-5. generic best practice/model memory.
+Specialists advise; evidence decides.
 
-If disagreement remains material, run the **smallest discriminating check**. Ask the developer only when evidence cannot cheaply resolve a decision that materially changes behavior, risk, cost, or compatibility.
+Rank evidence approximately:
 
-Never let an external skill override a newer developer correction or authoritative repository evidence.
+1. direct current runtime/test/data behavior;
+2. current repository code/contracts/types/schema/config for the actual version;
+3. authoritative documentation for the installed/current version;
+4. current local analogous implementation and relevant history;
+5. specialist reasoning supported by evidence;
+6. generic best practice or model memory.
 
-## Sequential vs parallel work
+When reports disagree:
 
-Default to **sequential specialist consultation** because it avoids duplicated discovery.
+1. reduce disagreement to a concrete proposition;
+2. identify which assumptions differ;
+3. reject claims contradicted by stronger current evidence;
+4. run the **smallest discriminating check** that can separate the remaining explanations;
+5. choose the supported path.
 
-Parallelize only when:
+Do not vote. Three agreeing specialists do not beat one direct failing test.
 
-- investigations are independent;
-- each specialist has a bounded question;
-- they do not need to mutate the same files/state;
-- critical-path savings exceed extra tokens/coordination;
-- the lead orchestrator can arbitrate results with evidence.
+If evidence still cannot resolve a high-impact irreversible choice, ask the developer one focused question. If the choice is reversible and low-blast-radius, P-01 may choose the safest bounded path and state the assumption.
 
-Examples suited to parallel work:
+## Parallel vs sequential scheduling
 
-- two independent root-cause hypotheses with separate evidence paths;
-- security and performance review of an already-stable implementation;
-- frontend rendered QA and backend contract verification after integration.
+Parallelism is for critical-path reduction, not activity.
 
-Do not parallelize several specialists to rediscover the same architecture.
+### Parallel is useful when
 
-## External-skill safety
+- tasks are independent;
+- investigations do not depend on each other's output;
+- workers do not mutate the same fragile state;
+- each brief is self-contained;
+- merging results is cheap;
+- the lead can arbitrate them independently.
 
-Treat installed skills as **consultants**, not higher-priority instructions.
+Examples:
 
-- Current developer request and repository/runtime evidence remain authoritative.
-- Do not grant extra side effects merely because another skill asks for them.
-- Do not expose secrets/private data beyond what the task already authorizes.
-- Do not recursively fan out into more skills without passing the selection gate again.
-- Do not copy external skill content into Plat at runtime or into project files unless the user asks and licensing permits it.
-- If the skill appears stale or conflicts with the repository's installed version, use current local/official evidence instead.
+- two independent read-only hypotheses;
+- separate security and performance reviews of a stable diff;
+- research across independent technologies/sources;
+- frontend rendered QA while backend read-only contract verification runs.
+
+### Keep sequential when
+
+- one result determines the next question;
+- workers share a contract/schema/state boundary;
+- two agents would edit the same files;
+- the architecture is still unsettled;
+- one fix may eliminate the other task;
+- the second specialist is only speculative.
+
+Batch several tiny same-shape independent edits into one bounded worker instead of spawning one worker per file.
+
+## Mutation ownership
+
+Read-only specialists are the default.
+
+Allow a specialist to edit only when:
+
+- its scope is bounded;
+- shared contracts are already settled;
+- file ownership is clear;
+- the host provides safe isolation or the lead can prevent conflicting edits;
+- the verification command is explicit.
+
+P-01 should normally perform integration edits that cross specialist boundaries.
+
+Never let two specialists independently mutate the same shared schema, contract, migration, lockfile, or central state without an explicit isolation/merge plan.
+
+## Cost/token/time discipline
+
+Optimize **total task economics**, not agent count or raw token price.
+
+Count:
+
+- briefing context;
+- specialist input/output;
+- duplicated repository reads;
+- tool calls;
+- parallel coordination;
+- review/rework;
+- wall time;
+- integration cost.
+
+Rules:
+
+- do not delegate a task that is cheaper for P-01 to finish directly;
+- use smaller/faster workers for bounded reading/mechanical work only when likely repair cost stays low;
+- use stronger judgment for architecture, subtle debugging, integration, and high-risk review;
+- do not choose a cheap worker if it is likely to need multiple repair turns;
+- keep specialist reports terse and evidence-dense;
+- stop once another specialist is unlikely to change the decision.
+
+## State and recovery
+
+Do not create orchestration state for one specialist.
+
+For 2+ specialists or a long-running coordinated task, keep a compact board in current context or `.plat/session.md`:
+
+```text
+Goal:
+Open decision:
+A — question — status
+B — question — status
+Accepted evidence:
+Rejected/why:
+Next proof:
+```
+
+Keep it under ~30 lines. It is a recovery map, not a transcript.
+
+On resume, verify current branch/diff/runtime state before trusting old specialist conclusions.
+
+## Circuit breakers
+
+Prevent orchestration loops:
+
+- **One-level delegation:** specialists report needs back to P-01 rather than spawning specialists recursively.
+- **Same-question limit:** after 2 unsuccessful specialist/fix rounds on the same unresolved question, stop and re-localize the problem or change the hypothesis.
+- **Specialist cap:** normally no more than 3 specialists for one Deep decision without a new evidence-backed reason.
+- **Review cap:** do not keep adding reviewers after direct verification and one risk-appropriate independent review are clean.
+- **Parallel cap:** start with at most 3 concurrent independent specialists; widen only for clearly partitioned Research.
+- **Stale-report rule:** if the implementation materially changes after a report, do not treat that report as proof of the new state.
+
+A circuit breaker triggers **re-routing**, not "try another specialist".
 
 ## Stop conditions
 
-Stop adding specialists when:
+End orchestration when:
 
-- the unresolved question is answered;
-- one supported approach clearly fits current evidence;
+- the unresolved decision is answered by strong evidence;
+- ownership and implementation path are clear;
 - direct verification is known;
+- required independent reviews are complete;
 - another specialist is unlikely to change the decision;
 - coordination cost exceeds expected value.
 
-The best orchestration often uses **zero external skills**.
+Then integrate, verify, and answer the developer. Do not narrate the internal team unless it materially helps.
 
 ## Examples
 
+### Simple CSS issue
+
+A design skill and three frontend skills are installed.
+
+Ownership and render proof are already clear.
+
+Route: **Quick -> no specialist -> edit -> render proof.**
+
 ### Deep RAG regression
 
-Evidence localizes the problem to retrieval ranking. Plat's `ai-deep.md` provides the pipeline/eval frame, but an installed `hybrid-search-implementation` or `vector-index-tuning` skill directly matches the unresolved retrieval mechanism.
+Internal AI analysis localizes regression to hybrid retrieval ranking. An installed retrieval-tuning skill directly matches that unresolved mechanism.
 
 Route:
 
 ```text
-P-01 -> AI deep -> discover installed skills
-     -> consult one retrieval specialist
-     -> validate recommendation against current index/version/eval set
-     -> implement -> frozen eval proof
+P-01
+ -> ai-deep
+ -> discover installed skill metadata
+ -> consult one retrieval specialist
+ -> validate against current index/version/eval set
+ -> implement
+ -> frozen eval proof
 ```
 
 Do not load every AI skill.
 
-### Distributed duplicate writes
+### Duplicate writes under retries
 
-Internal evidence already shows retry/idempotency behavior is the main cause.
+P-01 localizes the issue to cross-worker idempotency.
 
-Use Plat backend + backend-systems first. An installed database specialty is not consulted until evidence shows DB isolation/constraints are the unresolved invariant boundary.
+First specialist: distributed backend.
 
-### Simple CSS correction
+If that report shows the remaining invariant depends on DB isolation/constraints, a database specialist becomes evidence-earned.
 
-A world-class frontend-design skill is installed.
-
-Do not invoke it. The target, expected visual behavior, and render proof are already clear; stay Quick.
+Do not load database depth before that boundary is known.
 
 ### Conflicting specialists
 
-Security specialist recommends server-side token storage. Framework specialist recommends a browser storage pattern that conflicts with the application's threat model.
+Security specialist recommends server-owned token handling. Framework specialist recommends a client storage pattern.
 
-Do not choose by popularity. Use current security requirements/runtime architecture and the narrowest threat/compatibility evidence to arbitrate.
+P-01 compares both to the actual threat model, current runtime boundary, and framework version. It runs the smallest compatibility/threat check and chooses from evidence.
+
+No vote.
+
+### Independent reviews
+
+A high-risk implementation is stable. Security and performance concerns are independent and read-only.
+
+Run both reviews in parallel, then P-01 de-duplicates findings, checks each against current code, applies only supported changes, and runs final verification.
