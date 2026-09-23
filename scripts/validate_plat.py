@@ -141,7 +141,7 @@ if EFFICIENCY.exists():
         "lead-first orientation",
         "golden-reference mapping pattern",
         "failing tests",
-        "worker model/tier explicitly",
+        "every dispatch names a model/tier explicitly",
         "aggregate model/api time",
         "afk / report mode",
     ]:
