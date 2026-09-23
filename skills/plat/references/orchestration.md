@@ -14,13 +14,14 @@ Use only when the task has earned multi-specialist coordination: Deep/Research w
 8. Dispatch contract
 9. Result contract
 10. Evidence arbitration
-11. Parallel vs sequential scheduling
-12. Mutation ownership
-13. Cost/token/time discipline
-14. State and recovery
-15. Circuit breakers
-16. Stop conditions
-17. Examples
+11. Integration and output fidelity
+12. Parallel vs sequential scheduling
+13. Mutation ownership
+14. Cost/token/time discipline
+15. State and recovery
+16. Circuit breakers
+17. Stop conditions
+18. Examples
 
 ## Orchestrator objective
 
@@ -248,6 +249,24 @@ When reports disagree:
 Do not vote. Three agreeing specialists do not beat one direct failing test.
 
 If evidence still cannot resolve a high-impact irreversible choice, ask the developer one focused question. If the choice is reversible and low-blast-radius, P-01 may choose the safest bounded path and state the assumption.
+
+## Integration and output fidelity
+
+Specialist work is internal support. P-01 must rebuild the final action/output from the **latest developer request + accepted evidence**, not concatenate specialist reports.
+
+Before finishing, check:
+
+- Did we deliver the exact requested behavior/artifact rather than a nearby improvement?
+- Did a specialist expand scope beyond what the developer asked?
+- Did an internal recommendation silently change UX, API shape, persistence, dependencies, architecture, or compatibility?
+- Did we implement the feature, or only produce analysis about how to implement it?
+- Is every material completion claim supported by fresh evidence after integration?
+
+For Build/Design/Migrate tasks, the final artifact is the requested working change, not the orchestration discussion.
+
+Reject specialist suggestions that are interesting but not required for the requested outcome unless they prevent a concrete correctness/security/compatibility failure.
+
+Do not expose internal team chatter in the final response. Report the integrated result, proof, and only material residual risk.
 
 ## Parallel vs sequential scheduling
 
