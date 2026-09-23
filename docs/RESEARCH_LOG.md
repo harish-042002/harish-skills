@@ -351,3 +351,55 @@ Plat adaptation:
 - 24 frozen orchestration cases covering caps, parallelism, external-skill selection, handoff gating, recursive-delegation prevention, and circuit breakers;
 - skill discovery tests proving a specific specialist outranks a broad orchestrator;
 - structural validation for manager ownership, arbitration, specialist contracts, and stop conditions.
+
+
+## 2026-09-23 — Enforced maintenance evidence gate
+
+Evidence ID: `2026-09-23-maintenance-evidence-gate`
+
+### Problem
+
+Plat already required maintainers to scan relevant public skills/projects, check licensing, adapt the useful principle, and test the result before material changes. That rule lived only in documentation, so a future change could silently skip the research/license/test record while still passing CI.
+
+### Sources inspected first
+
+#### NVIDIA/skills — Apache-2.0 source code; CC-BY-4.0 documentation/skills
+
+Inspected repository validation/evaluation structure, per-skill `BENCHMARK.md` evidence/freshness language, and publication/readiness checks that separate deterministic validation from stronger behavioral claims.
+
+Adopted principle: validation evidence should be explicit, refreshable, and machine-checkable when behavior changes. No NVIDIA skill text or code is copied into Plat.
+
+#### jscraik/Agent-Skills — Apache-2.0
+
+Inspected changed-surface validation, proof taxonomy separating structural proof from behavioral/outcome proof, and deterministic promotion/audit gates.
+
+Adopted principle: CI should validate the evidence appropriate to the surface that changed. Rejected the larger SDK/command surface because it adds ceremony Plat does not need.
+
+#### gohypergiant/agent-skills — Apache-2.0
+
+Inspected skill audit workflows, eval co-maintenance, verification-report discipline, and change-history practices for behavior-bearing instructions.
+
+Adopted principle: behavior-bearing skill updates should carry explicit verification evidence and keep evaluation assets aligned. Rejected per-skill changelog machinery for this single-skill repository.
+
+### Plat adaptation
+
+Added `scripts/maintenance_gate.py`, `docs/maintenance-evidence.json`, and deterministic tests. Material changes to `skills/plat/**`, repository validation scripts, installers, or Plat CI/release workflows now require the same change set to update both the machine-readable maintenance evidence record and this human research log.
+
+The gate requires at least two inspected public sources, explicit license/reuse classification, coverage of every material changed file, and recorded tests. Unknown/no-license sources can only be recorded as principle-only inspiration.
+
+The gate stays completely outside the normal Plat runtime, so ordinary engineering requests do **not** pay a market-research token/tool cost.
+
+### Tests added
+
+- 10 maintenance-gate unit tests;
+- docs-only negative control;
+- missing-evidence-file failure;
+- fewer-than-two-sources failure;
+- missing/invalid license-reuse failure;
+- unknown-license copy rejection;
+- uncovered material-file failure;
+- missing-test-record failure;
+- research-log cross-check failure;
+- `.github` path-normalization regression test.
+
+The first adversarial run exposed a real normalization bug where `.github/...` lost its leading dot; the implementation was corrected before repository integration.
