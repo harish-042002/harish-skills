@@ -6,16 +6,17 @@ Use when the latest developer message is short, referential, ambiguous, correcti
 
 1. Routing objective
 2. Active-intent evidence
-3. Vague-message resolution
-4. Confidence gate
-5. Fast path
-6. Correction severity
-7. Dependency invalidation
-8. Re-route protocol
-9. Repository inspection budget
-10. Specialist budget
-11. Stop conditions
-12. Examples
+3. Scope lock and negative constraints
+4. Vague-message resolution
+5. Confidence gate
+6. Fast path
+7. Correction severity
+8. Dependency invalidation
+9. Re-route protocol
+10. Repository inspection budget
+11. Specialist budget
+12. Stop conditions
+13. Examples
 
 ## Routing objective
 
@@ -43,6 +44,41 @@ Resolve the current task from the strongest available evidence in this order:
 
 Do not let an older plan outrank a newer correction. Do not let a profile infer product requirements.
 
+## Scope lock and negative constraints
+
+Before implementation, reduce the latest request to a compact contract:
+
+```text
+Required: explicit behaviors/artifacts/quantities to deliver
+Forbidden: explicit negatives and corrected assumptions
+Proof: narrow evidence that demonstrates Required without violating Forbidden
+```
+
+Treat **only, alone, just, no need, do not, don't, keep unchanged, these alone, no X** as binding negative constraints. They outrank attractive adjacent improvements and earlier inferred requirements.
+
+Do not infer a new product capability from an adjective. Requests for copy that is more engaging, natural, emotional, or high-return do not by themselves authorize learning systems, response telemetry, confidence models, persistence, new selectors, analytics, or generalized configuration.
+
+A supporting edit outside the obvious target is allowed only when current repository evidence shows the requested behavior cannot work correctly without it. Make the smallest dependent edit and keep unrelated cleanup separate.
+
+### Diff-expansion circuit breaker
+
+Re-check the scope contract **before continuing** when any of these occur:
+
+- a new subsystem/concept appears that was not Required;
+- changed files spread beyond the owning path + direct tests/proof;
+- a new dependency/schema/event/telemetry/config mechanism is introduced;
+- the implementation starts solving a future use case rather than the current one;
+- the developer explicitly said to work on named items/files "alone".
+
+The check is internal and cheap: identify which Required item forces the expansion. If none does, do not make that change.
+
+### Correction purge
+
+When a newer correction says an earlier mechanism is unnecessary or wrong, do not merely stop adding to it. Inspect the current diff and remove additions that exist **only** to support the rejected assumption, while preserving independent valid work.
+
+Example: the developer changes the requirement to "exactly five variants per state; confidence no longer gates copy; work on these alone." Keep the five-variant/state work, remove newly introduced confidence-gating support that only existed for the old model, and do not add unrelated learning/telemetry behavior unless separately requested.
+
+
 ## Vague-message resolution
 
 Treat short messages such as these as likely **continuations**, not automatically new tasks:
@@ -66,7 +102,7 @@ Before asking a question, use this ambiguity ladder:
 4. check whether one interpretation clearly dominates;
 5. only then ask one focused question if materially different interpretations remain.
 
-A vague message can safely inherit **scope**, **artifact**, and **accepted constraints** from the active task. It must not inherit assumptions that the developer already corrected.
+A vague message can safely inherit **scope**, **artifact**, and **accepted constraints** from the active task. It must not inherit assumptions the developer already corrected, and it must preserve explicit negative constraints from the latest correction.
 
 ## Confidence gate
 
@@ -130,7 +166,7 @@ Examples:
 - old clients must remain compatible;
 - notification should schedule from a different event.
 
-Action: revisit affected implementation, tests, and nearby contract/failure paths.
+Action: revisit affected implementation, tests, and nearby contract/failure paths. Purge current-diff machinery that exists only for behavior the developer just rejected.
 
 ### Level 3 — Structural
 
@@ -143,7 +179,7 @@ Examples:
 - repository evidence reveals the planned local cache must use an existing shared cache;
 - user changes the actual product audience or primary workflow.
 
-Action: invalidate dependent decisions and re-run Interpret → Inspect → Route for the affected artifact/subsystem.
+Action: invalidate dependent decisions and current-diff additions built on them, then re-run Interpret → Inspect → Route for the affected artifact/subsystem.
 
 ## Dependency invalidation
 
