@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "source": "single observed pre-v1.9 DAY1 cross-branch adapter mapping session",
+  "comparable_live_benchmark": false,
+  "metrics": {
+    "cost_usd": 29.94,
+    "api_model_time_seconds": 2993,
+    "active_time_seconds": 452,
+    "cache_read_tokens": 7400000,
+    "cache_write_tokens": 187000,
+    "output_tokens": 544,
+    "general_purpose_subagent_share_pct": 91
+  },
+  "candidate_targets": {
+    "preserve_report_correctness": true,
+    "cost_reduction_pct_min": 30,
+    "cache_read_reduction_pct_min": 30,
+    "aggregate_api_time_reduction_pct_min": 30,
+    "broad_full_suite_runs_max": 1,
+    "subagent_share_pct_target_max": 50,
+    "wall_time_regression_pct_max": 10
+  },
+  "caveat": "Targets are not achieved claims. Re-run with matched repository/model/host/settings and >=3 repetitions per arm."
+}
