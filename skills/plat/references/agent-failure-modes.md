@@ -41,6 +41,8 @@ Plat exists to reduce **total work required to reach a correct engineering resul
 | Parallel mutation collision | Multiple agents edit shared contracts/state concurrently | Read-only parallelism by default; shared mutations sequential |
 | Recursive delegation | Specialist spawns more specialists and loses cost/ownership control | One-level delegation; capability needs return to P-01 |
 | Report concatenation | Final answer mirrors conflicting specialist chatter instead of user request | P-01 re-integrates from latest request + accepted evidence |
+| Scope substitution | Bounded request becomes a richer adjacent product/architecture change | Required/Forbidden/Proof scope lock + diff-expansion circuit breaker |
+| Correction accumulation | Agent accepts a correction but leaves machinery created for the rejected assumption | Correction purge: remove dependent current-diff additions before continuing |
 
 ## Routing errors
 
@@ -57,6 +59,17 @@ Control: choose the **minimum sufficient engineering depth**. Output preference 
 A task is under-escalated when local reasoning ignores a material boundary such as concurrency, public compatibility, security, migration overlap, process death, distributed state, or probabilistic AI behavior.
 
 Control: escalate only on evidence-backed risk triggers.
+
+### Scope substitution and feature inflation
+
+A task has drifted when the agent implements something plausibly useful but materially different from what the developer asked. Common signals:
+
+- copy/catalogue changes grow into learning, telemetry, confidence or persistence systems;
+- a named-file/local request spreads into selectors, schemas, services, docs, or generalized abstractions without a necessary dependency;
+- words such as "only", "alone", "no need", or "keep X unchanged" are treated as suggestions instead of constraints;
+- a correction is satisfied by layering new behavior on top of old agent-invented machinery rather than removing the invalidated machinery.
+
+Control: lock Required/Forbidden/Proof before edits, use the diff-expansion circuit breaker during implementation, and run correction purge whenever the developer invalidates an assumption.
 
 ## Repository/context errors
 
