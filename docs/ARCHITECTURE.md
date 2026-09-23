@@ -68,21 +68,76 @@ Plat contains focused guidance for repository understanding, debugging, system d
 
 Deep references are intentionally lazy-loaded. The full library is not a normal context path.
 
-## Specialist federation
+## Specialist federation and orchestration
 
-Plat uses a tiered capability model:
+Plat uses a lead-controlled capability model:
 
-1. core router;
-2. built-in Plat reference;
-3. installed external skill when a concrete deeper specialty remains unresolved;
-4. parallel/subagent specialists only when independent work justifies coordination;
-5. external research/docs when installed knowledge is absent or version-sensitive.
+1. P-01 + built-in Plat reference;
+2. installed external skill when one concrete deeper specialty remains unresolved;
+3. fresh subagent specialist when isolated context/parallel investigation has clear value;
+4. independent reviewer/verifier when risk justifies fresh judgment;
+5. current external docs/research when installed knowledge is absent or version-sensitive.
 
-The orchestrator discovers installed skills **metadata-first** rather than loading every skill body. It consults one best candidate first. Communication is bounded to the current goal, known evidence, unresolved question, constraints, expected output, and stop condition.
+### Manager topology by default
 
-Specialists return domain findings with evidence/confidence. P-01 owns final integration. Conflicts are resolved by current runtime/repository evidence and the smallest discriminating check, not by vote or specialist popularity.
+P-01 stays responsible for developer intent, architecture/integration, shared contracts, arbitration, final verification, and the user-facing answer.
 
-This keeps Plat extensible without turning the always-loaded core into a copy of every domain skill.
+```text
+developer
+   ↓
+P-01
+   ├─ specialist A ─┐
+   ├─ specialist B ─┼─> evidence arbitration -> integration -> proof
+   └─ external skill┘
+```
+
+A true handoff is used only when the host supports it and one specialist should own a genuinely separable interaction. Engineering work that crosses files, contracts, or domains remains manager-led.
+
+### One-level delegation
+
+Specialists never recursively assemble their own Plat team. If another capability is needed, the specialist reports `Needs: <capability>` to P-01, which re-runs the selection gate.
+
+This keeps delegation depth, permissions, and context cost visible.
+
+### Communication contract
+
+Each specialist receives only:
+
+- observable goal;
+- exact unresolved question;
+- decisive evidence pointers;
+- read/write scope;
+- constraints/do-not-change boundaries;
+- expected proof;
+- concise return schema.
+
+Specialists return conclusion, evidence, confidence, impact, recommendation, unknowns, and any further capability need.
+
+### Evidence arbitration
+
+P-01 never chooses by majority vote.
+
+Evidence order is approximately:
+
+1. direct current runtime/test/data behavior;
+2. current repository code/contracts/config for the actual version;
+3. authoritative version-correct documentation;
+4. current analogous implementation/history;
+5. specialist reasoning supported by evidence;
+6. generic best practice.
+
+Conflicts are reduced to one concrete proposition and resolved with the smallest discriminating check. One direct failing test outweighs several unsupported specialist opinions.
+
+### Budgets and circuit breakers
+
+- Quick: 0 specialists.
+- Standard: normally 0; at most one bounded consultant for a real capability gap.
+- Deep: start with one; add a second only when evidence exposes a second material boundary; normally cap at three.
+- Research: up to three independent read-only specialists initially.
+- Shared mutations stay sequential unless explicit isolation exists.
+- Two unsuccessful specialist rounds on the same unresolved question force re-localization/re-routing instead of another automatic dispatch.
+
+The orchestrator discovers installed skills **metadata-first** and prefers a specific specialist over a broad orchestrator. This keeps Plat extensible without turning the hot path into a copy of every skill.
 
 ## Truth order
 
