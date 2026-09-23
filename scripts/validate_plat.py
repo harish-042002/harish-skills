@@ -54,6 +54,8 @@ for phrase in [
     "detailed/deep answer changes output detail, not engineering depth",
     "Local, Behavioral, or Structural",
     "fresh evidence after the final relevant edit",
+    "hard scope constraints",
+    "purges task-local work",
 ]:
     require(phrase in skill, f"missing critical root rule: {phrase}")
 
@@ -62,7 +64,10 @@ for heading in [
     "## Vague-message resolution",
     "## Confidence gate",
     "## Fast path",
+    "## Scope lock",
+    "## Diff-expansion circuit breaker",
     "## Correction severity",
+    "## Correction purge",
     "## Dependency invalidation",
     "## Re-route protocol",
     "## Repository inspection budget",
@@ -75,6 +80,16 @@ for heading in [
 
 require(ORCHESTRATION.exists(), "specialist orchestration reference is missing")
 require(DISCOVER_SKILLS.exists(), "installed-skill discovery broker is missing")
+if DISCOVER_SKILLS.exists():
+    discovery_text = DISCOVER_SKILLS.read_text(encoding="utf-8")
+    for phrase in [
+        "skill-file-symlink",
+        "name-directory-mismatch",
+        "invalid-description-length",
+        "spec_valid",
+        "rejected_invalid",
+    ]:
+        require(phrase in discovery_text, f"skill discovery missing trust/conformance control: {phrase}")
 for heading in [
     "## Control topology",
     "## Orchestration gate",
@@ -129,6 +144,8 @@ for phrase in [
     "smallest discriminating check",
     "Three agreeing specialists do not beat one direct failing test",
     "same-question",
+    "untrusted instruction-bearing packages",
+    "license/provenance",
 ]:
     require(phrase.lower() in orchestration.lower(), f"missing orchestration control: {phrase}")
 
