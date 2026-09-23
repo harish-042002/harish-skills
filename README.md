@@ -51,7 +51,8 @@ $installer = Join-Path $env:TEMP 'plat-install.ps1'
 Invoke-WebRequest `
   -Uri 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1' `
   -OutFile $installer `
-  -TimeoutSec 60
+  -TimeoutSec 60 `
+  -ErrorAction Stop
 & $installer
 ~~~
 
