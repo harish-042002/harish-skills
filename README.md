@@ -6,7 +6,7 @@
 
 **Minimum sufficient engineering depth for AI coding agents.**
 
-**v1.8.0 · adaptive depth · scope fidelity · specialist orchestration · AWS deep · proof-first execution**
+**v1.9.0 · adaptive depth · scope fidelity · research economics · specialist orchestration · AWS deep · proof-first execution**
 
 Plat is an engineering control plane for AI coding agents. It helps an agent understand the real task, keep the requested scope intact, choose the smallest sufficient reasoning depth, load only the engineering knowledge it actually needs, reuse repository truth, and prove the result before calling the work complete.
 
@@ -183,7 +183,19 @@ Plat includes a progressively loaded engineering knowledge layer instead of load
 
 The point is not to create more “agents.” The point is to make the right engineering knowledge available **only when the current unresolved boundary needs it**.
 
-### 4. AWS Deep
+### 4. Research economics
+
+For broad repository mapping, audits, and AFK report tasks, Plat now optimizes both **correctness and total task economics**.
+
+The lead orients first, reconstructs a golden/reference flow once, derives a fixed comparison matrix, then inspects peers/adapters against that matrix. It avoids sending a general-purpose subagent to rediscover the repository before the work is partitioned.
+
+Research defaults to **0 specialists during orientation**, then normally 1 batched scout or 2 genuinely independent read-only scouts. When the host supports model selection, bounded search/mechanical workers should use the lowest adequate tier instead of silently inheriting the lead's most expensive model.
+
+Verification follows the same economy rule: focused changed-boundary tests first; if a broad suite fails, compare the **failing tests** against the clean baseline instead of rerunning the entire baseline suite.
+
+The v1.9 Research-economics benchmark records one observed pre-v1.9 session as a baseline and publishes explicit rerun targets. Those targets are not counted as achieved until matched repeated live trajectories are run.
+
+### 5. AWS Deep
 
 AWS is now a first-class deep specialist, but merely mentioning AWS does **not** force Deep mode.
 
@@ -319,7 +331,8 @@ Plat publishes positive results, mixed results, failures, and evidence gaps toge
 
 | Evidence | Result | What it means |
 | --- | --- | --- |
-| Current v1.8 release validation | **41/41** Python tests · **34** routing cases · structural + maintenance gates PASS | current package/release health; not live-agent superiority |
+| v1.9 Research economics | lead-first Research · explicit worker-tier rule · failing-test baseline strategy · AFK/report economy | behavior controls and rerun protocol; savings targets are not yet achieved claims |
+| Current release validation | CI structural + unit + maintenance gates | package/release health; not live-agent superiority |
 | v1.8 behavioral-eval maturity | **8/18** | credible harness and frozen cases exist; fresh repeated live A/B results still missing |
 | Current industry/evaluation-maturity rubric | **82.5/100** | architecture/evidence maturity only; not real-task accuracy or a live success rate |
 | v1.7 external-skill red-team | **12/12** after **4/12** on v1.6 | discovered federation failures were closed |
