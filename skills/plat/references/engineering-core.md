@@ -15,6 +15,7 @@ Never improve a lower priority by silently damaging a higher one.
 
 ## Before coding
 
+- Translate the latest request into **MUST / MUST NOT / PRESERVE / PROOF** when scope could drift. Explicit exclusions ("only", "alone", "no X", "do not touch Y") are hard requirements.
 - Define the observable success condition and meaningful acceptance cases.
 - Find the owning boundary: UI, application/service, domain, persistence, infrastructure, or external system.
 - Search for existing implementation patterns before inventing another.
@@ -64,8 +65,10 @@ Do not complicate five-item code to improve an irrelevant Big-O term while ignor
 
 ## Scope discipline
 
-- Keep the patch aligned with the task.
-- Refactor adjacent code only when needed for correctness, safe implementation, or substantial simplification.
+- Keep the patch aligned with the exact requested delta, not the broader product idea it resembles.
+- Never invent new product semantics (modes, confidence tiers, stages, learning signals, telemetry, persistence, fallbacks) because they seem useful. Add them only when explicitly requested or mechanically required by current contracts.
+- Treat unexpected diff expansion as a circuit breaker: if a localized request starts crossing subsystems or adding new behavior dimensions, stop and prove why each extra surface is causally required before continuing.
+- Refactor adjacent code only when needed for correctness or safe implementation of the requested behavior. "While here" cleanup is separate work.
 - Separate broad cleanup from behavior changes when mixing them harms review or rollback.
 - Avoid speculative extension points, wrapper-on-wrapper layers, one-use configuration systems, and future-proofing without a current requirement.
 - Add an extension point when a real second use or near-certain requirement exists.

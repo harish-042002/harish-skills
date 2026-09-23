@@ -59,3 +59,20 @@ External skills and subagents can add domain depth, but they also add coordinati
 Plat therefore cannot assume that an installed skill is correct merely because it is specialized. P-01 must validate specialist claims against current repository/runtime evidence and actual installed versions.
 
 Multi-agent speedups depend on real independence. Parallelizing coupled work can increase tokens, duplicate discovery, and create conflicting mutations. The v1.6 orchestration policy limits fan-out, but live multi-agent A/B evidence is still pending.
+
+
+## v1.7 evidence boundary
+
+v1.7 now has strong deterministic and adversarial evidence for scope-fidelity controls and installed-specialist trust boundaries. The unchanged external red-team passes 12/12 and the independent scope-policy suite passes 24/24.
+
+This still does **not** prove that Plat v1.7 improves real coding outcomes on average. Missing evidence includes:
+
+- repeated fresh-session v1.7 vs no-Plat/prior-Plat execution;
+- current trigger activation precision/recall across a realistic positive/negative prompt set;
+- current token/tool-call/repair-turn/wall-time distributions;
+- cross-host/model behavioral replication;
+- task-level negative-delta analysis.
+
+External-skill validation proves package shape, containment, and routing hygiene; it does not prove that a syntactically valid third-party skill is semantically correct, safe for every task, or better than Plat's built-in guidance.
+
+Until those live lanes exist, the v1.7 industry score should be read as **architecture/governance/adversarial readiness**, not certification or a task-success percentage.

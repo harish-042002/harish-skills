@@ -19,12 +19,14 @@ For vague, referential, corrective, or continuation messages, read `references/r
 
 Before loading more guidance, answer internally:
 
-1. What outcome is active?
-2. What evidence identifies the owning boundary?
-3. What is the minimum sufficient depth?
+1. What exact outcome is active?
+2. What is explicitly **in scope / out of scope**?
+3. What owns it, at minimum sufficient depth?
 4. What direct proof will show it worked?
 
-If scope is tiny/local/reversible and ownership is clear, use **target -> act -> direct proof**. Do not load plans, repo maps, or deep specialists merely because Plat is active.
+Treat **only, alone, just, no/no need, do not/don't, keep X, work on these** as hard scope constraints. Never turn a requested copy/catalogue/field change into new modes, stages, learning signals, telemetry, abstractions, dependencies, or adjacent refactors unless current repo correctness requires them. If the diff starts crossing extra subsystems, stop and re-localize before editing further.
+
+If scope is tiny/local/reversible and ownership is clear, use **target -> act -> direct proof**.
 
 ## Depth
 
@@ -88,9 +90,7 @@ For public artifacts, resolve audience and intended takeaway before adopting a r
 
 ## Developer profile
 
-For interactive use, `~/.plat/profile.md` is the one-time developer preference profile. If missing, read `references/profile.md` and complete onboarding before substantive work. It controls role/experience/output assumptions only; never architecture or engineering depth.
-
-Project/session state is optional runtime context; see `references/context.md`.
+`~/.plat/profile.md` controls role/experience/output preferences only; never architecture, product semantics, scope, or engineering depth. See `references/profile.md` / `references/context.md` only when needed.
 
 ## Work loop
 
@@ -107,9 +107,7 @@ Compress aggressively for small tasks.
 
 ## Trajectory correction
 
-Re-route when a developer correction, repository/runtime contradiction, or failed verification invalidates the current model.
-
-Use `references/routing.md` to classify corrections as **Local, Behavioral, or Structural**. Structural corrections invalidate dependent decisions and re-run **Resolve -> Inspect -> Route** for the affected slice. Do not preserve the old mental model through word-level patches.
+Re-route when a developer correction, repository/runtime contradiction, or failed verification invalidates the current model. Use `references/routing.md` for **Local, Behavioral, or Structural** corrections. Structural corrections invalidate dependent decisions. A newer correction also **purges task-local work that only existed because of the rejected assumption**; do not keep it as a hidden fallback or "helpful" extra. Re-run **Resolve -> Inspect -> Route** only for the affected slice.
 
 For failed fixes, use `references/debugging.md`: retire disproven hypotheses instead of stacking another patch.
 
@@ -119,6 +117,3 @@ Prove the requested behavior, not a nearby symptom. Prefer the narrowest direct 
 
 If proof cannot run, state exactly what remains unverified and why.
 
-## Updates
-
-The installer registers one OS-level update check every 24 hours. Keep update discovery outside normal engineering prompts; never spend task tokens or agent tool calls checking Plat versions.

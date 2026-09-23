@@ -150,3 +150,35 @@ Priority orchestration tasks:
 3. frontend feature with independent rendered QA and backend contract review;
 4. high-risk security/performance review with independent read-only specialists;
 5. negative control where many relevant skills are installed but the task is a trivial local edit.
+
+
+## 5. v1.7 independent industry benchmark — scope fidelity and specialist trust
+
+This benchmark is intentionally separate from Plat's own regression suite. The new 30 routing cases and 36 unit tests are release validation only; they do **not** earn industry-benchmark points.
+
+Compared snapshots:
+
+- v1.6.0 baseline: \`b57dc1a051a8dc067459b9c232f6ca0befdb2ece\`
+- v1.7.0 candidate code: \`a5715a123875d3ae11c4c925ba07d1042ee22460\`
+
+| Independent lane | v1.6 | v1.7 |
+| --- | ---: | ---: |
+| External specialist red-team (same 12 cases) | 4/12 | **12/12** |
+| Scope-fidelity/correction policy suite | 8/24 | **24/24** |
+| General industry scenario coverage (same 26 cases) | 24/26 | **26/26** |
+| Static industry rubric | 64.5/100 | **75.5/100** |
+
+The 100-point score remains conservative because **Behavioral Evaluation is still 1/18**: current v1.7 has not yet been measured in a repeated clean-context live coding-agent A/B benchmark.
+
+The main v1.7 improvements are:
+
+- hard scope constraints before mutation;
+- correction purge for task-local machinery built from a rejected assumption;
+- diff-expansion circuit breaking based on causal necessity;
+- explicit untrusted-specialist boundary;
+- Agent Skills-compatible external metadata validation;
+- \`SKILL.md\` symlink/path confinement;
+- resistance to broad keyword-stuffed specialist metadata;
+- runtime license/provenance boundary for literal reuse.
+
+See \`benchmarks/industry-v1.7/METHODOLOGY.md\`, \`REPORT.md\`, and \`RESULTS.json\` for the benchmark boundary and exact results.

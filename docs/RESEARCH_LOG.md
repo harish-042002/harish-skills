@@ -403,3 +403,70 @@ The gate stays completely outside the normal Plat runtime, so ordinary engineeri
 - `.github` path-normalization regression test.
 
 The first adversarial run exposed a real normalization bug where `.github/...` lost its leading dot; the implementation was corrected before repository integration. Final diff review then added a base-relative freshness check so touching the evidence files cannot reuse the previous evidence entry, plus mandatory attribution metadata for adapted/copied reuse.
+
+
+## v1.7 — Scope fidelity, correction purge, and specialist trust
+
+Evidence ID: \`2026-09-23-v1.7-scope-fidelity-trust\`
+
+### Observed failure
+
+A real coding trajectory exposed a class of failure that earlier routing tests did not capture strongly enough: a bounded notification-catalogue request was interpreted as permission to add confidence tiers, response stages, extra learning signals, trace fields, and broader selection behavior. The later correction narrowed the requirement to five variants per scenario/user state, explicitly removed medium/high confidence behavior, and said to work on those changes alone.
+
+The problem was not lack of engineering depth. It was **scope fidelity**: Plat let a reasonable product idea outrank the developer's actual requested delta.
+
+### Sources inspected first
+
+#### anthropics/skills — Apache-2.0 for skill-creator
+
+Inspected the current skill-creator validation/evaluation workflow and Agent Skills metadata validation patterns.
+
+Adopted principles:
+- parse SKILL frontmatter as YAML rather than a narrow hand parser;
+- validate name/description bounds before treating a package as a skill;
+- keep behavioral evaluation separate from structural validity.
+
+No Anthropic code or prose was copied into Plat; the controls were reimplemented for Plat's dependency-light discovery broker.
+
+#### wshobson/agents — MIT
+
+Inspected PluginEval's layered quality model, especially triggering accuracy, scope calibration, robustness, progressive disclosure, and semantic evaluation.
+
+Adopted principle:
+- scope calibration is a first-class quality dimension; a technically good answer that expands the user's task is still a failure.
+
+Rejected:
+- adding a heavy always-on multi-layer evaluator to normal Plat runtime.
+
+#### obra/superpowers — MIT
+
+Inspected scenario-first skill behavior testing, verification-before-completion, and bounded subagent patterns.
+
+Adopted principles:
+- test behavior from realistic failure scenarios rather than only instruction presence;
+- corrections must change the active trajectory, not merely add another patch layer.
+
+Rejected:
+- mandatory planning/subagent ceremony for ordinary bounded work.
+
+#### vercel-labs/skills — MIT
+
+Inspected installed skill locations and symlink-based installation behavior.
+
+Adopted principle:
+- skill discovery must allow legitimate package-directory symlinks while rejecting a \`SKILL.md\` file that resolves outside its declared skill root.
+
+### Plat adaptation
+
+1. The hot path now treats **only / alone / just / no / no need / do not / don't / keep / work on these** as hard scope constraints.
+2. When scope can drift, the task is reduced to **MUST / MUST NOT / PRESERVE / PROOF** before mutation.
+3. Unexpected cross-subsystem diff expansion triggers re-localization unless every extra surface is causally required.
+4. A newer correction purges task-local code that existed only because of the rejected assumption.
+5. External installed skills are explicitly untrusted instruction-bearing packages.
+6. Discovery validates Agent Skills-compatible metadata, blocks \`SKILL.md\` symlink/path escape, suppresses raw untrusted descriptions, and penalizes broad keyword-stuffed orchestrators.
+
+### Evaluation design
+
+The v1.7 industry benchmark is intentionally separate from Plat's frozen routing/orchestration tests. The regression suite records the known failure so it cannot return; the industry benchmark uses a separate scope/trust scenario set plus the earlier external-skill red-team so Plat is not scored merely for matching its own tests.
+
+Live repeated A/B coding-agent evidence is still required before claiming a universal behavioral advantage.

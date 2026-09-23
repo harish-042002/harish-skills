@@ -1,0 +1,45 @@
+{
+  "benchmark": "plat-industry-v1.7",
+  "date": "2026-09-23",
+  "baseline": {
+    "version": "1.6.0",
+    "commit": "b57dc1a051a8dc067459b9c232f6ca0befdb2ece",
+    "static_score": 64.5,
+    "external_redteam": {
+      "passed": 4,
+      "total": 12
+    },
+    "scope_fidelity": {
+      "passed": 8,
+      "total": 24
+    },
+    "general_scenarios": {
+      "passed": 24,
+      "total": 26
+    }
+  },
+  "candidate": {
+    "version": "1.7.0",
+    "commit": "a5715a123875d3ae11c4c925ba07d1042ee22460",
+    "static_score": 75.5,
+    "external_redteam": {
+      "passed": 12,
+      "total": 12
+    },
+    "scope_fidelity": {
+      "passed": 24,
+      "total": 24
+    },
+    "general_scenarios": {
+      "passed": 26,
+      "total": 26
+    },
+    "ci": {
+      "unit_tests": "36/36",
+      "routing_cases": 30,
+      "hot_path_chars": 6966,
+      "hot_path_lines": 119
+    }
+  },
+  "behavioral_evidence_note": "No repeated clean-context live coding-agent A/B benchmark for v1.7; Behavioral Evaluation remains 1/18."
+}

@@ -46,6 +46,66 @@
         "full Python unittest discovery",
         "installer shell syntax validation"
       ]
+    },
+    {
+      "id": "2026-09-23-v1.7-scope-fidelity-trust",
+      "date": "2026-09-23",
+      "capability": "Prevent developer-intent deviation/over-engineering after bounded requests or corrections, and harden installed-specialist discovery against invalid/untrusted skill packages.",
+      "material_files": [
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/references/routing.md",
+        "skills/plat/references/engineering-core.md",
+        "skills/plat/references/agent-failure-modes.md",
+        "skills/plat/references/orchestration.md",
+        "skills/plat/scripts/discover_skills.py",
+        "scripts/validate_plat.py"
+      ],
+      "sources": [
+        {
+          "repo": "anthropics/skills",
+          "license": "Apache-2.0 for skill-creator",
+          "inspected": "official skill-creator validation/evaluation patterns and Agent Skills metadata constraints including YAML parsing, name/description bounds, and behavioral eval loops",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "wshobson/agents",
+          "license": "MIT",
+          "inspected": "PluginEval scope-calibration, triggering, robustness, progressive-disclosure, and layered evaluation methodology",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "obra/superpowers",
+          "license": "MIT",
+          "inspected": "scenario-first skill behavior testing, correction discipline, verification-before-completion, and bounded delegation patterns",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "vercel-labs/skills",
+          "license": "MIT",
+          "inspected": "installed skill roots, symlink-based installation behavior, update/list semantics, and cross-agent skill discovery conventions",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "MUST/MUST NOT/PRESERVE/PROOF scope lock before mutation when intent could drift",
+        "diff-expansion circuit breaker based on causal necessity rather than arbitrary file count",
+        "correction purge for task-local machinery created from a rejected assumption",
+        "fail-closed Agent Skills-compatible metadata validation and symlink/path containment for external specialists",
+        "untrusted external-skill instruction boundary with no raw description echo in discovery"
+      ],
+      "rejected": [
+        "mandatory planning ceremony for every task",
+        "numeric file-count limits as a proxy for scope fidelity",
+        "automatic marketplace downloading or installation during engineering work",
+        "copying external implementations/text instead of reimplementing principles in Plat"
+      ],
+      "tests": [
+        "fresh scope-fidelity/trust industry benchmark kept separate from repo regression scoring",
+        "external specialist discovery red-team including valid YAML variants, symlink escape, invalid metadata, keyword stuffing, and prompt-injection text",
+        "30 frozen routing regressions including the real catalogue/variants correction failure pattern",
+        "full Python unit suite, structural validation, compile checks, installer syntax, and skill packaging"
+      ]
     }
   ]
 }
