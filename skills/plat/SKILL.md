@@ -115,4 +115,4 @@ If proof cannot run, state exactly what remains unverified and why.
 
 ## Updates
 
-Do not spend normal task tokens/network calls checking Plat versions. The installer registers one user-level OS scheduler that checks GitHub Releases once per day, caches status under `~/.plat/`, and notifies only when a newer release exists. Engineering sessions never perform that network check.
+The installer registers one OS-level update check every 24 hours. Keep update discovery outside normal engineering prompts; never spend task tokens or agent tool calls checking Plat versions.
