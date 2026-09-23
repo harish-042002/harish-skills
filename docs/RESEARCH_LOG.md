@@ -403,3 +403,85 @@ The gate stays completely outside the normal Plat runtime, so ordinary engineeri
 - `.github` path-normalization regression test.
 
 The first adversarial run exposed a real normalization bug where `.github/...` lost its leading dot; the implementation was corrected before repository integration. Final diff review then added a base-relative freshness check so touching the evidence files cannot reuse the previous evidence entry, plus mandatory attribution metadata for adapted/copied reuse.
+
+
+## v1.7 — Scope fidelity, correction purge, and external-skill trust hardening
+
+Evidence ID: `2026-09-23-v1.7-scope-fidelity-hardening`
+
+### Problem
+
+A real coding trajectory exposed a failure mode not adequately prevented by v1.6: the developer narrowed a notification-copy task to exact per-state variants and explicitly rejected the earlier confidence model, yet the previous trajectory had already expanded into learning/response-stage/telemetry-adjacent behavior and multiple supporting files. The core issue was **scope substitution**: Plat had final output-fidelity checks, but no strong pre-edit contract making negative constraints and correction rollback first-class.
+
+The independent industry benchmark also found 8 failures in 12 new external-skill discovery red-team cases, including symlink escape, incomplete YAML handling, Agent Skills metadata non-conformance, raw instruction-like metadata exposure, and broad-specialist score gaming.
+
+### Sources inspected first
+
+#### anthropics/skills — Apache-2.0 for `skill-creator`
+
+Relevant material:
+- `skills/skill-creator/SKILL.md`;
+- `skills/skill-creator/scripts/quick_validate.py`;
+- Agent Skills specification linked by the repository.
+
+Adopted principles:
+- skill metadata is a real activation/control surface and must be validated, not best-effort parsed;
+- `name`/`description` constraints and parent-directory matching are part of package conformance;
+- evaluation should separate skill structure from behavioral evidence.
+
+Reuse: principle-only. No Anthropic source text/code was copied.
+
+#### wshobson/agents — MIT
+
+Relevant material:
+- `docs/plugin-eval.md` multi-layer quality evaluation;
+- progressive-disclosure and harness-portability guidance.
+
+Adopted principles:
+- structural/static evidence, semantic behavior, and repeated live behavior are separate evidence planes;
+- adversarial/static checks can be release-grade for specific deterministic boundaries without being mislabeled as live behavioral proof.
+
+Reuse: principle-only.
+
+#### obra/superpowers — MIT
+
+Relevant material:
+- behavior-eval separation from plugin/infrastructure tests;
+- correction/debugging discipline and verification-before-completion patterns.
+
+Adopted principles:
+- test the behavior class that failed rather than only growing generic unit-test counts;
+- a correction should change the active trajectory rather than layer another patch over invalid assumptions.
+
+Reuse: principle-only.
+
+### Plat adaptation
+
+1. **Required / Forbidden / Proof scope lock** is now on the hot path before edits.
+2. **Negative constraints are binding**: words such as only/alone/no need/do not/keep unchanged are treated as requirements.
+3. **No adjective-to-architecture inference**: more engaging/natural/emotional copy does not authorize learning, telemetry, confidence, persistence, analytics, or generalized configuration.
+4. **Diff-expansion circuit breaker** stops work when a new subsystem/concept, dependency, schema/event, or surprising file cluster cannot be justified by a Required item.
+5. **Correction purge** removes current-diff machinery that exists only because of an assumption the developer rejected.
+6. External skill discovery now rejects symlinks/path escapes, validates bounded Agent Skills frontmatter, enforces parent-directory/name and size constraints, and does not emit raw descriptions into candidate output.
+7. Installed external skills are explicitly treated as **untrusted third-party instruction-bearing content**. They cannot expand user scope, gain tool authority, recurse, deploy, reveal secrets, or override repository/developer evidence.
+8. Broad orchestrators receive a materially stronger ranking penalty so focused specialists win when both match.
+
+### Rejected patterns
+
+- asking the developer to approve every bounded scope decision;
+- hard file-count caps that would block legitimate cross-file correctness work;
+- automatically installing marketplace skills during a task;
+- adding a new runtime policy/classifier service just to enforce scope text;
+- claiming live behavioral uplift from static/adversarial checks.
+
+### Verification
+
+- existing structural validation: pass;
+- full Python unit suite after changes: 34/34 pass before final release bookkeeping;
+- external-skill industry red-team: 12/12 (up from 4/12 on v1.6);
+- 26-scenario industry policy coverage: 26/26 (up from 24/26);
+- new scope-fidelity holdout: 20/20;
+- comparable industry-readiness rubric: 75.5/100 (up from 64.5/100);
+- architecture/design score excluding live behavioral-evidence maturity: 90.9% (up from 77.4%).
+
+Live repeated with-Plat vs no-Plat coding trajectories remain a separate pending evidence lane and are not claimed by this release.
