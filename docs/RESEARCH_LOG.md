@@ -391,7 +391,7 @@ The gate stays completely outside the normal Plat runtime, so ordinary engineeri
 
 ### Tests added
 
-- 10 maintenance-gate unit tests;
+- 12 maintenance-gate unit tests;
 - docs-only negative control;
 - missing-evidence-file failure;
 - fewer-than-two-sources failure;
@@ -402,4 +402,4 @@ The gate stays completely outside the normal Plat runtime, so ordinary engineeri
 - research-log cross-check failure;
 - `.github` path-normalization regression test.
 
-The first adversarial run exposed a real normalization bug where `.github/...` lost its leading dot; the implementation was corrected before repository integration.
+The first adversarial run exposed a real normalization bug where `.github/...` lost its leading dot; the implementation was corrected before repository integration. Final diff review then added a base-relative freshness check so touching the evidence files cannot reuse the previous evidence entry, plus mandatory attribution metadata for adapted/copied reuse.
