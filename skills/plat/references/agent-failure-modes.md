@@ -36,6 +36,11 @@ Plat exists to reduce **total work required to reach a correct engineering resul
 | Response bloat | Deep internal reasoning becomes a long user-facing answer | Output depth separated from engineering depth |
 | Reference overfitting | Inspiration metaphor copied into wrong product context | Audience/purpose/reference-abstraction review |
 | Profile overreach | Preferred stack/role overrides actual project | Repository truth outranks developer profile |
+| Specialist fan-out | Every installed skill/agent gets invoked | Evidence-earned specialist gate + soft caps |
+| Specialist voting | Lead follows majority opinion instead of current proof | Evidence hierarchy + smallest discriminating check |
+| Parallel mutation collision | Multiple agents edit shared contracts/state concurrently | Read-only parallelism by default; shared mutations sequential |
+| Recursive delegation | Specialist spawns more specialists and loses cost/ownership control | One-level delegation; capability needs return to P-01 |
+| Report concatenation | Final answer mirrors conflicting specialist chatter instead of user request | P-01 re-integrates from latest request + accepted evidence |
 
 ## Routing errors
 
