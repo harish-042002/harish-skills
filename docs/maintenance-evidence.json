@@ -41,7 +41,7 @@
         "a large SDK-style lifecycle command surface"
       ],
       "tests": [
-        "10 deterministic maintenance-gate unit tests including adversarial bypass cases",
+        "12 deterministic maintenance-gate unit tests including stale-evidence and attribution bypass cases",
         "existing Plat structural validation",
         "full Python unittest discovery",
         "installer shell syntax validation"
