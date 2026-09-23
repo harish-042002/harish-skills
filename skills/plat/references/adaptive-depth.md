@@ -168,19 +168,26 @@ Avoid:
 - rereading already available references;
 - broad repository dumps;
 - asking subagents to rediscover the same scope;
+- running the same broad suite on both current and baseline when only the failing tests are needed for attribution;
+- parallel scouts that read mostly the same files;
 - generating long plans that restate the request;
 - copying source files into session/project profiles.
 
 ## Research mode
 
-Research should progressively widen evidence instead of starting exhaustive.
+Research should progressively widen evidence instead of starting exhaustive. For expensive/broad Research, also load `efficiency.md`.
 
-1. **Orient** - repository instructions, project profile if present, manifests, top-level architecture/docs.
+1. **Orient** - establish goal/scope, current branch state, golden/reference flow if any, peer inventory, and report shape.
 2. **Locate** - named behavior, routes, entry points, symbols, tests, configs.
-3. **Trace** - relevant call/data/event path and ownership boundaries.
-4. **Validate** - compare docs/profile assumptions against current code/tests/config/history where material.
-5. **Expand** - only into unresolved/high-impact branches.
-6. **Synthesize** - produce a structured map with evidence and explicit unknowns.
+3. **Model once** - derive the comparison dimensions/invariants once instead of rediscovering the architecture per peer.
+4. **Trace** - inspect each peer only against the fixed model and follow unresolved deltas.
+5. **Validate** - compare docs/profile assumptions against current code/tests/config/history where material.
+6. **Expand** - only into unresolved/high-impact branches.
+7. **Synthesize** - produce a structured map with evidence and explicit unknowns.
+
+P-01 orients **before** dispatching broad scouts. Do not begin Research by sending a general-purpose subagent to rediscover the whole repository.
+
+After orientation, prefer one batched read-only scout for homogeneous peers. Add a second concurrent scout only when partitions are genuinely independent and wall-time savings outweigh briefing/integration cost. A third is exceptional.
 
 A useful Research output may be longer than normal execution output, but do not turn uncertain inference into fact.
 
