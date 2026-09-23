@@ -470,3 +470,81 @@ Adopted principle:
 The v1.7 industry benchmark is intentionally separate from Plat's frozen routing/orchestration tests. The regression suite records the known failure so it cannot return; the industry benchmark uses a separate scope/trust scenario set plus the earlier external-skill red-team so Plat is not scored merely for matching its own tests.
 
 Live repeated A/B coding-agent evidence is still required before claiming a universal behavioral advantage.
+
+
+## v1.8 — AWS deep specialist and behavioral evaluation harness
+
+Evidence ID: `2026-09-23-v1.8-aws-behavioral-evals`
+
+### Problem
+
+Plat had broad delivery/backend/database/security depth but no built-in AWS-specific deep layer. This meant AWS tasks either relied on generic cloud guidance or had to discover an installed external specialist. At the same time, v1.7's behavioral-evaluation score remained low because current-version realistic trajectories had no frozen executable harness.
+
+### Sources inspected first
+
+#### aws/agent-toolkit-for-aws — Apache-2.0
+
+Inspected current AWS core skills for serverless, IAM, networking, observability, deployment, billing/cost, messaging, CDK, and DynamoDB.
+
+Adopted principles:
+- route by concrete AWS capability, not the word AWS alone;
+- verify current service/version/quota facts when precision matters;
+- make retries/event delivery/idempotency explicit for serverless/event systems;
+- treat account/region/role context as part of operational correctness;
+- progressive disclosure across AWS domains instead of one always-loaded knowledge dump.
+
+Reuse: principle-only. No AWS toolkit text/code was copied.
+
+#### aws-samples/sample-agent-skills-for-builders — Apache-2.0
+
+Inspected `aws-cdk-development`, `aws-cost-operations`, `security-scan`, and `end-to-end-testing`.
+
+Adopted principles:
+- account identity checks before deployment-impacting operations;
+- synth/plan/diff before infrastructure mutation;
+- current official AWS documentation for version/region-sensitive decisions;
+- evidence capture and explicit pre-reporting validation for E2E evaluation.
+
+Reuse: principle-only.
+
+#### aws-samples/sample-well-architected-skills-and-steering — MIT-0
+
+Inspected the Well-Architected review and guardrail workflows.
+
+Adopted principles:
+- use the six Well-Architected pillars as lenses, not mandatory ceremony for every edit;
+- absence of evidence is not evidence of absence;
+- prefer preventive controls only when they map to an actual workload risk/enforcement point;
+- distinguish quick/pillar-scoped/full review depth.
+
+Reuse: principle-only.
+
+#### kndoshn/aws-cdk-skill-plugin — MIT
+
+Inspected CDK risk workflows and `EVALS.md`.
+
+Adopted principles:
+- resource replacement/data-loss/IAM widening are first-class IaC review risks;
+- stateful resource identity changes require migration thinking;
+- behavioral eval prompts should state observable expected outcomes.
+
+Reuse: principle-only.
+
+### Current AWS documentation checked
+
+Current AWS Well-Architected, IAM best-practice, serverless lens, and Lambda idempotency documentation were checked while drafting the specialist. Plat records durable principles and deliberately avoids freezing fast-changing pricing/quota/feature values.
+
+### Plat adaptation
+
+1. Added `references/aws-deep.md` with an AWS-specific evidence hierarchy and deep controls for identity/targeting, IAM, networking, compute/serverless, events, data, IaC, observability, reliability/DR, quotas/performance, cost, security, incident diagnosis, and verification.
+2. Added AWS to adaptive deep routing without making AWS a blanket escalation trigger.
+3. Added AWS-specific routing regressions for Lambda/SQS duplicates, CDK stateful replacement, production account targeting, and a Quick CloudFormation typo negative control.
+4. Added `benchmarks/behavioral-v1.8/` with frozen multi-turn/negative-control/AWS fixtures, executable verifiers, a generic runner, scoring utility, trigger corpus, and an explicit 18-point evidence-maturity rubric.
+5. Behavioral evaluation maturity now earns 8/18 based on repository evidence infrastructure; no current live-result points are claimed.
+
+### Harness validation
+
+- `--plan` validates 5 frozen fixture cases;
+- 20 frozen trigger cases include positive/negative activation and AWS-deep routing expectations;
+- a non-committed fake adapter exercised the complete runner/verifier pipeline and all 5 fixtures passed after fixing pycache-generated false scope violations;
+- fake/dry-run outcomes are explicitly excluded from live evidence.
