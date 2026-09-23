@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "purpose": "Frozen positive/negative activation and AWS-depth routing prompts. Requires live agent runs before scoring trigger precision/recall.",
+  "cases": [
+    {"id":"tiny-copy","prompt":"Change this button label from Save to Continue.","expect_plat":true,"expect_depth":"Quick","expect_aws_deep":false},
+    {"id":"tiny-aws-copy","prompt":"Rename the display label AWS Region to Region in this form only.","expect_plat":true,"expect_depth":"Quick","expect_aws_deep":false},
+    {"id":"lambda-retries","prompt":"Our SQS-triggered Lambda sends duplicate invoices after retries. Diagnose and fix it.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"iam-access-denied","prompt":"Lambda gets AccessDenied reading one S3 prefix. Fix IAM without broadening permissions.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"cdk-replacement","prompt":"This CDK diff wants to replace the production database after a construct rename. Make the migration safe.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"vpc-timeout","prompt":"Lambda in a VPC times out calling an AWS API while the same call works locally.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"dynamodb-hot-partition","prompt":"DynamoDB throttles one tenant under burst traffic even though table capacity is high.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"rds-connections","prompt":"Lambda bursts are exhausting PostgreSQL connections on RDS.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"aws-cost","prompt":"NAT Gateway cost jumped 4x this month; find the cause and cheapest safe fix.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"cloudformation-local","prompt":"Fix this known CloudFormation YAML typo in one resource property.","expect_plat":true,"expect_depth":"Quick","expect_aws_deep":false},
+    {"id":"research-wa","prompt":"Audit this AWS workload against reliability and security Well-Architected concerns, read-only.","expect_plat":true,"expect_depth":"Research","expect_aws_deep":true},
+    {"id":"non-engineering-weather","prompt":"What is the weather tomorrow?","expect_plat":false,"expect_depth":null,"expect_aws_deep":false},
+    {"id":"non-engineering-email","prompt":"Write a thank-you email to my manager.","expect_plat":false,"expect_depth":null,"expect_aws_deep":false},
+    {"id":"generic-cloud-history","prompt":"Explain the history of cloud computing.","expect_plat":false,"expect_depth":null,"expect_aws_deep":false},
+    {"id":"frontend-local","prompt":"Fix padding on this React card; exact component and screenshot are attached.","expect_plat":true,"expect_depth":"Quick","expect_aws_deep":false},
+    {"id":"db-nonaws","prompt":"Fix a PostgreSQL deadlock in our on-prem service.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":false},
+    {"id":"terraform-aws","prompt":"Terraform plan replaces an S3 bucket with retained data. Review and make it safe.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"aws-service-quota","prompt":"Can we raise this AWS service to 100k requests/sec? Verify the current quota and design around it.","expect_plat":true,"expect_depth":"Research","expect_aws_deep":true},
+    {"id":"bedrock-rag","prompt":"Bedrock RAG retrieval quality regressed after changing the index configuration.","expect_plat":true,"expect_depth":"Deep","expect_aws_deep":true},
+    {"id":"aws-profile-command","prompt":"What command lists my local AWS CLI profiles?","expect_plat":true,"expect_depth":"Quick","expect_aws_deep":false}
+  ]
+}
