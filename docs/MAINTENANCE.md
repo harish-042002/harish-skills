@@ -45,14 +45,25 @@ Every material change to Plat must begin with external evidence, not only local 
 
 ## Market scan record
 
-For each material release, record a short entry in `docs/RESEARCH_LOG.md`:
+For each material change, keep **both** records current:
 
+1. append a human-readable entry to `docs/RESEARCH_LOG.md`;
+2. append/update the machine-readable release entry in `docs/maintenance-evidence.json`.
+
+The machine record must include:
+
+- a stable evidence ID and date;
 - capability/failure being changed;
-- sources inspected;
-- licenses;
+- every material file covered by the evidence;
+- at least 2 relevant public sources;
+- source license and reuse mode (`principle-only`, `adapted`, or `copied`);
 - adopted principles;
 - rejected patterns and why;
-- tests added.
+- tests added/run.
+
+`scripts/maintenance_gate.py` enforces this for material Plat changes in CI. The human research log must reference the same evidence ID and inspected repositories.
+
+This gate is deliberately **repository-maintenance only**. It must never be called from Plat's normal engineering runtime.
 
 ## What this protocol must NOT become
 
