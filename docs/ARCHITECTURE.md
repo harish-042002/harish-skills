@@ -68,6 +68,22 @@ Plat contains focused guidance for repository understanding, debugging, system d
 
 Deep references are intentionally lazy-loaded. The full library is not a normal context path.
 
+## Specialist federation
+
+Plat uses a tiered capability model:
+
+1. core router;
+2. built-in Plat reference;
+3. installed external skill when a concrete deeper specialty remains unresolved;
+4. parallel/subagent specialists only when independent work justifies coordination;
+5. external research/docs when installed knowledge is absent or version-sensitive.
+
+The orchestrator discovers installed skills **metadata-first** rather than loading every skill body. It consults one best candidate first. Communication is bounded to the current goal, known evidence, unresolved question, constraints, expected output, and stop condition.
+
+Specialists return domain findings with evidence/confidence. P-01 owns final integration. Conflicts are resolved by current runtime/repository evidence and the smallest discriminating check, not by vote or specialist popularity.
+
+This keeps Plat extensible without turning the always-loaded core into a copy of every domain skill.
+
 ## Truth order
 
 1. current developer request or correction;
