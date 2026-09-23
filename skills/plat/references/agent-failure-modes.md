@@ -41,6 +41,9 @@ Plat exists to reduce **total work required to reach a correct engineering resul
 | Parallel mutation collision | Multiple agents edit shared contracts/state concurrently | Read-only parallelism by default; shared mutations sequential |
 | Recursive delegation | Specialist spawns more specialists and loses cost/ownership control | One-level delegation; capability needs return to P-01 |
 | Report concatenation | Final answer mirrors conflicting specialist chatter instead of user request | P-01 re-integrates from latest request + accepted evidence |
+| Helpful expansion | Agent turns a bounded request into new modes/stages/signals/telemetry/architecture | Scope lock + causal-necessity gate |
+| Correction residue | User rejects an assumption but task-local machinery built from it remains | Correction purge |
+| Diff explosion | Local request spreads across subsystems without a proven dependency | Diff-expansion circuit breaker |
 
 ## Routing errors
 
@@ -69,6 +72,18 @@ Truth order:
 5. Plat defaults
 
 Do not turn cached context into authority. Search exact symbols/routes/events/contracts first. Expand outward only when ownership or behavior remains unresolved.
+
+## Scope-fidelity errors
+
+Common failure patterns:
+
+- treating "make it better" as permission to invent product semantics;
+- ignoring hard negative requirements such as "no confidence tiers" or "work on these alone";
+- keeping speculative task-local additions after the developer corrects the model;
+- touching selectors, learning, telemetry, persistence, docs, or infrastructure for a catalogue/copy request without a proven dependency;
+- using passing broad tests to justify a change that missed the exact requested behavior.
+
+Control: bind **MUST / MUST NOT / PRESERVE / PROOF** before mutation when scope could drift. Every extra touched surface needs a causal link to the requested outcome, not merely an engineering rationale.
 
 ## Execution/verification errors
 
