@@ -76,3 +76,12 @@ This still does **not** prove that Plat v1.7 improves real coding outcomes on av
 External-skill validation proves package shape, containment, and routing hygiene; it does not prove that a syntactically valid third-party skill is semantically correct, safe for every task, or better than Plat's built-in guidance.
 
 Until those live lanes exist, the v1.7 industry score should be read as **architecture/governance/adversarial readiness**, not certification or a task-success percentage.
+
+
+## v1.8 behavioral-evaluation boundary
+
+v1.8 materially improves **evaluation infrastructure**: frozen current-version fixtures, multi-turn correction cases, executable verifiers, repeated/control-arm runner support, diff metrics, optional token/cost/tool telemetry, and a trigger corpus now live in the repository. This earns 8/18 on the published Behavioral Evaluation Maturity rubric.
+
+It still does **not** provide new repeated live v1.8 coding-agent outcomes. The release therefore makes no claim that AWS depth or scope controls improve average correctness, cost, or speed until fresh Plat vs control trajectories are run and published.
+
+The AWS deep reference is also not a substitute for current AWS documentation, Service Quotas, pricing, account configuration, or runtime evidence. Version/region/quota/pricing-sensitive claims must be checked against current authoritative sources when they affect a decision.
