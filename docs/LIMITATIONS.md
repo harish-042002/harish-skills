@@ -50,3 +50,12 @@ It is a control layer for deciding when and how to use those forms of evidence.
 ## Background update checks
 
 The installer attempts to register one user-level daily scheduler (LaunchAgent on macOS, systemd user timer or cron on Linux, Scheduled Task on Windows). Locked-down environments may block scheduler registration. That failure does not break Plat; installation continues and reports the warning. The cached checker never runs inside an engineering prompt.
+
+
+## Specialist federation
+
+External skills and subagents can add domain depth, but they also add coordination cost and may contain stale, generic, or conflicting guidance.
+
+Plat therefore cannot assume that an installed skill is correct merely because it is specialized. P-01 must validate specialist claims against current repository/runtime evidence and actual installed versions.
+
+Multi-agent speedups depend on real independence. Parallelizing coupled work can increase tokens, duplicate discovery, and create conflicting mutations. The v1.6 orchestration policy limits fan-out, but live multi-agent A/B evidence is still pending.
