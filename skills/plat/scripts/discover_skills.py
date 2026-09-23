@@ -29,6 +29,8 @@ ALIASES = {
 def tokens(text: str) -> set[str]:
     out = {t.lower().replace("_", "-") for t in TOKEN_RE.findall(text or "")}
     expanded = set(out)
+    for token in list(out):
+        expanded.update(part for part in token.split("-") if part)
     for key, vals in ALIASES.items():
         if key in out or out & vals:
             expanded.add(key)
@@ -84,13 +86,28 @@ def parse_frontmatter(path: Path) -> dict[str, str]:
     m = re.match(r"^---\s*\n(.*?)\n---", text, re.S)
     if not m:
         return {}
+
+    lines = m.group(1).splitlines()
     data: dict[str, str] = {}
-    for line in m.group(1).splitlines():
+    i = 0
+    while i < len(lines):
+        line = lines[i]
         if ":" not in line or line[:1].isspace():
+            i += 1
             continue
         key, value = line.split(":", 1)
-        value = value.strip().strip('"').strip("'")
-        data[key.strip()] = value
+        key = key.strip()
+        value = value.strip()
+        if value in {"|", ">"}:
+            folded: list[str] = []
+            i += 1
+            while i < len(lines) and (not lines[i].strip() or lines[i][:1].isspace()):
+                folded.append(lines[i].strip())
+                i += 1
+            data[key] = " ".join(x for x in folded if x).strip()
+            continue
+        data[key] = value.strip('"').strip("'")
+        i += 1
     return data
 
 def score(query: str, name: str, description: str) -> int:
