@@ -93,14 +93,22 @@ def decide(
         use_external = bool(external_match)
         if use_external:
             reasons.append("matching-external-specialist")
+        handoff = bool(
+            host_handoff
+            and specialist_should_own_turn
+            and not mutating
+            and not shared_state
+        )
+        if handoff:
+            reasons.append("explicit-handoff-fit")
         return Decision(
             action="consult",
-            lead_control="manager",
+            lead_control="handoff" if handoff else "manager",
             initial_specialists=1,
             max_specialists=1,
             parallel_limit=1,
             external_skill=use_external,
-            handoff=bool(host_handoff and specialist_should_own_turn and not mutating and not shared_state),
+            handoff=handoff,
             recursive_delegation=False,
             reason_codes=tuple(reasons),
         )
