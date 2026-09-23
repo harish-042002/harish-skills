@@ -548,3 +548,67 @@ Current AWS Well-Architected, IAM best-practice, serverless lens, and Lambda ide
 - 20 frozen trigger cases include positive/negative activation and AWS-deep routing expectations;
 - a non-committed fake adapter exercised the complete runner/verifier pipeline and all 5 fixtures passed after fixing pycache-generated false scope violations;
 - fake/dry-run outcomes are explicitly excluded from live evidence.
+
+
+## v1.9 — Research economics and subagent cost control
+
+Evidence ID: `2026-09-23-v1.9-research-economics`
+
+### Triggering real trajectory
+
+A real DAY1 cross-branch adapter-mapping session showed strong reasoning quality but weak economics:
+
+- $29.94 session cost;
+- 49m53s aggregate API/model time shown by the host;
+- 7m32s active time;
+- 7.4M cache-read tokens;
+- 187k cache-write tokens;
+- 91% general-purpose subagent share.
+
+The trajectory correctly used Hydration as the golden reference, validated merge failures against a clean baseline, and rejected stale documentation. The optimization target is therefore **not less rigor**. It is less duplicate discovery, cheaper bounded delegation, and narrower failure attribution.
+
+### Sources inspected first
+
+#### obra/superpowers — MIT
+
+Inspected recent subagent-driven-development redesign material, especially task-scoped review, explicit worker-model selection, focused re-review, and avoiding repeated package-wide tests.
+
+Adopted principles:
+- every worker dispatch should name a model/tier when the host supports it, because omission can silently inherit an expensive lead model;
+- bounded reviews should inspect the relevant diff/question rather than crawl the codebase;
+- do not rerun broad tests when existing focused evidence already answers the question.
+
+Reuse: principle-only. No Superpowers text/code copied.
+
+#### aws-samples/sample-agent-skill-eval — MIT-0
+
+Inspected functional with-skill/without-skill evaluation, token/cost measurement, timing capture, and Pareto-style cost-efficiency framing.
+
+Adopted principles:
+- cost efficiency must be measured alongside quality, not inferred from prompt size;
+- compare matched conditions and publish negative/mixed deltas;
+- capture token, wall-time, and per-run cost evidence.
+
+Reuse: principle-only.
+
+### Plat adaptation
+
+1. Added `references/efficiency.md` for broad Research/Deep task economics.
+2. Research now uses **lead-first orientation**: P-01 establishes the golden/reference flow, peer inventory, comparison dimensions, and report shape before dispatching broad scouts.
+3. Golden-reference audits derive one comparison matrix and inspect peers against it instead of rediscovering each architecture independently.
+4. Research starts with **0 specialists during orientation**, then normally 1 batched scout or 2 independent read-only scouts. A third requires explicit wall-time value.
+5. Worker model/tier must be explicit when the host supports it; bounded reading/mechanical work should use the lowest adequate tier.
+6. Evidence ledgers reduce rereads of unchanged large files.
+7. Merge/integration verification narrows first; if a broad suite fails, baseline only the failing tests instead of rerunning the whole baseline suite.
+8. AFK/report mode minimizes progress narration while preserving verification.
+9. Wall time and aggregate model/API time are treated as separate metrics.
+10. Added a v1.9 Research-economics baseline + controlled rerun protocol with explicit cost/cache/API/subagent targets that are not claimed achieved until live reruns exist.
+
+### Rejected patterns
+
+- hard token caps that can force under-investigation;
+- always-cheapest worker selection regardless of repair risk;
+- banning subagents from Research;
+- skipping full-suite verification when blast radius genuinely warrants it;
+- claiming cost savings before a matched v1.8/v1.9 rerun.
+
