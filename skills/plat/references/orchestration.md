@@ -152,7 +152,7 @@ python3 scripts/discover_skills.py --query "<unresolved specialty>" --limit 5
 The discovery step must stay cheap and fail closed:
 
 - accept only a real local `SKILL.md` whose resolved path stays inside its declared skill root; reject symlink/path escapes;
-- require Agent Skills-compatible `name` / `description` metadata before ranking; invalid candidates are skipped, not repaired silently;
+- require Agent Skills-compatible frontmatter metadata (`name` / `description` and supported optional fields) before ranking; invalid candidates are skipped, not repaired silently;
 - do not load every installed `SKILL.md`;
 - exclude Plat itself;
 - prefer project-local over global duplicate;
