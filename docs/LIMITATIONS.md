@@ -85,3 +85,14 @@ v1.8 materially improves **evaluation infrastructure**: frozen current-version f
 It still does **not** provide new repeated live v1.8 coding-agent outcomes. The release therefore makes no claim that AWS depth or scope controls improve average correctness, cost, or speed until fresh Plat vs control trajectories are run and published.
 
 The AWS deep reference is also not a substitute for current AWS documentation, Service Quotas, pricing, account configuration, or runtime evidence. Version/region/quota/pricing-sensitive claims must be checked against current authoritative sources when they affect a decision.
+
+
+## v1.9 Research-economics evidence boundary
+
+v1.9 adds explicit cost/time controls for broad Research and AFK report work, including lead-first orientation, matrix-driven peer comparison, explicit worker-tier selection, read deduplication, and focused failure attribution.
+
+The motivating DAY1 session is a **single observed baseline**, not a controlled before/after experiment. The published 30% cost/cache/API-time reduction goals are rerun targets only.
+
+Plat cannot guarantee a cheaper worker tier on hosts that do not expose per-subagent model selection. In those hosts, the skill raises the delegation bar instead.
+
+Parallelism can reduce developer wall time while increasing aggregate model/API time. v1.9 therefore treats those as separate metrics and does not call a trajectory "faster and cheaper" unless both the user wait time and total compute economics support that claim.

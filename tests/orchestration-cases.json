@@ -164,11 +164,12 @@
         "depth": "Research",
         "unresolved": 3,
         "independent": 3,
-        "built_in_sufficient": true
+        "built_in_sufficient": true,
+        "research_oriented": true
       },
       "expect": {
         "max_specialists": 3,
-        "parallel_limit": 3
+        "parallel_limit": 2
       }
     },
     {
@@ -349,11 +350,64 @@
         "unresolved": 2,
         "independent": 2,
         "built_in_sufficient": false,
-        "external_match": true
+        "external_match": true,
+        "research_oriented": true
       },
       "expect": {
         "external_skill": true,
         "parallel_limit": 2
+      }
+    },
+    {
+      "id": "research-orients-before-delegation",
+      "input": {
+        "depth": "Research",
+        "unresolved": 4,
+        "independent": 4,
+        "built_in_sufficient": false,
+        "external_match": true,
+        "research_oriented": false
+      },
+      "expect": {
+        "action": "lead",
+        "initial_specialists": 0,
+        "max_specialists": 0,
+        "parallel_limit": 0,
+        "external_skill": false
+      }
+    },
+    {
+      "id": "research-default-parallel-cap-two",
+      "input": {
+        "depth": "Research",
+        "unresolved": 4,
+        "independent": 4,
+        "built_in_sufficient": true,
+        "research_oriented": true,
+        "wall_time_critical": false
+      },
+      "expect": {
+        "action": "consult",
+        "initial_specialists": 1,
+        "max_specialists": 3,
+        "parallel_limit": 2
+      }
+    },
+    {
+      "id": "research-third-worker-needs-wall-time-reason",
+      "input": {
+        "depth": "Research",
+        "unresolved": 4,
+        "independent": 4,
+        "built_in_sufficient": true,
+        "research_oriented": true,
+        "wall_time_critical": true
+      },
+      "expect": {
+        "action": "consult",
+        "initial_specialists": 1,
+        "max_specialists": 3,
+        "parallel_limit": 3
       }
     }
   ]

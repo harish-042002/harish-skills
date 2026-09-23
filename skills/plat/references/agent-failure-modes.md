@@ -44,6 +44,9 @@ Plat exists to reduce **total work required to reach a correct engineering resul
 | Helpful expansion | Agent turns a bounded request into new modes/stages/signals/telemetry/architecture | Scope lock + causal-necessity gate |
 | Correction residue | User rejects an assumption but task-local machinery built from it remains | Correction purge |
 | Diff explosion | Local request spreads across subsystems without a proven dependency | Diff-expansion circuit breaker |
+| Research rediscovery | Golden flow and peer architecture are independently re-read for every adapter | Derive one comparison matrix + evidence ledger |
+| Expensive scout dominance | General-purpose subagent consumes most tokens/cost for work the lead could batch | Lead-first orientation + explicit worker tier + batched scouts |
+| Duplicate broad verification | Full suite is rerun on current and baseline only to attribute a few failures | Baseline only the failing tests first |
 
 ## Routing errors
 
@@ -100,9 +103,20 @@ Control: prove the requested behavior with the narrowest direct fresh evidence, 
 
 ## Cost/time errors
 
-Track **total task economics**, not only prompt tokens: context loaded + repository reads + tool calls + model output + retries + repair turns + subagent coordination + wall time.
+Track **total task economics**, not only prompt tokens: context loaded + repository reads + tool calls + model output + retries + repair turns + subagent coordination + wall time + aggregate model/API time.
 
-A smaller context is not cheaper if it creates more retries or wrong work. A deep route is not better merely because it is thorough.
+Common expensive patterns:
+
+- one general-purpose scout re-reading most of the repository before the lead has defined the comparison shape;
+- several scouts reading overlapping files;
+- omitted worker model/tier causing the most expensive lead model to be inherited;
+- full-suite current + full-suite baseline repetition when only failing tests need attribution;
+- repeated opening of unchanged large references/docs to recover already accepted facts;
+- progress narration during AFK/report work instead of spending output budget on the final artifact.
+
+For broad mapping, reconstruct the golden path once, derive a fixed matrix, batch peer inspection, and investigate deltas only. For verification, run the narrowest test that distinguishes current-change vs baseline behavior.
+
+A smaller context is not cheaper if it creates more retries or wrong work. A deep route is not better merely because it is thorough. Parallelism that lowers wall time while multiplying aggregate model time must justify the extra cost.
 
 ## Design/public-artifact errors
 

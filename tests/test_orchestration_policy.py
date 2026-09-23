@@ -42,6 +42,41 @@ class OrchestrationPolicyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.mod.decide(depth="Deep", unresolved=-1)
 
+    def test_research_orients_before_any_specialist(self):
+        decision = self.mod.decide(
+            depth="Research",
+            unresolved=5,
+            independent=5,
+            built_in_sufficient=False,
+            external_match=True,
+        )
+        self.assertEqual(decision.action, "lead")
+        self.assertEqual(decision.initial_specialists, 0)
+        self.assertIn("research-orient-first", decision.reason_codes)
+
+    def test_research_parallelism_is_cost_capped_by_default(self):
+        decision = self.mod.decide(
+            depth="Research",
+            unresolved=5,
+            independent=5,
+            built_in_sufficient=True,
+            research_oriented=True,
+        )
+        self.assertEqual(decision.parallel_limit, 2)
+        self.assertIn("research-cost-cap-two", decision.reason_codes)
+
+    def test_research_can_use_third_worker_when_wall_time_is_explicitly_critical(self):
+        decision = self.mod.decide(
+            depth="Research",
+            unresolved=5,
+            independent=5,
+            built_in_sufficient=True,
+            research_oriented=True,
+            wall_time_critical=True,
+        )
+        self.assertEqual(decision.parallel_limit, 3)
+        self.assertIn("research-wall-time-override", decision.reason_codes)
+
     def test_manager_is_default(self):
         decision = self.mod.decide(
             depth="Deep",

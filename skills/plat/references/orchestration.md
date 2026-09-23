@@ -89,7 +89,7 @@ These are **soft caps**, not goals:
 - **Quick:** 0 specialists.
 - **Standard:** 0 specialists by default; at most 1 bounded consultant when a concrete capability gap blocks progress.
 - **Deep:** start with 1 specialist; add a second only when evidence reveals a second material boundary; normally stop at 3 total.
-- **Research:** up to 3 independent read-only specialists can run in parallel when that clearly shortens the critical path.
+- **Research:** P-01 orients first with **0 specialists**. After the work is partitioned, start with 1 bounded scout; use 2 concurrent read-only specialists for genuinely independent partitions; a third requires an explicit wall-time benefit.
 
 A developer saying "use all skills", "go deep", or "bring everyone in" does not remove the evidence gate.
 
@@ -324,6 +324,8 @@ Never let two specialists independently mutate the same shared schema, contract,
 
 ## Cost/token/time discipline
 
+For broad/expensive Research, also load `efficiency.md`.
+
 Optimize **total task economics**, not agent count or raw token price.
 
 Count:
@@ -340,7 +342,10 @@ Count:
 Rules:
 
 - do not delegate a task that is cheaper for P-01 to finish directly;
+- orient and partition the research before dispatching general-purpose scouts;
+- batch same-shape peers into one worker instead of one worker per adapter/file;
 - use smaller/faster workers for bounded reading/mechanical work only when likely repair cost stays low;
+- when the host supports worker model selection, name the model/tier explicitly so a scout does not silently inherit the lead's most expensive model;
 - use stronger judgment for architecture, subtle debugging, integration, and high-risk review;
 - do not choose a cheap worker if it is likely to need multiple repair turns;
 - keep specialist reports terse and evidence-dense;
@@ -374,7 +379,7 @@ Prevent orchestration loops:
 - **Same-question limit:** after 2 unsuccessful specialist/fix rounds on the same unresolved question, stop and re-localize the problem or change the hypothesis.
 - **Specialist cap:** normally no more than 3 specialists for one Deep decision without a new evidence-backed reason.
 - **Review cap:** do not keep adding reviewers after direct verification and one risk-appropriate independent review are clean.
-- **Parallel cap:** start with at most 3 concurrent independent specialists; widen only for clearly partitioned Research.
+- **Parallel cap:** Deep normally starts with at most 2 concurrent specialists. Research orients with 0, then normally uses 1 batched scout or 2 independent scouts. A third Research worker requires an explicit wall-time reason.
 - **Stale-report rule:** if the implementation materially changes after a report, do not treat that report as proof of the new state.
 
 A circuit breaker triggers **re-routing**, not "try another specialist".

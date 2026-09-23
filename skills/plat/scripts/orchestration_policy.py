@@ -39,6 +39,8 @@ def decide(
     same_question_rounds: int = 0,
     host_handoff: bool = False,
     specialist_should_own_turn: bool = False,
+    research_oriented: bool = False,
+    wall_time_critical: bool = False,
 ) -> Decision:
     if depth not in VALID_DEPTHS:
         raise ValueError(f"invalid depth: {depth}")
@@ -73,6 +75,19 @@ def decide(
             handoff=False,
             recursive_delegation=False,
             reason_codes=tuple(reasons),
+        )
+
+    if depth == "Research" and not research_oriented:
+        return Decision(
+            action="lead",
+            lead_control="manager",
+            initial_specialists=0,
+            max_specialists=0,
+            parallel_limit=0,
+            external_skill=False,
+            handoff=False,
+            recursive_delegation=False,
+            reason_codes=("research-orient-first",),
         )
 
     if depth == "Standard":
@@ -113,12 +128,17 @@ def decide(
             reason_codes=tuple(reasons),
         )
 
-    # Deep and Research start with one specialist when unresolved work remains.
+    # Deep/Research add specialists only after the lead has localized the work.
     cap = min(3, max(1, unresolved))
     parallel = 1
     if independent >= 2 and not mutating and not shared_state:
-        parallel = min(3, independent, cap)
+        default_parallel_cap = 2 if depth == "Research" and not wall_time_critical else 3
+        parallel = min(default_parallel_cap, independent, cap)
         reasons.append("independent-readonly-parallel")
+        if depth == "Research" and parallel == 2 and independent >= 3 and not wall_time_critical:
+            reasons.append("research-cost-cap-two")
+        if depth == "Research" and wall_time_critical and parallel >= 3:
+            reasons.append("research-wall-time-override")
     elif independent >= 2:
         reasons.append("shared-mutation-sequential")
 

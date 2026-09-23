@@ -22,6 +22,8 @@ MAINTENANCE_EVIDENCE = ROOT / "docs" / "maintenance-evidence.json"
 MAINTENANCE_DOC = ROOT / "docs" / "MAINTENANCE.md"
 RESEARCH_LOG = ROOT / "docs" / "RESEARCH_LOG.md"
 AWS_DEEP = ROOT / "skills" / "plat" / "references" / "aws-deep.md"
+EFFICIENCY = ROOT / "skills" / "plat" / "references" / "efficiency.md"
+RESEARCH_ECON = ROOT / "benchmarks" / "research-economics-v1.9" / "BASELINE.json"
 BEHAVIORAL_DIR = ROOT / "benchmarks" / "behavioral-v1.8"
 BEHAVIORAL_CASES = BEHAVIORAL_DIR / "cases.json"
 BEHAVIORAL_TRIGGERS = BEHAVIORAL_DIR / "trigger-cases.json"
@@ -131,6 +133,23 @@ require(MAINTENANCE_EVIDENCE.exists(), "machine-readable maintenance evidence is
 require(MAINTENANCE_DOC.exists(), "maintenance protocol is missing")
 require(RESEARCH_LOG.exists(), "research log is missing")
 require(AWS_DEEP.exists(), "AWS deep specialist reference is missing")
+require(EFFICIENCY.exists(), "Research economics reference is missing")
+require(RESEARCH_ECON.exists(), "v1.9 Research economics baseline is missing")
+if EFFICIENCY.exists():
+    efficiency_text = EFFICIENCY.read_text(encoding="utf-8").lower()
+    for phrase in [
+        "lead-first orientation",
+        "golden-reference mapping pattern",
+        "failing tests",
+        "every dispatch names a model/tier explicitly",
+        "aggregate model/api time",
+        "afk / report mode",
+    ]:
+        require(phrase in efficiency_text, f"Research economics reference missing control: {phrase}")
+if RESEARCH_ECON.exists():
+    econ = json.loads(RESEARCH_ECON.read_text(encoding="utf-8"))
+    require(econ.get("schema_version") == 1, "Research economics baseline schema_version must be 1")
+    require(econ.get("comparable_live_benchmark") is False, "single observed baseline must not be labeled comparable live benchmark")
 if AWS_DEEP.exists():
     aws_text = AWS_DEEP.read_text(encoding="utf-8")
     for phrase in [
@@ -178,6 +197,8 @@ for phrase in [
     "same-question",
     "untrusted instruction-bearing packages",
     "license/provenance",
+    "P-01 orients first with **0 specialists**",
+    "explicit wall-time benefit",
 ]:
     require(phrase.lower() in orchestration.lower(), f"missing orchestration control: {phrase}")
 

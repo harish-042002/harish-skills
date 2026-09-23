@@ -68,6 +68,7 @@ Load one primary reference first; add another only when evidence crosses a real 
 - Flutter/mobile -> `flutter-mobile.md`
 - AI/RAG/agents -> `ai-engineering.md`
 - Delegation -> `subagents.md`
+- Efficiency -> `efficiency.md`
 
 Deep specialist mapping lives in `references/adaptive-depth.md`. Load one deep specialist first; a second requires evidence that the task truly crosses that boundary.
 
