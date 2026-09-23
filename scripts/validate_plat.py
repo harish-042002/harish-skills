@@ -15,6 +15,8 @@ VERSION = ROOT / "VERSION"
 SKILL_VERSION = ROOT / "skills" / "plat" / "VERSION"
 CASES = ROOT / "tests" / "routing-cases.json"
 UPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
+ORCHESTRATION_POLICY = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
+ORCHESTRATION_CASES = ROOT / "tests" / "orchestration-cases.json"
 
 errors: list[str] = []
 
@@ -70,12 +72,18 @@ for heading in [
 require(ORCHESTRATION.exists(), "specialist orchestration reference is missing")
 require(DISCOVER_SKILLS.exists(), "installed-skill discovery broker is missing")
 for heading in [
+    "## Control topology",
+    "## Orchestration gate",
     "## Specialist tiers",
-    "## Discovery",
-    "## Selection gate",
-    "## Evidence packet",
-    "## Arbitration",
-    "## External-skill safety",
+    "## Manager vs handoff",
+    "## External-skill discovery",
+    "## Dispatch contract",
+    "## Result contract",
+    "## Evidence arbitration",
+    "## Parallel vs sequential scheduling",
+    "## Mutation ownership",
+    "## Cost/token/time discipline",
+    "## Circuit breakers",
     "## Stop conditions",
 ]:
     require(heading in orchestration, f"orchestration.md missing section: {heading}")
@@ -90,6 +98,25 @@ for phrase in [
 for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`", skill):
     p = ROOT / "skills" / "plat" / "references" / ref
     require(p.exists(), f"missing referenced file: {p.relative_to(ROOT)}")
+
+require(ORCHESTRATION_POLICY.exists(), "deterministic orchestration policy script is missing")
+require(ORCHESTRATION_CASES.exists(), "orchestration regression corpus is missing")
+if ORCHESTRATION_CASES.exists():
+    orchestration_data = json.loads(ORCHESTRATION_CASES.read_text(encoding="utf-8"))
+    orchestration_items = orchestration_data.get("cases", [])
+    require(len(orchestration_items) >= 20, f"orchestration corpus too small: {len(orchestration_items)} < 20")
+    orchestration_ids = [x.get("id") for x in orchestration_items]
+    require(len(orchestration_ids) == len(set(orchestration_ids)), "orchestration case ids are not unique")
+
+for phrase in [
+    "P-01 retains:",
+    "Specialists do not directly overrule one another",
+    "one level",
+    "smallest discriminating check",
+    "Three agreeing specialists do not beat one direct failing test",
+    "same question",
+]:
+    require(phrase.lower() in orchestration.lower(), f"missing orchestration control: {phrase}")
 
 require(VERSION.read_text().strip() == SKILL_VERSION.read_text().strip(), "root VERSION and skill VERSION differ")
 require(UPDATE_CHECK.exists(), "daily update checker script is missing")
