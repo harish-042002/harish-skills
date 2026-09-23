@@ -48,7 +48,7 @@ A request for a detailed/deep answer changes output detail, not engineering dept
 7. Claim completion only from **fresh evidence after the final relevant edit**.
 8. Deep internal work does not require a long final response.
 
-For non-trivial implementation/refactoring, read `references/engineering-core.md`. For expensive Deep/Research work, AFK mapping/report tasks, or cost/time optimization, read `references/efficiency.md`. For routing/failure-mode audits, read `references/agent-failure-modes.md`.
+For non-trivial implementation/refactoring, read `references/engineering-core.md`. For routing/efficiency audits, read `references/agent-failure-modes.md`.
 
 ## Primary routes
 
@@ -68,7 +68,7 @@ Load one primary reference first; add another only when evidence crosses a real 
 - Flutter/mobile -> `flutter-mobile.md`
 - AI/RAG/agents -> `ai-engineering.md`
 - Delegation -> `subagents.md`
-- Research/task economics -> `efficiency.md`
+- Efficiency -> `efficiency.md`
 
 Deep specialist mapping lives in `references/adaptive-depth.md`. Load one deep specialist first; a second requires evidence that the task truly crosses that boundary.
 
