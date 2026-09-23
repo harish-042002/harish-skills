@@ -182,3 +182,55 @@ The main v1.7 improvements are:
 - runtime license/provenance boundary for literal reuse.
 
 See \`benchmarks/industry-v1.7/METHODOLOGY.md\`, \`REPORT.md\`, and \`RESULTS.json\` for the benchmark boundary and exact results.
+
+
+## 6. v1.8 AWS deep specialist + behavioral evaluation maturity
+
+v1.8 adds two independent capabilities:
+
+1. a built-in `aws-deep.md` specialist for AWS-specific architecture/operations boundaries;
+2. a current-version behavioral evaluation harness under `benchmarks/behavioral-v1.8/`.
+
+### AWS deep specialist
+
+The AWS reference is progressively loaded only when the unresolved question is specifically AWS. AWS appearing in a repository or prompt does **not** by itself force Deep routing. The specialist covers account/region/role targeting, IAM, VPC/network path reasoning, Lambda/API Gateway/ECS/EKS, SQS/SNS/EventBridge/Step Functions, DynamoDB/RDS/S3/cache boundaries, CDK/CloudFormation/Terraform safety, CloudWatch/CloudTrail operations, quotas/scaling, DR, security, and cost.
+
+The source scan used current official AWS material and public skill implementations as principle-level inspiration only; no external skill code/prose was copied into Plat.
+
+### Behavioral evaluation maturity
+
+The behavioral-evaluation dimension is now explicitly scored from `benchmarks/behavioral-v1.8/RUBRIC.md`. v1.8 earns **8/18 maturity points**, up from the previous 1/18 evidence state, because the repository now contains:
+
+- a frozen current-version realistic task pack;
+- a three-turn scope/correction case based on the real notification misunderstanding class;
+- AWS correctness/safety/security fixtures;
+- independent executable verifiers;
+- a host-neutral runner with isolated workspaces;
+- Plat/no-Plat/prior-arm labeling and repetition support;
+- changed-file/LOC/wall-time capture plus optional token/cost/tool telemetry;
+- a frozen 20-case positive/negative trigger corpus.
+
+This raises the **industry-readiness/evaluation-maturity rubric** from 75.5/100 to **82.5/100** if all other v1.7 dimensions are held constant.
+
+This is **not** a claim that v1.8 succeeds on 82.5% of real tasks. The current-version live-result portion remains unearned: `STATUS.json` records **0 fresh v1.8 live trajectories** at release time. Fake-adapter/dry-run execution validates harness plumbing only and earns no live-result points.
+
+### Frozen behavioral cases
+
+The initial executable pack contains 5 fixture tasks:
+
+1. multi-turn notification variants/correction with explicit no-dynamic/no-learning scope;
+2. tiny timeout-only negative control;
+3. SQS/Lambda duplicate-side-effect case requiring existing durable idempotency;
+4. CloudFormation deploy account/region fail-closed guard;
+5. IAM wildcard-to-prefix least-privilege correction.
+
+The runner is designed for repeated real runs using external host wrappers. A result is a pass only when the independent verifier passes **and** there are no unexpected changed files or forbidden-pattern hits.
+
+### Next evidence milestone
+
+To earn the remaining behavioral points, run the frozen pack (and expand to >=8 cases) with the same model/settings in fresh workspaces:
+
+- v1.8 Plat arm: >=3 repetitions per case;
+- matching no-Plat or prior-Plat control arm;
+- publish raw result JSON, task-level failures, tokens/tool calls/cost/wall time;
+- replicate on a second coding-agent host/model.
