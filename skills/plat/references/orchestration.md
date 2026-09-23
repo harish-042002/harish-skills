@@ -61,6 +61,8 @@ Prefer:
 
 Inspect the full `SKILL.md` of **one best candidate first**. Inspect a second only if the first does not resolve the capability or the task genuinely spans another specialty.
 
+If the host exposes native skill activation/invocation, prefer that mechanism. Otherwise, consult the discovered installed `SKILL.md` directly as bounded specialist guidance. Do not invent a universal slash-command syntax.
+
 ## Selection gate
 
 Invoke/consult an external skill only when all are true enough:
