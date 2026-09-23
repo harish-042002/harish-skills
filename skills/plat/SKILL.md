@@ -69,6 +69,12 @@ Load one primary reference first; add another only when evidence crosses a real 
 
 Deep specialist mapping lives in `references/adaptive-depth.md`. Load one deep specialist first; a second requires evidence that the task truly crosses that boundary.
 
+## External specialist bench
+
+For Deep/Research work, or when a concrete specialty exceeds Plat's built-in depth, read `references/orchestration.md`. Discover installed skills metadata-first with `scripts/discover_skills.py`; consult **one best-matching external skill first** and add another only when evidence proves a second specialty is needed.
+
+Plat remains the lead orchestrator. External skills are bounded consultants: send only relevant evidence, require evidence/confidence back, and arbitrate disagreements with current repo/runtime evidence rather than voting. Quick/ordinary Standard tasks should normally use **zero external skills**.
+
 ## UI/UX
 
 Do not load design depth for ordinary frontend logic.
