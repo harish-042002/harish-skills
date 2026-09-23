@@ -56,12 +56,12 @@ The machine record must include:
 - capability/failure being changed;
 - every material file covered by the evidence;
 - at least 2 relevant public sources;
-- source license and reuse mode (`principle-only`, `adapted`, or `copied`);
+- source license and reuse mode (`principle-only`, `adapted`, or `copied`); adapted/copied reuse must include an attribution record;
 - adopted principles;
 - rejected patterns and why;
 - tests added/run.
 
-`scripts/maintenance_gate.py` enforces this for material Plat changes in CI. The human research log must reference the same evidence ID and inspected repositories.
+`scripts/maintenance_gate.py` enforces this for material Plat changes in CI, including a base-relative freshness check that rejects reuse of the previous evidence entry. The human research log must reference the same evidence ID and inspected repositories.
 
 This gate is deliberately **repository-maintenance only**. It must never be called from Plat's normal engineering runtime.
 
