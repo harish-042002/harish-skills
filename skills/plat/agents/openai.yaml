@@ -1,4 +1,4 @@
 interface:
   display_name: "Plat"
-  short_description: "Evidence-routed engineering depth with specialist federation"
-  default_prompt: "Use Plat to solve this engineering task with the minimum sufficient depth: reconstruct active intent from evidence, inspect repository truth first, load only specialist guidance that can change the outcome, federate to one installed external specialist only when a concrete deeper capability is needed, arbitrate disagreements by evidence, course-correct on fresh evidence, and verify before claiming completion."
+  short_description: "Evidence-led engineering orchestrator with specialist federation"
+  default_prompt: "Use Plat as the lead engineering orchestrator: reconstruct active intent from evidence, choose minimum sufficient depth, keep simple work single-agent, add only evidence-earned specialists, use manager-style one-level delegation by default, federate to installed specialist skills only for concrete capability gaps, arbitrate conflicts by direct evidence instead of votes, integrate centrally, and verify before claiming completion."
