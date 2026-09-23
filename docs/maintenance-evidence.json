@@ -166,6 +166,60 @@
         "non-evidence fake-adapter end-to-end harness dry-run: 5/5 fixtures",
         "Python compileall and installer shell syntax"
       ]
+    },
+    {
+      "id": "2026-09-23-v1.9-research-economics",
+      "date": "2026-09-23",
+      "capability": "Reduce cost, cache churn, duplicate verification, and subagent dominance in broad Deep/Research tasks while preserving rigorous repository evidence and final report quality.",
+      "material_files": [
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/references/adaptive-depth.md",
+        "skills/plat/references/agent-failure-modes.md",
+        "skills/plat/references/efficiency.md",
+        "skills/plat/references/orchestration.md",
+        "skills/plat/references/repository-understanding.md",
+        "skills/plat/references/subagents.md",
+        "skills/plat/references/testing.md",
+        "skills/plat/scripts/orchestration_policy.py",
+        "scripts/validate_plat.py"
+      ],
+      "sources": [
+        {
+          "repo": "obra/superpowers",
+          "license": "MIT",
+          "inspected": "task-scoped review/dispatch design, explicit worker-model selection, focused re-review and test-budget guidance",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "aws-samples/sample-agent-skill-eval",
+          "license": "MIT-0",
+          "inspected": "with-skill/without-skill quality evaluation, token/cost estimation, timing metrics, and cost-efficiency reporting",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "lead-first Research orientation before broad delegation",
+        "golden-reference comparison matrix and compact evidence ledger",
+        "Research default of zero specialists during orientation, then one batched scout or two independent scouts",
+        "explicit worker model/tier where supported to avoid accidental expensive inheritance",
+        "baseline failing tests instead of rerunning the full baseline suite for failure attribution",
+        "separate wall time from aggregate model/API time in live economics evaluation"
+      ],
+      "rejected": [
+        "hard token budgets that can force under-investigation",
+        "always-cheapest worker selection regardless of repair risk",
+        "banning Research parallelism entirely",
+        "skipping broad verification when blast radius genuinely requires it",
+        "claiming the v1.9 savings targets before matched repeated live reruns"
+      ],
+      "tests": [
+        "orchestration policy regressions for Research orientation, default parallel cap two, and explicit wall-time override",
+        "structural validation for Research economics controls and single-observation benchmark labeling",
+        "full Python unit discovery",
+        "Python compileall and installer shell syntax",
+        "main-branch GitHub Actions before release"
+      ]
     }
   ]
 }
