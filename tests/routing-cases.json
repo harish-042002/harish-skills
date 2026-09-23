@@ -276,6 +276,61 @@
         "correction": "None",
         "note": "fall back to repo/official evidence; do not force irrelevant skill"
       }
+    },
+    {
+      "id": "scope-lock-catalogue-only",
+      "message": "add 5 variants for each scenario and each user state; work on these alone",
+      "evidence": "The active catalogue already supports scenario/state variants. No current contract requires confidence tiers, response stages, new learning signals, telemetry, persistence, or architecture changes.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "Behavioral",
+        "note": "lock scope to catalogue/required selector/tests; do not invent adjacent product semantics"
+      }
+    },
+    {
+      "id": "correction-purge-task-local",
+      "message": "5 variants per state is the only truth; no medium/high thing",
+      "evidence": "The immediately previous attempt introduced confidence-gated selection and response-stage machinery only for this request; no pre-existing contract depends on them.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "Behavioral",
+        "note": "purge task-local confidence/stage machinery built from rejected assumption"
+      }
+    },
+    {
+      "id": "hard-negative-requirement",
+      "message": "keep the existing learning logic; only change the notification title/body copy",
+      "evidence": "Copy lives in the catalogue and existing tests isolate it. Learning code is unrelated to the requested copy delta.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "Local",
+        "note": "MUST NOT modify learning/selector architecture"
+      }
+    },
+    {
+      "id": "diff-expansion-circuit-breaker",
+      "message": "make these 20 catalogue messages more natural",
+      "evidence": "Editing the catalogue begins touching selector, telemetry, persistence, and event-processing modules without any compile/runtime dependency.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "Behavioral",
+        "note": "stop expansion and re-localize; extra subsystems are not causally required"
+      }
+    },
+    {
+      "id": "necessary-adjacent-change-allowed",
+      "message": "replace the enum value OLD with NEW everywhere this public serializer requires",
+      "evidence": "The serializer cannot compile unless the owning enum and its direct compatibility test change together.",
+      "expect": {
+        "clarify": false,
+        "depth": "Standard",
+        "correction": "Behavioral",
+        "note": "allow minimal adjacent change because it is mechanically required"
+      }
     }
   ]
 }
