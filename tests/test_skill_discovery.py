@@ -120,7 +120,7 @@ class DiscoverSkillsTests(unittest.TestCase):
             write_skill(
                 home / ".codex" / "skills" / "agent-orchestrator",
                 "agent-orchestrator",
-                "General-purpose agent orchestration workflow for many engineering tasks",
+                "General-purpose agent orchestration workflow including postgres database isolation and many engineering tasks",
             )
             write_skill(
                 home / ".codex" / "skills" / "postgres-isolation",
