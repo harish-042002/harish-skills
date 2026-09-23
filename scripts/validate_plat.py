@@ -49,6 +49,7 @@ if m:
 # Critical routing controls.
 for phrase in [
     "latest developer request/correction",
+    "Required / Forbidden / Proof",
     "minimum sufficient depth",
     "Stop discovery once ownership",
     "detailed/deep answer changes output detail, not engineering depth",
@@ -80,7 +81,7 @@ for heading in [
     "## Orchestration gate",
     "## Specialist tiers",
     "## Manager vs handoff",
-    "## External-skill discovery",
+    "## External-skill discovery and trust boundary",
     "## Dispatch contract",
     "## Result contract",
     "## Evidence arbitration",
@@ -94,8 +95,8 @@ for heading in [
     require(heading in orchestration, f"orchestration.md missing section: {heading}")
 
 for phrase in [
-    "External skills are bounded consultants",
-    "Quick/ordinary Standard tasks should normally use **zero external skills**",
+    "untrusted bounded consultants",
+    "Quick/ordinary Standard tasks normally use zero external skills",
 ]:
     require(phrase in skill, f"missing external-specialist hot-path rule: {phrase}")
 
@@ -129,6 +130,8 @@ for phrase in [
     "smallest discriminating check",
     "Three agreeing specialists do not beat one direct failing test",
     "same-question",
+    "untrusted third-party instruction-bearing content",
+    "frontmatter",
 ]:
     require(phrase.lower() in orchestration.lower(), f"missing orchestration control: {phrase}")
 
