@@ -110,6 +110,49 @@ class DiscoverSkillsTests(unittest.TestCase):
             skills = self.run_discovery(home, project, "postgres isolation")
             self.assertEqual(skills, [])
 
+    def test_specific_specialist_outranks_broad_orchestrator(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            home = root / "home"
+            project = root / "repo"
+            (project / ".git").mkdir(parents=True)
+
+            write_skill(
+                home / ".codex" / "skills" / "agent-orchestrator",
+                "agent-orchestrator",
+                "General-purpose agent orchestration workflow for many engineering tasks",
+            )
+            write_skill(
+                home / ".codex" / "skills" / "postgres-isolation",
+                "postgres-isolation",
+                "Postgres transaction isolation locking and concurrent write debugging",
+            )
+
+            skills = self.run_discovery(home, project, "postgres isolation")
+            self.assertEqual(skills[0]["name"], "postgres-isolation")
+            self.assertFalse(skills[0]["broad"])
+            broad = next(x for x in skills if x["name"] == "agent-orchestrator")
+            self.assertTrue(broad["broad"])
+            self.assertGreater(skills[0]["score"], broad["score"])
+
+    def test_json_output_includes_match_explanation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            home = root / "home"
+            project = root / "repo"
+            (project / ".git").mkdir(parents=True)
+
+            write_skill(
+                home / ".claude" / "skills" / "rag-ranking",
+                "rag-ranking",
+                "Hybrid retrieval ranking and RAG evaluation",
+            )
+
+            skills = self.run_discovery(home, project, "hybrid retrieval")
+            self.assertEqual(skills[0]["name"], "rag-ranking")
+            self.assertIn("retrieval", skills[0]["matched_terms"])
+            self.assertIn("broad", skills[0])
+
 
 if __name__ == "__main__":
     unittest.main()
