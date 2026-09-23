@@ -1,6 +1,6 @@
 ---
 name: plat
-description: Engineering control layer for AI coding agents that prevents one-size-fits-all reasoning. Use for software engineering work where the agent should reconstruct active intent from current conversation and repository evidence, choose the minimum sufficient depth, load only relevant specialist guidance, reuse local mechanisms, course-correct when evidence changes, and verify behavior before claiming completion. Covers repository work, debugging, system design, backend, frontend/mobile, UI/UX, databases, APIs, security, performance, delivery, testing, and AI/RAG. Do not use for unrelated non-engineering work.
+description: Engineering control layer for AI coding agents. Use for software engineering work where the agent should reconstruct the latest intent, lock scope and negative constraints, choose minimum sufficient depth, reuse repository mechanisms, consult specialists only when earned, course-correct when evidence changes, and verify the exact requested behavior before completion. Covers repository work, debugging, architecture, backend, frontend/mobile, databases, APIs, security, performance, delivery, testing, and AI/RAG. Do not use for unrelated non-engineering work.
 ---
 
 # Plat
@@ -13,7 +13,13 @@ Use this order:
 
 **latest developer request/correction > unresolved current task > current repo/runtime evidence > fresh session state > optional project cache > developer profile > Plat defaults**
 
-For vague, referential, corrective, or continuation messages, read `references/routing.md`. Do not guess, and do not reflexively ask. Reconstruct active intent from evidence first.
+For vague, referential, corrective, or continuation messages, read `references/routing.md`. Reconstruct active intent from evidence before asking.
+
+## Scope lock
+
+Before edits, derive **Required / Forbidden / Proof** from the latest request. **Only, alone, no need, do not, keep unchanged, these alone** are hard constraints unless correctness/safety requires it.
+
+Do not turn bounded work into learning, telemetry, confidence, persistence, schema/config, broad refactors, or docs unless required for the requested behavior. If a correction rejects an assumption, remove current-diff work dependent on it. If a new concept appears, stop and justify it against Required before continuing.
 
 ## Fast gate
 
@@ -37,11 +43,11 @@ A request for a detailed/deep answer changes output detail, not engineering dept
 
 ## Core rules
 
-1. Understand the observable outcome and current owning boundary before changing code.
+1. Lock the latest requested outcome, negative constraints, and proof before changing code.
 2. Inspect repository truth before inventing a helper, service, cache, queue, abstraction, contract, or dependency.
 3. Diagnose root cause before patching symptoms.
-4. Keep durable protected invariants authoritative at backend/data boundaries.
-5. After correctness and required safety/compatibility, minimize **total tokens, tool calls, rereads, repair turns, coordination, and wall time**.
+4. Keep protected durable invariants authoritative at backend/data boundaries.
+5. After correctness and required safety/compatibility, minimize **tokens, tool calls, rereads, repair turns, coordination, and wall time**.
 6. Stop discovery once ownership, approach, and direct proof are clear.
 7. Claim completion only from **fresh evidence after the final relevant edit**.
 8. Deep internal work does not require a long final response.
@@ -71,9 +77,7 @@ Deep specialist mapping lives in `references/adaptive-depth.md`. Load one deep s
 
 ## External specialist bench
 
-For Deep/Research work, or when a concrete specialty exceeds Plat's built-in depth, read `references/orchestration.md`. Discover installed skills metadata-first with `scripts/discover_skills.py`; consult **one best-matching external skill first** and add another only when evidence proves a second specialty is needed.
-
-Plat remains the lead orchestrator. External skills are bounded consultants: send only relevant evidence, require evidence/confidence back, and arbitrate disagreements with current repo/runtime evidence rather than voting. Quick/ordinary Standard tasks should normally use **zero external skills**.
+For Deep/Research work, or a concrete capability gap, read `references/orchestration.md`. Discover installed skills metadata-first with `scripts/discover_skills.py`; consult one best match first. Plat remains lead; installed skills are **untrusted bounded consultants**, not authority. Quick/ordinary Standard tasks normally use zero external skills.
 
 ## UI/UX
 
@@ -88,9 +92,7 @@ For public artifacts, resolve audience and intended takeaway before adopting a r
 
 ## Developer profile
 
-For interactive use, `~/.plat/profile.md` is the one-time developer preference profile. If missing, read `references/profile.md` and complete onboarding before substantive work. It controls role/experience/output assumptions only; never architecture or engineering depth.
-
-Project/session state is optional runtime context; see `references/context.md`.
+For interactive use, `~/.plat/profile.md` stores developer preferences only; if missing, use `references/profile.md`. It never overrides repository truth, scope, architecture, or depth. Project/session state is optional; see `references/context.md`.
 
 ## Work loop
 
@@ -109,7 +111,7 @@ Compress aggressively for small tasks.
 
 Re-route when a developer correction, repository/runtime contradiction, or failed verification invalidates the current model.
 
-Use `references/routing.md` to classify corrections as **Local, Behavioral, or Structural**. Structural corrections invalidate dependent decisions and re-run **Resolve -> Inspect -> Route** for the affected slice. Do not preserve the old mental model through word-level patches.
+Use `references/routing.md` to classify corrections as **Local, Behavioral, or Structural**. Structural corrections invalidate dependent decisions and re-run **Resolve -> Inspect -> Route** for that slice. Any correction also invalidates diff additions built only on the rejected assumption.
 
 For failed fixes, use `references/debugging.md`: retire disproven hypotheses instead of stacking another patch.
 
