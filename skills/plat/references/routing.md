@@ -9,13 +9,16 @@ Use when the latest developer message is short, referential, ambiguous, correcti
 3. Vague-message resolution
 4. Confidence gate
 5. Fast path
-6. Correction severity
-7. Dependency invalidation
-8. Re-route protocol
-9. Repository inspection budget
-10. Specialist budget
-11. Stop conditions
-12. Examples
+6. Scope lock
+7. Diff-expansion circuit breaker
+8. Correction severity
+9. Correction purge
+10. Dependency invalidation
+11. Re-route protocol
+12. Repository inspection budget
+13. Specialist budget
+14. Stop conditions
+15. Examples
 
 ## Routing objective
 
@@ -105,6 +108,34 @@ Typical fast-path cases:
 - rerun after a narrow failed command;
 - developer says "remove that" immediately after identifying one element.
 
+## Scope lock
+
+Before mutating code, bind the latest request into four facts when scope could drift:
+
+```text
+MUST: exact requested behavior/artifact
+MUST NOT: explicit exclusions/negations
+PRESERVE: accepted current behavior not being replaced
+PROOF: smallest direct evidence for the requested delta
+```
+
+Words such as **only, alone, just, no/no need, do not/don't, keep, exactly, these alone** are constraints, not conversational filler. They outrank earlier inferred enhancements.
+
+Do not substitute a product idea for the request. A developer asking for more catalogue variants, stronger copy, or one new user-state dimension has **not** implicitly asked for confidence tiers, new progression stages, additional learning signals, telemetry, selector rewrites, or new persistence. Those require their own evidence-backed requirement.
+
+Adjacent changes are allowed only when they are mechanically required for the requested behavior to compile, run, preserve an existing contract, or pass the direct proof. Keep them minimal and name why they were required.
+
+## Diff-expansion circuit breaker
+
+Treat unexpected patch growth as evidence that the task may have been reinterpreted. Before continuing, stop and re-localize when any of these occurs:
+
+- a local/copy/catalogue request crosses into a second subsystem with no proven dependency;
+- a new state dimension, mode, stage, signal, abstraction, dependency, schema field, telemetry path, or background process appears without an explicit requirement;
+- touched files materially exceed the owning implementation + nearest tests/docs required by the change;
+- the explanation for a touched file is "it would be better" rather than "the requested outcome requires it."
+
+This is not a numeric file-count rule. One requirement may legitimately span many files; one copy change may legitimately need one. The gate is **causal necessity**. If extra scope is not necessary, do not do it.
+
 ## Correction severity
 
 Classify a material correction before continuing.
@@ -144,6 +175,22 @@ Examples:
 - user changes the actual product audience or primary workflow.
 
 Action: invalidate dependent decisions and re-run Interpret → Inspect → Route for the affected artifact/subsystem.
+
+## Correction purge
+
+A newer developer correction is not an additive suggestion. For task-local work created during the current trajectory:
+
+1. identify additions that depended on the rejected assumption;
+2. remove/revert them if they are no longer necessary for the corrected outcome;
+3. preserve only work that is independently required;
+4. re-run the narrowest proof against the corrected truth.
+
+Examples:
+- "no medium/high thing" means confidence-gated selection introduced for this task should disappear, not remain as a dormant fallback;
+- "work on these alone" means stop touching learning, telemetry, orchestration, or unrelated docs unless the corrected behavior cannot function without a specific dependency;
+- "5 variants per state is the only truth" means do not retain a generic competing catalogue path merely because it was built earlier, unless an existing contract requires a fallback.
+
+Do not protect agent-authored work from the developer's correction. The latest accepted requirement owns the trajectory.
 
 ## Dependency invalidation
 
@@ -283,3 +330,11 @@ Engineering route: Quick. Response may explain the change in more detail if usef
 If recent context identifies duplicate invoice creation under concurrent workers, use that evidence and inspect the owning write path.
 
 If there is no active referent and several duplicate behaviors exist, search narrowly first. Ask one question only if the repository still leaves multiple materially different targets.
+
+### "5 variants per user state; no medium/high; work on these alone"
+
+Previous trajectory added confidence tiers, response stages, extra learning signals, and trace fields while expanding catalogue copy.
+
+Route: latest correction becomes the scope lock -> keep only the requested scenario × state × variant truth plus mechanically required selector/test changes -> purge task-local confidence/stage/telemetry additions that no longer serve the corrected requirement -> direct catalogue/selection proof.
+
+Do not justify the old additions as future-proofing.
