@@ -114,7 +114,7 @@ for phrase in [
     "one level",
     "smallest discriminating check",
     "Three agreeing specialists do not beat one direct failing test",
-    "same question",
+    "same-question",
 ]:
     require(phrase.lower() in orchestration.lower(), f"missing orchestration control: {phrase}")
 
