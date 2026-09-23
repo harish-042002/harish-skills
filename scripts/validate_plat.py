@@ -17,6 +17,10 @@ CASES = ROOT / "tests" / "routing-cases.json"
 UPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
 ORCHESTRATION_POLICY = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
 ORCHESTRATION_CASES = ROOT / "tests" / "orchestration-cases.json"
+MAINTENANCE_GATE = ROOT / "scripts" / "maintenance_gate.py"
+MAINTENANCE_EVIDENCE = ROOT / "docs" / "maintenance-evidence.json"
+MAINTENANCE_DOC = ROOT / "docs" / "MAINTENANCE.md"
+RESEARCH_LOG = ROOT / "docs" / "RESEARCH_LOG.md"
 
 errors: list[str] = []
 
@@ -101,6 +105,15 @@ for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`", skill):
     require(p.exists(), f"missing referenced file: {p.relative_to(ROOT)}")
 
 require(ORCHESTRATION_POLICY.exists(), "deterministic orchestration policy script is missing")
+require(MAINTENANCE_GATE.exists(), "maintenance evidence gate is missing")
+require(MAINTENANCE_EVIDENCE.exists(), "machine-readable maintenance evidence is missing")
+require(MAINTENANCE_DOC.exists(), "maintenance protocol is missing")
+require(RESEARCH_LOG.exists(), "research log is missing")
+if MAINTENANCE_EVIDENCE.exists():
+    maintenance_data = json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
+    require(maintenance_data.get("schema_version") == 1, "maintenance evidence schema_version must be 1")
+    maintenance_entries = maintenance_data.get("entries", [])
+    require(isinstance(maintenance_entries, list) and len(maintenance_entries) >= 1, "maintenance evidence must contain entries")
 require(ORCHESTRATION_CASES.exists(), "orchestration regression corpus is missing")
 if ORCHESTRATION_CASES.exists():
     orchestration_data = json.loads(ORCHESTRATION_CASES.read_text(encoding="utf-8"))
