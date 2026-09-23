@@ -36,7 +36,9 @@ jobs:
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Validate Plat
-        run: python scripts/validate_plat.py
+        run: |
+          python scripts/validate_plat.py
+          python -m unittest tests/test_update_check.py
 
       - name: Package Plat
         shell: bash
