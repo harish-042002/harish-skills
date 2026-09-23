@@ -128,6 +128,7 @@ class OrchestrationInvariantTests(unittest.TestCase):
                 independent=1,
                 built_in_sufficient=False,
                 external_match=True,
+                research_oriented=(depth == "Research"),
             )
             self.assertEqual(d.parallel_limit, 1, depth)
 
