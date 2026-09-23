@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - VERSION
-      - .github/workflows/release-plat.yml
+      - skills/plat/VERSION
 
 concurrency:
   group: release-plat
@@ -20,10 +20,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout latest main
+      - name: Checkout triggering revision
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.sha }}
 
       - name: Read version
         id: version
