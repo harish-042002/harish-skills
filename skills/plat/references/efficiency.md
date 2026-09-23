@@ -2,6 +2,20 @@
 
 Use for broad repository analysis, cross-branch mapping, AFK report tasks, expensive Deep/Research sessions, or any task where tokens, cache reads, tool calls, subagents, full-suite runs, or wall time may dominate cost.
 
+## Contents
+
+1. Objective
+2. Lead-first orientation
+3. Golden-reference mapping pattern
+4. Evidence ledger and read deduplication
+5. Subagent economics
+6. Test economics
+7. Branch / merge research
+8. AFK / report mode
+9. Parallelism vs cost
+10. Research stop conditions
+11. Metrics for live evaluation
+
 ## Objective
 
 Minimize **total cost to a correct verified result**:
