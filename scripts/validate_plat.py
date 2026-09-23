@@ -137,7 +137,7 @@ if AWS_DEEP.exists():
         "aws sts get-caller-identity",
         "human access should use federation/SSO and temporary credentials",
         "A module-level in-memory dedupe set is not a durable idempotency mechanism",
-        "review \`cdk diff\` / CloudFormation change sets",
+        "review `cdk diff` / CloudFormation change sets",
         "multi-region is a major data/traffic/operational commitment",
         "Verify current quota values",
     ]:
