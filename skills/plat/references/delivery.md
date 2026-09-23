@@ -4,7 +4,7 @@ Use for CI failures, build/release pipelines, deployments, Docker/Kubernetes/ser
 
 ## Principle
 
-Delivery code is production code. Prefer the repository's existing pipeline, deployment, IaC, and branching conventions; change the smallest layer that owns the failure/requirement.
+Delivery code is production code. Prefer the repository's existing pipeline, deployment, IaC, and branching conventions; change the smallest layer that owns the failure/requirement. For AWS-specific service semantics, account/region/IAM safety, serverless/event delivery, CDK/CloudFormation, quotas, or AWS incident diagnosis, add `aws-deep.md` only when that concrete AWS boundary matters.
 
 ## CI and build
 

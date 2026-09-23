@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "release": "1.8.0",
+  "behavioral_evaluation_maturity": {
+    "score": 8,
+    "max": 18,
+    "earned": [
+      "historical real coding trajectory evidence with published limitations",
+      "frozen current-version realistic task pack",
+      "multi-turn correction/scope-deviation case",
+      "independent executable fixture verifiers",
+      "host-neutral isolated-workspace runner",
+      "control-arm and repetition support",
+      "diff/wall-time and optional token/cost/tool telemetry capture",
+      "frozen positive/negative trigger corpus"
+    ],
+    "not_earned": [
+      "current-version live Plat arm with at least 3 repetitions across at least 8 cases",
+      "matching current no-Plat/prior-Plat control arm",
+      "published task-level negative deltas from current live runs",
+      "independent human/agent verifier review for ambiguous semantic cases",
+      "replication on a second supported coding-agent host/model"
+    ]
+  },
+  "live_current_version_trajectories": 0,
+  "live_behavior_claim": "No new live behavioral uplift is claimed by v1.8 until fresh trajectories are published."
+}

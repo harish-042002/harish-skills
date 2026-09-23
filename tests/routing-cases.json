@@ -331,6 +331,50 @@
         "correction": "Behavioral",
         "note": "allow minimal adjacent change because it is mechanically required"
       }
+    },
+    {
+      "id": "aws-lambda-sqs-duplicates",
+      "message": "SQS-triggered Lambda is sending duplicate notifications after retries",
+      "evidence": "The handler has an external side effect and the unresolved boundary is AWS SQS/Lambda retry and idempotency semantics.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "None",
+        "note": "backend + AWS deep; durable idempotency, do not trust in-memory dedupe"
+      }
+    },
+    {
+      "id": "aws-cloudformation-tiny-typo",
+      "message": "fix this one CloudFormation property typo",
+      "evidence": "Exact template/resource/property and validate command are known; no runtime/IAM/data behavior changes.",
+      "expect": {
+        "clarify": false,
+        "depth": "Quick",
+        "correction": "Local",
+        "note": "AWS presence alone must not force aws-deep"
+      }
+    },
+    {
+      "id": "aws-cdk-stateful-replacement",
+      "message": "make this CDK rename safe",
+      "evidence": "cdk diff shows replacement of a production stateful database resource.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "Behavioral",
+        "note": "delivery + AWS deep; preserve resource identity or plan migration"
+      }
+    },
+    {
+      "id": "aws-wrong-account-guard",
+      "message": "make this production deploy fail closed if I am on the wrong AWS account",
+      "evidence": "Deploy script mutates CloudFormation and currently relies on implicit profile/region.",
+      "expect": {
+        "clarify": false,
+        "depth": "Deep",
+        "correction": "Behavioral",
+        "note": "AWS target identity is mandatory evidence before mutation"
+      }
     }
   ]
 }

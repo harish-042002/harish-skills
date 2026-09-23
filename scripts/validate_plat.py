@@ -21,6 +21,12 @@ MAINTENANCE_GATE = ROOT / "scripts" / "maintenance_gate.py"
 MAINTENANCE_EVIDENCE = ROOT / "docs" / "maintenance-evidence.json"
 MAINTENANCE_DOC = ROOT / "docs" / "MAINTENANCE.md"
 RESEARCH_LOG = ROOT / "docs" / "RESEARCH_LOG.md"
+AWS_DEEP = ROOT / "skills" / "plat" / "references" / "aws-deep.md"
+BEHAVIORAL_DIR = ROOT / "benchmarks" / "behavioral-v1.8"
+BEHAVIORAL_CASES = BEHAVIORAL_DIR / "cases.json"
+BEHAVIORAL_TRIGGERS = BEHAVIORAL_DIR / "trigger-cases.json"
+BEHAVIORAL_RUNNER = BEHAVIORAL_DIR / "run_behavioral_eval.py"
+BEHAVIORAL_SCORER = BEHAVIORAL_DIR / "score_results.py"
 
 errors: list[str] = []
 
@@ -124,6 +130,32 @@ require(MAINTENANCE_GATE.exists(), "maintenance evidence gate is missing")
 require(MAINTENANCE_EVIDENCE.exists(), "machine-readable maintenance evidence is missing")
 require(MAINTENANCE_DOC.exists(), "maintenance protocol is missing")
 require(RESEARCH_LOG.exists(), "research log is missing")
+require(AWS_DEEP.exists(), "AWS deep specialist reference is missing")
+if AWS_DEEP.exists():
+    aws_text = AWS_DEEP.read_text(encoding="utf-8")
+    for phrase in [
+        "aws sts get-caller-identity",
+        "human access should use federation/SSO and temporary credentials",
+        "A module-level in-memory dedupe set is not a durable idempotency mechanism",
+        "review `cdk diff` / CloudFormation change sets",
+        "multi-region is a major data/traffic/operational commitment",
+        "Verify current quota values",
+    ]:
+        require(phrase.lower() in aws_text.lower(), f"AWS deep reference missing control: {phrase}")
+require(BEHAVIORAL_CASES.exists(), "v1.8 behavioral case pack is missing")
+require(BEHAVIORAL_TRIGGERS.exists(), "v1.8 trigger case pack is missing")
+require(BEHAVIORAL_RUNNER.exists(), "v1.8 behavioral runner is missing")
+require(BEHAVIORAL_SCORER.exists(), "v1.8 behavioral scorer is missing")
+if BEHAVIORAL_CASES.exists():
+    behavioral = json.loads(BEHAVIORAL_CASES.read_text(encoding="utf-8"))
+    bc = behavioral.get("cases", [])
+    require(len(bc) >= 5, f"behavioral case pack too small: {len(bc)} < 5")
+    require(any(len(x.get("turns", [])) >= 3 for x in bc), "behavioral pack must include a multi-turn correction case")
+if BEHAVIORAL_TRIGGERS.exists():
+    triggers = json.loads(BEHAVIORAL_TRIGGERS.read_text(encoding="utf-8")).get("cases", [])
+    require(len(triggers) >= 20, f"trigger case pack too small: {len(triggers)} < 20")
+    require(any(x.get("expect_aws_deep") is True for x in triggers), "trigger pack must exercise AWS deep routing")
+    require(any(x.get("expect_plat") is False for x in triggers), "trigger pack must include negative controls")
 if MAINTENANCE_EVIDENCE.exists():
     maintenance_data = json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
     require(maintenance_data.get("schema_version") == 1, "maintenance evidence schema_version must be 1")
