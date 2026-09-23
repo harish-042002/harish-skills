@@ -9,6 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / "skills" / "plat" / "SKILL.md"
 ROUTING = ROOT / "skills" / "plat" / "references" / "routing.md"
+ORCHESTRATION = ROOT / "skills" / "plat" / "references" / "orchestration.md"
+DISCOVER_SKILLS = ROOT / "skills" / "plat" / "scripts" / "discover_skills.py"
 VERSION = ROOT / "VERSION"
 SKILL_VERSION = ROOT / "skills" / "plat" / "VERSION"
 CASES = ROOT / "tests" / "routing-cases.json"
@@ -22,6 +24,7 @@ def require(cond: bool, msg: str) -> None:
 
 skill = SKILL.read_text(encoding="utf-8")
 routing = ROUTING.read_text(encoding="utf-8")
+orchestration = ORCHESTRATION.read_text(encoding="utf-8") if ORCHESTRATION.exists() else ""
 
 # Hot-path budget: keep the always-loaded router lean.
 require(len(skill) <= 7000, f"SKILL.md hot path too large: {len(skill)} chars > 7000")
@@ -63,6 +66,26 @@ for heading in [
 ]:
     require(heading in routing, f"routing.md missing section: {heading}")
 
+
+require(ORCHESTRATION.exists(), "specialist orchestration reference is missing")
+require(DISCOVER_SKILLS.exists(), "installed-skill discovery broker is missing")
+for heading in [
+    "## Specialist tiers",
+    "## Discovery",
+    "## Selection gate",
+    "## Evidence packet",
+    "## Arbitration",
+    "## External-skill safety",
+    "## Stop conditions",
+]:
+    require(heading in orchestration, f"orchestration.md missing section: {heading}")
+
+for phrase in [
+    "External skills are bounded consultants",
+    "Quick/ordinary Standard tasks should normally use **zero external skills**",
+]:
+    require(phrase in skill, f"missing external-specialist hot-path rule: {phrase}")
+
 # All referenced Plat markdown files must exist.
 for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`", skill):
     p = ROOT / "skills" / "plat" / "references" / ref
@@ -78,7 +101,7 @@ if UPDATE_CHECK.exists():
 
 data = json.loads(CASES.read_text(encoding="utf-8"))
 items = data.get("cases", [])
-require(len(items) >= 20, f"routing corpus too small: {len(items)} < 20")
+require(len(items) >= 25, f"routing corpus too small: {len(items)} < 25")
 ids = [x.get("id") for x in items]
 require(len(ids) == len(set(ids)), "routing case ids are not unique")
 valid_depth = {"Quick","Standard","Deep","Research"}
