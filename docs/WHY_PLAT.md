@@ -38,6 +38,12 @@ The USP is not 'more instructions'. It is:
 
 > **Use the smallest engineering team and depth that can solve the real problem correctly, then prove it.**
 
+## Why Plat does not copy every specialist
+
+Dedicated skills can contain far more domain depth than Plat should keep in its own package/hot path. Copying them wholesale would increase context, duplicate maintenance, create licensing/update problems, and make simple tasks slower.
+
+Instead, Plat keeps a compact built-in baseline and can **federate to installed specialist skills** for genuinely complex work. This is capability reuse, not a claim that Plat contains every other skill.
+
 ## What Plat does not claim
 
 - It does not guarantee a fixed percentage reduction in tokens or cost.
