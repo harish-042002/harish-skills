@@ -72,31 +72,51 @@ Short follow-ups such as **"do it"**, **"continue"**, **"still wrong"**, or **"r
 
 <img src="assets/plat-roster.svg" alt="Plat specialist engineering team roster" width="100%" />
 
-## External specialist bench
+## Orchestrator + external specialist bench
 
-Plat does **not** try to copy every deep specialist skill into its own hot path. For ordinary work it stays self-contained. For genuinely complex **Deep/Research** tasks, it can discover already-installed skills, select the one that matches the unresolved specialty, consult it with a bounded evidence packet, and integrate the result.
+Plat does **not** try to copy every deep specialist skill into its hot path. P-01 stays the lead and adds specialists only when a concrete unresolved engineering question earns the extra context.
 
 ~~~text
-active task
-  ↓
-Plat internal specialist
-  ↓
-still one concrete unresolved specialty?
-  ├─ no  → continue
-  └─ yes → discover installed skills (metadata only)
-             ↓
-          consult one best specialist
-             ↓
-          evidence + confidence
-             ↓
-          P-01 arbitration
-             ↓
-          direct verification
+developer request
+      ↓
+P-01 resolves intent + repository evidence
+      ↓
+minimum sufficient depth
+      ↓
+can P-01 + one Plat reference finish safely?
+   ├─ yes → act → prove
+   └─ no
+       ↓
+   choose ONE specialist first
+       ↓
+   bounded brief
+       ↓
+   evidence report
+       ↓
+   P-01 arbitration
+       ↓
+   add another specialist only if evidence exposes
+   a second material boundary
+       ↓
+   integrate → fresh proof
 ~~~
 
-External skills are **consultants, not authority**. Current developer intent and current repository/runtime evidence stay above specialist recommendations. Plat does not vote when specialists disagree; it runs the smallest discriminating check and follows the strongest evidence.
+**P-01 keeps control of architecture, shared contracts, integration, conflict resolution, and the final answer.** Specialists do not recursively spawn more specialists on Plat's behalf. If one discovers another capability gap, it reports that need back to P-01.
 
-Quick and normal Standard tasks should normally invoke **zero external skills**.
+External skills are discovered **metadata-first**. Plat prefers a narrow specialist over another broad orchestrator and normally reads/invokes only the best candidate first.
+
+| Task | Default specialist budget |
+| --- | --- |
+| Quick | **0** |
+| Standard | **0**, or 1 bounded consultant only for a real blocking capability gap |
+| Deep | start with **1**; add another only when evidence proves another boundary; normally ≤3 total |
+| Research | up to **3 independent read-only** specialists initially |
+
+Parallel work is used only when tasks are genuinely independent. Shared contracts, schemas, migrations, central state, and overlapping mutations stay sequential unless isolation is explicit.
+
+When specialists disagree, Plat **does not vote**. It reduces the disagreement to a concrete proposition and runs the smallest discriminating check. Direct current runtime/test/repository evidence outranks specialist confidence.
+
+This lets Plat use a user's existing specialist-skill library without paying the cost of loading all of it on every task.
 
 ## Compatibility
 
