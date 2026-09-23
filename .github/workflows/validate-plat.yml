@@ -6,36 +6,59 @@ on:
     paths:
       - "skills/plat/**"
       - "tests/**"
-      - "scripts/validate_plat.py"
+      - "scripts/**"
+      - "docs/RESEARCH_LOG.md"
+      - "docs/MAINTENANCE.md"
+      - "docs/maintenance-evidence.json"
       - "VERSION"
       - "install.sh"
       - "install.ps1"
       - ".github/workflows/validate-plat.yml"
+      - ".github/workflows/release-plat.yml"
   pull_request:
     paths:
       - "skills/plat/**"
       - "tests/**"
-      - "scripts/validate_plat.py"
+      - "scripts/**"
+      - "docs/RESEARCH_LOG.md"
+      - "docs/MAINTENANCE.md"
+      - "docs/maintenance-evidence.json"
       - "VERSION"
       - "install.sh"
       - "install.ps1"
       - ".github/workflows/validate-plat.yml"
+      - ".github/workflows/release-plat.yml"
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Maintenance evidence gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            python scripts/maintenance_gate.py --base-ref "origin/${{ github.base_ref }}"
+          else
+            python scripts/maintenance_gate.py --base-ref "HEAD^"
+          fi
 
       - name: Structural validation
         run: python scripts/validate_plat.py
 
       - name: Runtime unit tests
         run: python -m unittest discover -s tests -p "test_*.py"
+
+      - name: Python syntax
+        run: python -m compileall -q scripts skills/plat/scripts tests
 
       - name: Shell syntax
         run: bash -n install.sh
@@ -48,6 +71,7 @@ jobs:
           cp -R skills .ci-snapshot/
           cp -R tests .ci-snapshot/
           cp -R scripts .ci-snapshot/
+          cp -R docs .ci-snapshot/
           cp VERSION install.sh install.ps1 .ci-snapshot/
           cd .ci-snapshot
           zip -qr ../plat-validation-snapshot.zip .
