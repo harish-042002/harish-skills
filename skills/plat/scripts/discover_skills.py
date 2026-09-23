@@ -17,7 +17,7 @@ except Exception:
 
 TOKEN_RE = re.compile(r"[a-z0-9]+(?:[-_][a-z0-9]+)*", re.I)
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-FRONTMATTER_RE = re.compile(r"^---\\s*\\n(.*?)\\n---(?:\\s*\\n|$)", re.S)
+FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---(?:\s*\n|$)", re.S)
 MAX_HEADER_BYTES = 64 * 1024
 MAX_DESCRIPTION = 1024
 ALLOWED_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
@@ -336,7 +336,6 @@ def main() -> int:
             marker = "\tbroad" if item.get("broad") else ""
             matched = ",".join(item.get("matched_terms", []))
             print(f"{item['name']}\t{item['scope']}\tscore={item['score']}\tmatch={matched}{marker}\t{item['path']}")
-            if item["description"]:
     return 0
 
 if __name__ == "__main__":
