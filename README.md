@@ -300,7 +300,7 @@ Plat publishes positive results, mixed results, failures, and evidence gaps toge
 | --- | --- | --- |
 | Current v1.8 release validation | **41/41** Python tests · **34** routing cases · structural + maintenance gates PASS | current package/release health; not live-agent superiority |
 | v1.8 behavioral-eval maturity | **8/18** | credible harness and frozen cases exist; fresh repeated live A/B results still missing |
-| Independent industry-style audit | **~82/100** architecture/evidence maturity | strong production-grade structure; score is not real-task accuracy |
+| Current industry/evaluation-maturity rubric | **82.5/100** | architecture/evidence maturity only; not real-task accuracy or a live success rate |
 | v1.7 external-skill red-team | **12/12** after **4/12** on v1.6 | discovered federation failures were closed |
 | v1.7 scope/correction holdout | **24/24** documented-policy coverage | scope/correction controls are represented; live obedience still probabilistic |
 | Real full-stack build | cost **$3.22 → $1.72**, wall **9m → 6m**, cache read **12.2M → 5.7M** | strong efficiency signal, but only one manual comparison |
