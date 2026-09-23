@@ -33,17 +33,37 @@ Plat is an engineering control plane for AI coding agents. It helps an agent und
 
 ## Install
 
+Copy the command for your OS directly into a terminal. The installer is downloaded first with a bounded timeout, then executed locally. This keeps download progress/errors visible instead of leaving the terminal looking stuck.
+
 **macOS / Linux**
 
 ~~~bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.sh)"
+curl -fL --connect-timeout 10 --max-time 60 \
+  https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.sh \
+  -o /tmp/plat-install.sh && \
+bash /tmp/plat-install.sh
 ~~~
 
 **Windows PowerShell**
 
 ~~~powershell
-iex (irm 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1')
+$installer = Join-Path $env:TEMP 'plat-install.ps1'
+Invoke-WebRequest `
+  -Uri 'https://raw.githubusercontent.com/harish-042002/harish-skills/main/install.ps1' `
+  -OutFile $installer `
+  -TimeoutSec 60
+& $installer
 ~~~
+
+You should see the installer prompt after the download completes. It will ask for your coding agent and whether Plat should be installed globally or only in the current project.
+
+For non-interactive installs, pass the agent and scope explicitly. Example for Codex in the current repository:
+
+~~~bash
+bash /tmp/plat-install.sh --agent codex --scope project
+~~~
+
+If the download cannot reach GitHub Raw, it now fails visibly instead of waiting indefinitely; retry after checking your network/VPN/DNS access to `raw.githubusercontent.com`.
 
 The installer chooses the agent and skill install scope, copies Plat into the real agent skill directory, verifies the install, creates only the developer preference profile at **~/.plat/profile.md**, wires Plat into the agent instructions, and registers one user-level daily update checker. It does not create a project profile during installation.
 
