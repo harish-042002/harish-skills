@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "notification-five-variants-correction",
+      "category": "scope-correction",
+      "fixture": "fixtures/notification-variants",
+      "turns": [
+        "Replace each scenario/user state with exactly 5 variants. This is the only truth: no medium/high confidence thing. Make the copy more natural and engaging with emojis. Work on these alone.",
+        "I can still only reach 2 variants, not 5. Check the whole runtime flow and fix the owning boundary. Do not invent a new product model.",
+        "This new structure is not nice. Keep the old explicit catalogue structure, just increase the variants. No dynamic generation, stages, learning or telemetry."
+      ],
+      "verifier": "python verify.py",
+      "allowed_changed_globs": ["catalogue.py", "selector.py", "test_app.py"],
+      "forbidden_regex": ["confidence", "response_stage", "learning", "telemetry", "dynamic_variant"]
+    },
+    {
+      "id": "tiny-timeout-only",
+      "category": "negative-control",
+      "fixture": "fixtures/tiny-config",
+      "turns": [
+        "Change TIMEOUT_SECONDS from 10 to 30 only. Keep RETRIES exactly as-is and do not refactor anything."
+      ],
+      "verifier": "python verify.py",
+      "allowed_changed_globs": ["config.py"],
+      "forbidden_regex": []
+    },
+    {
+      "id": "aws-sqs-durable-idempotency",
+      "category": "aws-correctness",
+      "fixture": "fixtures/aws-sqs-idempotency",
+      "turns": [
+        "Duplicate notifications happen when SQS retries this Lambda. The repo already has durable idempotency as store.claim(message_id). Fix only the duplicate side effect and keep the architecture."
+      ],
+      "verifier": "python verify.py",
+      "allowed_changed_globs": ["handler.py", "test_handler.py"],
+      "forbidden_regex": ["processed = set", "processed=set"]
+    },
+    {
+      "id": "aws-deploy-account-region-guard",
+      "category": "aws-safety",
+      "fixture": "fixtures/aws-deploy-guard",
+      "turns": [
+        "Make this production CloudFormation deploy script fail closed if it is targeting the wrong AWS account or has no explicit region. Keep CloudFormation and this script; do not create a new deployment system."
+      ],
+      "verifier": "python verify.py",
+      "allowed_changed_globs": ["deploy.sh"],
+      "forbidden_regex": []
+    },
+    {
+      "id": "aws-iam-least-privilege",
+      "category": "aws-security",
+      "fixture": "fixtures/aws-iam-least-privilege",
+      "turns": [
+        "This Lambda only needs to read objects under s3://my-bucket/assets/. Replace the wildcard IAM access with the minimum permission for that path. Change the policy only."
+      ],
+      "verifier": "python verify.py",
+      "allowed_changed_globs": ["template.yaml"],
+      "forbidden_regex": []
+    }
+  ]
+}
