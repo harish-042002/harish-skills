@@ -234,3 +234,39 @@ To earn the remaining behavioral points, run the frozen pack (and expand to >=8 
 - matching no-Plat or prior-Plat control arm;
 - publish raw result JSON, task-level failures, tokens/tool calls/cost/wall time;
 - replicate on a second coding-agent host/model.
+
+
+## 7. v1.9 Research economics
+
+v1.9 addresses a real live trajectory where reasoning quality was strong but Research economics were poor: a cross-branch adapter-mapping session reported **$29.94** cost, **7.4M** cache-read tokens, **49m53s** aggregate API/model time, and **91%** general-purpose subagent share.
+
+The session is recorded as a **single observed baseline**, not a controlled benchmark.
+
+### Controls added
+
+- lead-first Research orientation;
+- golden-reference comparison matrix derived once;
+- evidence ledger + read deduplication;
+- Research orientation with 0 specialists;
+- normally 1 batched scout or 2 independent scouts after partitioning;
+- explicit worker model/tier where supported;
+- focused-current verification before broad suites;
+- after broad-suite failure, baseline only the failing tests first;
+- AFK/report output economy;
+- separate wall-time vs aggregate model/API-time measurement.
+
+### Controlled rerun targets
+
+See `benchmarks/research-economics-v1.9/`.
+
+Candidate targets are deliberately stated as **targets, not achieved claims**:
+
+- preserve report correctness/completeness;
+- >=30% lower total cost;
+- >=30% lower cache-read volume;
+- >=30% lower aggregate API/model time;
+- <=1 broad full-suite run unless later mutations justify another;
+- <50% subagent share for a single-golden-reference mapping task unless work is explicitly partitioned;
+- <=10% wall-time regression, preferably faster.
+
+A matched v1.8-vs-v1.9 rerun with >=3 repetitions per arm is required before reporting these as improvements.
