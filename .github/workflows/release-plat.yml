@@ -96,22 +96,19 @@ jobs:
 
           ## Highlights
 
-          - Fast routing hot path reduced to a compact always-loaded control plane.
-          - Vague messages resolve from active conversation/workspace/repository evidence before clarification.
-          - One safe interpretation -> act; materially different unresolved interpretations -> one focused question.
-          - Local / Behavioral / Structural correction levels prevent stale trajectory lock-in.
-          - Structural corrections invalidate dependent decisions and re-route the affected slice.
-          - Repository discovery now has explicit stop conditions and risk-first history/blast-radius checks.
-          - Specialist loading uses a strict budget: one primary reference first, one deep specialist when earned.
-          - Failed fixes retire disproven hypotheses instead of stacking patches.
-          - Market-first maintenance protocol requires external skill research, license review, adaptation, regression testing, and evidence logging before material Plat changes.
-          - Correctness/safety first; then minimize total tokens, tool calls, rereads, repair turns, coordination, and wall time.
-          - Deep/Research tasks can federate to already-installed specialist skills instead of copying every specialty into Plat.
-          - External skills are discovered metadata-first and consulted one best match at a time only when a concrete unresolved capability remains.
-          - P-01 remains the lead orchestrator: specialists exchange bounded evidence packets and disagreements are resolved by current repo/runtime evidence, not voting.
-          - Quick and ordinary Standard tasks normally invoke zero external skills, protecting speed and context.
-          - One user-level background checker checks GitHub Releases once every 24 hours outside engineering sessions.
-          - Update status is cached locally and an OS notification appears only when a newer release exists; Plat does not silently replace itself mid-session.
+          - P-01 is now explicitly the lead engineering orchestrator for integrated work.
+          - Manager-style orchestration is the default; true handoff is gated to genuinely separable specialist-owned interactions.
+          - One-level delegation prevents recursive agent/skill fan-out.
+          - External skills are discovered metadata-first; specific specialists are preferred over broad orchestrators.
+          - Specialist communication uses bounded briefs and evidence-dense return contracts instead of shared full-chat context.
+          - Specialist conflicts are resolved by current repo/runtime evidence and the smallest discriminating check, never majority vote.
+          - Quick tasks use zero specialists; Standard normally uses zero; Deep starts with one; Research can parallelize up to three independent read-only specialists initially.
+          - Shared mutations remain sequential unless explicit isolation exists.
+          - Two unsuccessful rounds on the same unresolved question trigger re-localization/re-routing instead of another automatic dispatch.
+          - Deterministic orchestration policy tests cover specialist caps, handoff gating, parallelism, external-skill selection, and circuit breakers.
+          - Exhaustive invariant tests exercise more than 10,000 structured orchestration states.
+          - Existing fast-path routing, vague-intent recovery, trajectory correction, developer preference onboarding, and once-daily out-of-band update checks remain intact.
+          - Correctness/safety first; then minimize total tokens, tool calls, duplicate reads, repair turns, integration overhead, and wall time.
 
           The release asset `skill.zip` contains the complete Plat skill and MIT license.
           EOF
