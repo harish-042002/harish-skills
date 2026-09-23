@@ -1,0 +1,360 @@
+{
+  "schema_version": 1,
+  "purpose": "Deterministic orchestration guardrail cases. Natural-language classification remains the agent's job; these cases protect specialist caps, parallelism, federation, and circuit breakers.",
+  "cases": [
+    {
+      "id": "quick-never-delegate",
+      "input": {
+        "depth": "Quick",
+        "unresolved": 2,
+        "independent": 2,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "action": "lead",
+        "initial_specialists": 0,
+        "max_specialists": 0,
+        "external_skill": false,
+        "parallel_limit": 0
+      }
+    },
+    {
+      "id": "standard-built-in",
+      "input": {
+        "depth": "Standard",
+        "unresolved": 1,
+        "built_in_sufficient": true,
+        "external_match": true
+      },
+      "expect": {
+        "action": "lead",
+        "initial_specialists": 0,
+        "max_specialists": 0,
+        "external_skill": false,
+        "parallel_limit": 0
+      }
+    },
+    {
+      "id": "standard-external-gap",
+      "input": {
+        "depth": "Standard",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "action": "consult",
+        "initial_specialists": 1,
+        "max_specialists": 1,
+        "external_skill": true,
+        "parallel_limit": 1
+      }
+    },
+    {
+      "id": "standard-no-match",
+      "input": {
+        "depth": "Standard",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": false
+      },
+      "expect": {
+        "action": "consult",
+        "initial_specialists": 1,
+        "max_specialists": 1,
+        "external_skill": false,
+        "parallel_limit": 1
+      }
+    },
+    {
+      "id": "deep-one-boundary",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 1,
+        "independent": 0,
+        "built_in_sufficient": true
+      },
+      "expect": {
+        "action": "consult",
+        "initial_specialists": 1,
+        "max_specialists": 1,
+        "external_skill": false,
+        "parallel_limit": 1
+      }
+    },
+    {
+      "id": "deep-two-independent-readonly",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 2,
+        "independent": 2,
+        "built_in_sufficient": true,
+        "mutating": false,
+        "shared_state": false
+      },
+      "expect": {
+        "action": "consult",
+        "initial_specialists": 1,
+        "max_specialists": 2,
+        "parallel_limit": 2
+      }
+    },
+    {
+      "id": "deep-three-independent-readonly",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 3,
+        "independent": 4,
+        "built_in_sufficient": true,
+        "mutating": false,
+        "shared_state": false
+      },
+      "expect": {
+        "max_specialists": 3,
+        "parallel_limit": 3
+      }
+    },
+    {
+      "id": "deep-parallel-cap",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 8,
+        "independent": 8,
+        "built_in_sufficient": true,
+        "mutating": false,
+        "shared_state": false
+      },
+      "expect": {
+        "max_specialists": 3,
+        "parallel_limit": 3
+      }
+    },
+    {
+      "id": "deep-shared-state-sequential",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 3,
+        "independent": 3,
+        "built_in_sufficient": true,
+        "mutating": false,
+        "shared_state": true
+      },
+      "expect": {
+        "parallel_limit": 1
+      }
+    },
+    {
+      "id": "deep-mutating-sequential",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 3,
+        "independent": 3,
+        "built_in_sufficient": true,
+        "mutating": true,
+        "shared_state": false
+      },
+      "expect": {
+        "parallel_limit": 1
+      }
+    },
+    {
+      "id": "research-parallel",
+      "input": {
+        "depth": "Research",
+        "unresolved": 3,
+        "independent": 3,
+        "built_in_sufficient": true
+      },
+      "expect": {
+        "max_specialists": 3,
+        "parallel_limit": 3
+      }
+    },
+    {
+      "id": "research-no-question",
+      "input": {
+        "depth": "Research",
+        "unresolved": 0,
+        "independent": 3,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "action": "lead",
+        "initial_specialists": 0,
+        "external_skill": false
+      }
+    },
+    {
+      "id": "deep-external-earned",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "external_skill": true,
+        "max_specialists": 1
+      }
+    },
+    {
+      "id": "deep-external-no-match",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": false
+      },
+      "expect": {
+        "external_skill": false,
+        "max_specialists": 1
+      }
+    },
+    {
+      "id": "circuit-breaker-standard",
+      "input": {
+        "depth": "Standard",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": true,
+        "same_question_rounds": 2
+      },
+      "expect": {
+        "action": "reroute",
+        "initial_specialists": 0,
+        "max_specialists": 0,
+        "external_skill": false
+      }
+    },
+    {
+      "id": "circuit-breaker-deep",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 3,
+        "independent": 3,
+        "same_question_rounds": 3
+      },
+      "expect": {
+        "action": "reroute",
+        "parallel_limit": 0
+      }
+    },
+    {
+      "id": "handoff-disabled-by-default",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": true,
+        "host_handoff": true,
+        "specialist_should_own_turn": false
+      },
+      "expect": {
+        "handoff": false,
+        "lead_control": "manager"
+      }
+    },
+    {
+      "id": "handoff-explicit-readonly",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": true,
+        "host_handoff": true,
+        "specialist_should_own_turn": true,
+        "mutating": false,
+        "shared_state": false
+      },
+      "expect": {
+        "handoff": true,
+        "lead_control": "handoff"
+      }
+    },
+    {
+      "id": "handoff-blocked-on-mutation",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 1,
+        "built_in_sufficient": false,
+        "external_match": true,
+        "host_handoff": true,
+        "specialist_should_own_turn": true,
+        "mutating": true
+      },
+      "expect": {
+        "handoff": false,
+        "lead_control": "manager"
+      }
+    },
+    {
+      "id": "recursive-never",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 3,
+        "independent": 3,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "recursive_delegation": false
+      }
+    },
+    {
+      "id": "standard-not-parallel",
+      "input": {
+        "depth": "Standard",
+        "unresolved": 3,
+        "independent": 3,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "max_specialists": 1,
+        "parallel_limit": 1
+      }
+    },
+    {
+      "id": "deep-cap-from-unresolved",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 2,
+        "independent": 5,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "max_specialists": 2,
+        "parallel_limit": 2
+      }
+    },
+    {
+      "id": "deep-built-in-preferred",
+      "input": {
+        "depth": "Deep",
+        "unresolved": 1,
+        "built_in_sufficient": true,
+        "external_match": true
+      },
+      "expect": {
+        "external_skill": false
+      }
+    },
+    {
+      "id": "research-external",
+      "input": {
+        "depth": "Research",
+        "unresolved": 2,
+        "independent": 2,
+        "built_in_sufficient": false,
+        "external_match": true
+      },
+      "expect": {
+        "external_skill": true,
+        "parallel_limit": 2
+      }
+    }
+  ]
+}
