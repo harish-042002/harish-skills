@@ -102,3 +102,51 @@ Priority cases:
 - live-compatible API/database migration;
 - public-facing artifact from a reference;
 - mid-course user correction that invalidates the current framing.
+
+## 4. v1.6 orchestration regression gate
+
+The lead-orchestrator update adds deterministic regression coverage for orchestration policy. These are **policy/structure tests**, not proof that a live multi-agent run is better.
+
+Current frozen checks include:
+
+- 25 vague-intent/depth/trajectory routing cases;
+- 24 orchestration-policy cases;
+- external-skill discovery tests including project-over-global preference, unrelated-skill rejection, folded metadata parsing, and specific-specialist-over-broad-orchestrator selection;
+- update-check tests proving notification deduplication and network failure isolation;
+- structural assertions for P-01 lead ownership, one-level delegation, evidence arbitration, specialist caps, and circuit breakers.
+
+The orchestration cases cover:
+
+- Quick/Standard specialist suppression;
+- Deep/Research specialist budgets;
+- parallel read-only work vs sequential shared mutation;
+- external-skill selection only after a capability gap;
+- handoff gating;
+- recursive-delegation prevention;
+- same-question circuit breaking;
+- manager topology as the default.
+
+### What this does not prove
+
+It does not yet prove that specialist federation improves correctness or lowers total cost on real coding tasks. The next live benchmark should compare **P-01 alone vs P-01 + evidence-earned specialist federation** on the same model/repository/task conditions.
+
+Recommended live metrics:
+
+- verifier pass/fail;
+- total input/output/cache tokens;
+- total tool calls and repeated repository reads;
+- specialist/subagent count;
+- duplicate work across specialists;
+- repair turns;
+- wall time and API/model time;
+- changed files/LOC/dependencies;
+- unsupported specialist findings rejected by P-01;
+- final proof quality.
+
+Priority orchestration tasks:
+
+1. distributed retry/idempotency failure where DB depth is needed only after backend localization;
+2. RAG retrieval regression with an installed retrieval specialist;
+3. frontend feature with independent rendered QA and backend contract review;
+4. high-risk security/performance review with independent read-only specialists;
+5. negative control where many relevant skills are installed but the task is a trivial local edit.
