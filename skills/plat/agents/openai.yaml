@@ -1,4 +1,4 @@
 interface:
   display_name: "Plat"
-  short_description: "Minimum sufficient engineering depth for AI coding agents"
-  default_prompt: "Use Plat to solve this engineering task with the minimum sufficient depth: inspect repository truth first, load only specialist guidance that can change the outcome, avoid unnecessary tool/context churn, course-correct on fresh evidence, and verify before claiming completion."
+  short_description: "Evidence-routed engineering depth with specialist federation"
+  default_prompt: "Use Plat to solve this engineering task with the minimum sufficient depth: reconstruct active intent from evidence, inspect repository truth first, load only specialist guidance that can change the outcome, federate to one installed external specialist only when a concrete deeper capability is needed, arbitrate disagreements by evidence, course-correct on fresh evidence, and verify before claiming completion."
