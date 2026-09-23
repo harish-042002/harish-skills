@@ -106,6 +106,66 @@
         "30 frozen routing regressions including the real catalogue/variants correction failure pattern",
         "full Python unit suite, structural validation, compile checks, installer syntax, and skill packaging"
       ]
+    },
+    {
+      "id": "2026-09-23-v1.8-aws-behavioral-evals",
+      "date": "2026-09-23",
+      "capability": "Add progressively loaded deep AWS engineering guidance and a reproducible current-version behavioral evaluation harness without making AWS a blanket escalation trigger or overstating live evidence.",
+      "material_files": [
+        "skills/plat/VERSION",
+        "skills/plat/references/adaptive-depth.md",
+        "skills/plat/references/aws-deep.md",
+        "skills/plat/references/delivery.md",
+        "scripts/validate_plat.py"
+      ],
+      "sources": [
+        {
+          "repo": "aws/agent-toolkit-for-aws",
+          "license": "Apache-2.0",
+          "inspected": "AWS core skills for serverless, IAM, networking, observability, deployment, cost, messaging, CDK, and DynamoDB; progressive AWS capability routing",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "aws-samples/sample-agent-skills-for-builders",
+          "license": "Apache-2.0",
+          "inspected": "AWS CDK development, cost/operations, security scan, and end-to-end testing evidence patterns",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "aws-samples/sample-well-architected-skills-and-steering",
+          "license": "MIT-0",
+          "inspected": "Well-Architected scope/depth, evidence sufficiency, six-pillar review lenses, and preventive/detective guardrail calibration",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "kndoshn/aws-cdk-skill-plugin",
+          "license": "MIT",
+          "inspected": "CDK replacement/data-loss/IAM risk model and observable skill eval prompts",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "progressively loaded AWS deep specialist selected by unresolved AWS boundary, not keyword alone",
+        "account/region/role targeting and IaC diff/plan as mutation safety evidence",
+        "explicit AWS async delivery/idempotency, IAM least privilege, networking path, data, observability, quota/cost, and DR controls",
+        "frozen current-version behavioral fixtures with independent verifiers and multi-turn correction coverage",
+        "host-neutral repeated/control-arm runner with diff, wall-time, and optional token/cost/tool telemetry"
+      ],
+      "rejected": [
+        "copying the large AWS skill catalog into Plat",
+        "forcing a Well-Architected review on normal AWS edits",
+        "hard-coding fast-changing AWS prices, quotas, or regional feature tables",
+        "claiming behavioral uplift from fake adapters, policy checks, or harness dry-runs",
+        "making AWS presence automatically trigger Deep mode"
+      ],
+      "tests": [
+        "Plat structural validation including AWS deep and behavioral harness assets",
+        "34 routing cases including four AWS depth/safety controls",
+        "41 Python unit tests including behavioral harness/schema/scorer tests",
+        "behavioral harness plan validation for five frozen fixtures",
+        "non-evidence fake-adapter end-to-end harness dry-run: 5/5 fixtures",
+        "Python compileall and installer shell syntax"
+      ]
     }
   ]
 }
