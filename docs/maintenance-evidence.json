@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "2026-09-23-maintenance-evidence-gate",
+      "date": "2026-09-23",
+      "capability": "Enforce market scan, license review, adaptation rationale, and test evidence for material Plat updates without adding runtime overhead.",
+      "material_files": [
+        ".github/workflows/validate-plat.yml",
+        "scripts/maintenance_gate.py",
+        "scripts/validate_plat.py"
+      ],
+      "sources": [
+        {
+          "repo": "NVIDIA/skills",
+          "license": "Apache-2.0 source code; CC-BY-4.0 documentation/skills",
+          "inspected": "deterministic PR validation, benchmark/eval artifacts, provenance and freshness gates",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "jscraik/Agent-Skills",
+          "license": "Apache-2.0",
+          "inspected": "separate structural/behavioral/runtime proof lanes and changed-surface validation",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "gohypergiant/agent-skills",
+          "license": "Apache-2.0",
+          "inspected": "skill audit workflow, eval co-maintenance, changelog discipline, and explicit verification reports",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "changed-file-aware CI gate for material Plat updates",
+        "machine-readable source/license/reuse/test provenance",
+        "cross-check machine evidence against the human research log"
+      ],
+      "rejected": [
+        "runtime market scans during ordinary engineering requests",
+        "mandatory signing/certification infrastructure for this single-skill repository",
+        "a large SDK-style lifecycle command surface"
+      ],
+      "tests": [
+        "10 deterministic maintenance-gate unit tests including adversarial bypass cases",
+        "existing Plat structural validation",
+        "full Python unittest discovery",
+        "installer shell syntax validation"
+      ]
+    }
+  ]
+}
