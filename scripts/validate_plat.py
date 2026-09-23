@@ -140,8 +140,8 @@ if EFFICIENCY.exists():
     for phrase in [
         "lead-first orientation",
         "golden-reference mapping pattern",
-        "baseline the failing tests",
-        "name the worker model/tier explicitly",
+        "failing tests",
+        "worker model/tier explicitly",
         "aggregate model/api time",
         "afk / report mode",
     ]:
