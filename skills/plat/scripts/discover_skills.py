@@ -12,6 +12,16 @@ from typing import Iterable
 
 TOKEN_RE = re.compile(r"[a-z0-9]+(?:[-_][a-z0-9]+)*", re.I)
 
+BROAD_MARKERS = {
+    "orchestrator",
+    "orchestration",
+    "general-purpose",
+    "generalist",
+    "all-purpose",
+    "workflow",
+    "control-plane",
+}
+
 ALIASES = {
     "debug": {"debug", "bug", "root", "cause", "failure"},
     "testing": {"test", "testing", "pytest", "jest", "playwright", "e2e", "mutation", "property"},
@@ -110,18 +120,49 @@ def parse_frontmatter(path: Path) -> dict[str, str]:
         i += 1
     return data
 
-def score(query: str, name: str, description: str) -> int:
+def base_tokens(text: str) -> set[str]:
+    out = {t.lower().replace("_", "-") for t in TOKEN_RE.findall(text or "")}
+    expanded = set(out)
+    for token in list(out):
+        expanded.update(part for part in token.split("-") if part)
+    return expanded
+
+
+def score_details(query: str, name: str, description: str) -> tuple[int, list[str], bool]:
     if not query:
-        return 0
+        return 0, [], False
+
+    q_base = base_tokens(query)
+    n_base = base_tokens(name)
+    d_base = base_tokens(description)
     q = tokens(query)
     n = tokens(name)
     d = tokens(description)
+
+    direct_name = q_base & n_base
+    direct_desc = q_base & d_base
+    semantic_overlap = q & (n | d)
     phrase = query.lower().strip()
     haystack = f"{name} {description}".lower()
-    value = len(q & n) * 5 + len(q & d) * 2
+
+    value = len(direct_name) * 8 + len(direct_desc) * 4
+    value += len(semantic_overlap - direct_name - direct_desc)
     if phrase and phrase in haystack:
-        value += 8
-    return value
+        value += 10
+
+    broad = bool((n_base | d_base) & BROAD_MARKERS)
+    # Broad orchestrators can still match, but a concrete specialist should win.
+    if broad and not direct_name:
+        value = max(0, value - 4)
+
+    matched = sorted(q_base & (n_base | d_base))
+    if not matched:
+        matched = sorted(q & (n | d))
+    return value, matched, broad
+
+
+def score(query: str, name: str, description: str) -> int:
+    return score_details(query, name, description)[0]
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Discover installed specialist skills.")
@@ -139,12 +180,15 @@ def main() -> int:
             if name.lower() == "plat":
                 continue
             description = meta.get("description", "")
+            item_score, matched_terms, broad = score_details(args.query, name, description)
             item = {
                 "name": name,
                 "description": description,
                 "path": str(skill_file),
                 "scope": scope,
-                "score": score(args.query, name, description),
+                "score": item_score,
+                "matched_terms": matched_terms,
+                "broad": broad,
             }
             existing = by_name.get(name.lower())
             if existing is None or (existing["scope"] == "global" and scope == "project"):
@@ -163,7 +207,9 @@ def main() -> int:
             print("No matching installed specialist skills found.")
             return 0
         for item in items:
-            print(f"{item['name']}\t{item['scope']}\tscore={item['score']}\t{item['path']}")
+            marker = "\tbroad" if item.get("broad") else ""
+            matched = ",".join(item.get("matched_terms", []))
+            print(f"{item['name']}\t{item['scope']}\tscore={item['score']}\tmatch={matched}{marker}\t{item['path']}")
             if item["description"]:
                 print(f"  {item['description']}")
     return 0
