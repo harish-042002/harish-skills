@@ -59,9 +59,15 @@ class MaintenanceGateTests(unittest.TestCase):
 
     def test_valid_material_change_passes(self):
         changed = ["skills/plat/SKILL.md", "docs/maintenance-evidence.json", "docs/RESEARCH_LOG.md"]
-        result = self.mod.evaluate(changed, self.valid_payload(), self.valid_log())
+        result = self.mod.evaluate(changed, self.valid_payload(), self.valid_log(), "2026-09-22-old-entry")
         self.assertTrue(result.required)
         self.assertTrue(result.passed, result.errors)
+
+    def test_material_change_requires_fresh_evidence_id(self):
+        changed = ["skills/plat/SKILL.md", "docs/maintenance-evidence.json", "docs/RESEARCH_LOG.md"]
+        result = self.mod.evaluate(changed, self.valid_payload(), self.valid_log(), "2026-09-23-market-gate")
+        self.assertFalse(result.passed)
+        self.assertTrue(any("fresh maintenance evidence entry" in e for e in result.errors))
 
     def test_two_public_sources_are_required(self):
         payload = self.valid_payload()
@@ -89,6 +95,18 @@ class MaintenanceGateTests(unittest.TestCase):
         result = self.mod.evaluate(changed, payload, self.valid_log())
         self.assertFalse(result.passed)
         self.assertTrue(any("must be principle-only" in e for e in result.errors))
+
+    def test_adapted_or_copied_reuse_requires_attribution(self):
+        payload = self.valid_payload()
+        payload["entries"][-1]["sources"][0]["reuse"] = "adapted"
+        changed = ["skills/plat/SKILL.md", "docs/maintenance-evidence.json", "docs/RESEARCH_LOG.md"]
+        result = self.mod.evaluate(changed, payload, self.valid_log())
+        self.assertFalse(result.passed)
+        self.assertTrue(any("attribution record" in e for e in result.errors))
+
+        payload["entries"][-1]["sources"][0]["attribution"] = "NOTICE: retained Apache-2.0 attribution"
+        result = self.mod.evaluate(changed, payload, self.valid_log())
+        self.assertTrue(result.passed, result.errors)
 
     def test_every_material_file_must_be_covered(self):
         changed = [
