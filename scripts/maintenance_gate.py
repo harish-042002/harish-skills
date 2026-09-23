@@ -81,6 +81,7 @@ def evaluate(
     changed_files: Iterable[str],
     evidence_payload: dict | None,
     research_log: str,
+    previous_evidence_id: str | None = None,
 ) -> GateResult:
     changed = normalize_paths(changed_files)
     material = material_changes(changed)
@@ -103,6 +104,8 @@ def evaluate(
         return GateResult(True, False, tuple(material), None, tuple(errors))
 
     evidence_id = entry.get("id") if isinstance(entry.get("id"), str) else None
+    if previous_evidence_id is not None and evidence_id == previous_evidence_id:
+        errors.append("material Plat changes require a fresh maintenance evidence entry")
     for key in ("id", "date", "capability", "adopted", "rejected", "tests", "material_files", "sources"):
         value = entry.get(key)
         if value in (None, "", []):
@@ -124,6 +127,8 @@ def evaluate(
         if isinstance(source.get("license"), str) and source["license"].strip().lower() in {"unknown", "none", "no license"}:
             if reuse != "principle-only":
                 errors.append(f"source[{idx}] with unknown/no license must be principle-only")
+        if reuse in {"adapted", "copied"} and not source.get("attribution"):
+            errors.append(f"source[{idx}] {reuse} reuse requires an explicit attribution record")
 
     recorded_files = normalize_paths(entry.get("material_files", []) if isinstance(entry.get("material_files"), list) else [])
     missing_coverage = sorted(set(material) - set(recorded_files))
@@ -167,6 +172,27 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def evidence_id_at_ref(base_ref: str) -> str | None:
+    proc = subprocess.run(
+        ["git", "show", f"{base_ref}:docs/maintenance-evidence.json"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if proc.returncode != 0 or not proc.stdout.strip():
+        return None
+    try:
+        payload = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return None
+    entry = _latest_entry(payload)
+    if entry is None:
+        return None
+    value = entry.get("id")
+    return value if isinstance(value, str) else None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate market-scan evidence for material Plat changes.")
     parser.add_argument("--base-ref", help="Git base ref used to detect changed files.")
@@ -175,10 +201,12 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
-        changed = args.changed_file or changed_files_from_git(args.base_ref or infer_base_ref())
+        base_ref = args.base_ref or infer_base_ref()
+        changed = args.changed_file or changed_files_from_git(base_ref)
         payload = load_json(EVIDENCE_PATH) if EVIDENCE_PATH.exists() else {}
         research = RESEARCH_LOG_PATH.read_text(encoding="utf-8") if RESEARCH_LOG_PATH.exists() else ""
-        result = evaluate(changed, payload, research)
+        previous_evidence_id = None if args.changed_file else evidence_id_at_ref(base_ref)
+        result = evaluate(changed, payload, research, previous_evidence_id)
     except (OSError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
         if args.json:
             print(json.dumps({"required": True, "passed": False, "errors": [f"{type(exc).__name__}: {exc}"]}, indent=2))
