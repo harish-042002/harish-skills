@@ -15,6 +15,7 @@ Never improve a lower priority by silently damaging a higher one.
 
 ## Before coding
 
+- Lock **Required / Forbidden / Proof** from the latest request before designing the patch. Explicit negative constraints (only/alone/no need/do not/keep unchanged) are part of the requirement, not optional wording.
 - Define the observable success condition and meaningful acceptance cases.
 - Find the owning boundary: UI, application/service, domain, persistence, infrastructure, or external system.
 - Search for existing implementation patterns before inventing another.
@@ -64,7 +65,11 @@ Do not complicate five-item code to improve an irrelevant Big-O term while ignor
 
 ## Scope discipline
 
-- Keep the patch aligned with the task.
+- Keep the patch aligned with the task. Do not substitute a more elaborate product idea for the requested change.
+- Do not add adjacent capabilities such as learning, telemetry, analytics, confidence models, persistence, generalized configuration, migrations, docs, or broad refactors merely because they might be useful. Each must be required by the current request or unavoidable repository correctness.
+- Treat patch surface as an active budget. If a new subsystem/concept, dependency, schema/event, or surprising file cluster appears, pause and identify the exact Required item that forces it. If none does, drop it.
+- When a correction rejects an earlier assumption, remove current-diff code/config/tests that exist only because of that assumption; do not leave obsolete machinery behind and layer the new requirement on top.
+- Keep review/proof proportional: a copy/catalogue-only change should not create architecture, learning, or telemetry work unless the existing runtime contract truly requires it.
 - Refactor adjacent code only when needed for correctness, safe implementation, or substantial simplification.
 - Separate broad cleanup from behavior changes when mixing them harms review or rollback.
 - Avoid speculative extension points, wrapper-on-wrapper layers, one-use configuration systems, and future-proofing without a current requirement.
