@@ -40,7 +40,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
         run: |
           python scripts/validate_plat.py
-          python -m unittest tests/test_update_check.py
+          python -m unittest discover -s tests -p "test_*.py"
 
       - name: Package Plat
         shell: bash
@@ -106,6 +106,10 @@ jobs:
           - Failed fixes retire disproven hypotheses instead of stacking patches.
           - Market-first maintenance protocol requires external skill research, license review, adaptation, regression testing, and evidence logging before material Plat changes.
           - Correctness/safety first; then minimize total tokens, tool calls, rereads, repair turns, coordination, and wall time.
+          - Deep/Research tasks can federate to already-installed specialist skills instead of copying every specialty into Plat.
+          - External skills are discovered metadata-first and consulted one best match at a time only when a concrete unresolved capability remains.
+          - P-01 remains the lead orchestrator: specialists exchange bounded evidence packets and disagreements are resolved by current repo/runtime evidence, not voting.
+          - Quick and ordinary Standard tasks normally invoke zero external skills, protecting speed and context.
           - One user-level background checker checks GitHub Releases once every 24 hours outside engineering sessions.
           - Update status is cached locally and an OS notification appears only when a newer release exists; Plat does not silently replace itself mid-session.
 
