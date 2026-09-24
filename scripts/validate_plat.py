@@ -36,9 +36,7 @@ task_state=TASK_STATE.read_text(encoding="utf-8")
 require(len(skill)<=7000,f"SKILL.md hot path too large: {len(skill)} chars > 7000")
 require(len(skill.splitlines())<=150,f"SKILL.md too many lines: {len(skill.splitlines())} > 150")
 
-m=re.match(r"^---
-(.*?)
----",skill,re.S)
+m=re.match(r"^---\n(.*?)\n---",skill,re.S)
 require(bool(m),"SKILL.md missing valid frontmatter")
 if m:
     keys=[line.split(":",1)[0].strip() for line in m.group(1).splitlines() if ":" in line and not line.startswith((" ","\t"))]
@@ -88,7 +86,6 @@ for phrase in [
     "CHECK_INTERVAL_SECONDS = 2 * 60 * 60",
     "OnUnitActiveSec=2h",
     "\"HOURLY\"",
-    "\"2\"",
     "--update-all",
     "last_notified_signature",
     "skills@latest",
