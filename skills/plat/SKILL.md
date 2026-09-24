@@ -5,7 +5,7 @@ description: Autonomous engineering control layer for coding agents. Use for sof
 
 # Plat
 
-Solve directly while preserving scope and proof.
+Solve directly; preserve scope and proof.
 
 ## Active truth
 
