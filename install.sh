@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="harish-042002/harish-skills"
-RAW_BASE="https://raw.githubusercontent.com/\${REPO}/main"
+RAW_BASE="https://raw.githubusercontent.com/${REPO}/main"
 AGENT=""
 SCOPE=""
 RECONFIGURE=0
@@ -50,7 +50,7 @@ ask_agent() {
     if [[ -z "$raw_choice" ]]; then
       choice="4"
     else
-      choice="\${raw_choice##*[!0-9]}"
+      choice="${raw_choice##*[!0-9]}"
     fi
 
     case "$choice" in
@@ -83,7 +83,7 @@ ask_scope() {
     if [[ -z "$raw_choice" ]]; then
       choice="1"
     else
-      choice="\${raw_choice##*[!0-9]}"
+      choice="${raw_choice##*[!0-9]}"
     fi
 
     case "$choice" in
@@ -130,7 +130,7 @@ EOF
 wire_known_agents() {
   if [[ "$AGENT" == "claude-code" ]]; then
     if [[ "$SCOPE" == "global" ]]; then
-      append_block "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md"
+      append_block "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md"
     else
       append_block "$(pwd)/CLAUDE.md"
     fi
@@ -139,7 +139,7 @@ wire_known_agents() {
 
   if [[ "$AGENT" == "codex" ]]; then
     if [[ "$SCOPE" == "global" ]]; then
-      append_block "\${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
+      append_block "${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
     else
       append_block "$(pwd)/AGENTS.md"
     fi
@@ -156,8 +156,8 @@ wire_known_agents() {
   fi
 
   if [[ "$AGENT" == "*" && "$SCOPE" == "global" ]]; then
-    [[ -d "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}" ]] && append_block "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md"
-    [[ -d "\${CODEX_HOME:-$HOME/.codex}" ]] && append_block "\${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
+    [[ -d "${CLAUDE_CONFIG_DIR:-$HOME/.claude}" ]] && append_block "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md"
+    [[ -d "${CODEX_HOME:-$HOME/.codex}" ]] && append_block "${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
     [[ -d "$HOME/.cursor" ]] && install_cursor_rule "$HOME/.cursor/rules/plat.mdc"
   fi
 }
@@ -165,11 +165,11 @@ wire_known_agents() {
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --agent)
-      AGENT="\${2:-}"
+      AGENT="${2:-}"
       shift 2
       ;;
     --scope)
-      SCOPE="\${2:-}"
+      SCOPE="${2:-}"
       shift 2
       ;;
     --reconfigure)
@@ -216,13 +216,13 @@ if [[ "$SCOPE" == "global" ]]; then
   INSTALL_ARGS+=(-g)
 fi
 
-npx "\${INSTALL_ARGS[@]}"
+npx "${INSTALL_ARGS[@]}"
 
 tmp_setup="$(mktemp)"
 tmp_update="$(mktemp)"
 trap 'rm -f "$tmp_setup" "$tmp_update"' EXIT
-curl -fsSL "\${RAW_BASE}/skills/plat/scripts/setup.py" -o "$tmp_setup"
-curl -fsSL "\${RAW_BASE}/skills/plat/scripts/update_check.py" -o "$tmp_update"
+curl -fsSL "${RAW_BASE}/skills/plat/scripts/setup.py" -o "$tmp_setup"
+curl -fsSL "${RAW_BASE}/skills/plat/scripts/update_check.py" -o "$tmp_update"
 
 if [[ "$RECONFIGURE" -eq 1 ]]; then
   python3 "$tmp_setup" --force
