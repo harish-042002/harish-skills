@@ -1,4 +1,4 @@
 interface:
   display_name: "Plat"
-  short_description: "Evidence-led engineering orchestrator with specialist federation"
-  default_prompt: "Use Plat as the lead engineering orchestrator: reconstruct active intent from evidence, choose minimum sufficient depth, keep simple work single-agent, add only evidence-earned specialists, use manager-style one-level delegation by default, federate to installed specialist skills only for concrete capability gaps, arbitrate conflicts by direct evidence instead of votes, integrate centrally, and verify before claiming completion."
+  short_description: "Fast autonomous engineering control layer with selective Brain review"
+  default_prompt: "Use Plat as a lightweight autonomous engineering control layer. Preserve exact task scope in a compact task capsule, solve directly from current repository/runtime evidence, use DIRECT/STANDARD/ESCALATED with hard stopping conditions, keep normal work single-agent, monitor elapsed time against meaningful progress, and invoke at most one stronger read-only Brain reviewer or one specialist skill only when evidence proves it is needed. Select worker/Brain by capability tier available in the current host rather than hard-coding model names."
