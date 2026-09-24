@@ -11,6 +11,9 @@ CONTEXT = ROOT / "skills" / "plat" / "references" / "context.md"
 EFFICIENCY = ROOT / "skills" / "plat" / "references" / "efficiency.md"
 TASK_STATE = ROOT / "skills" / "plat" / "scripts" / "task_state.py"
 POLICY = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
+CONTEXT_GUARD = ROOT / "skills" / "plat" / "scripts" / "context_guard.py"
+EVIDENCE_EXEC = ROOT / "skills" / "plat" / "scripts" / "evidence_exec.py"
+BRAIN_PACKET = ROOT / "skills" / "plat" / "scripts" / "brain_packet.py"
 DISCOVERY = ROOT / "skills" / "plat" / "scripts" / "discover_skills.py"
 UPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
 INSTALL_SH = ROOT / "install.sh"
@@ -45,20 +48,21 @@ if m:
     require(keys==["name","description"],f"frontmatter keys must be name,description only; got {keys}")
 
 for phrase in [
-    "latest developer request/correction","DIRECT","STANDARD","ESCALATED","0 subagents",
+    "latest developer request/correction","DIRECT","STANDARD","ESCALATED","0 specialists",
     "Model tiers, not model names","Worker tier:","Brain tier:","Brain reviewer","five-minute",
     "Task capsule and compaction","Do not follow reference-to-reference chains automatically",
+    "context_guard.py","evidence_exec.py","brain_packet.py","fresh-context worker",
     "fresh evidence after the final relevant edit",
 ]:
     require(phrase.lower() in skill.lower(),f"missing v2 hot-path rule: {phrase}")
 
-for phrase in ["Target <= 2 KB","4 KB","Compaction/resume fast path","current_slice","brain_reviews","hidden chain-of-thought"]:
+for phrase in ["Target <= 2 KB","4 KB","Context-pressure recovery","fresh-context worker","current_slice","brain_reviews","hidden chain-of-thought"]:
     require(phrase.lower() in context.lower(),f"context capsule missing control: {phrase}")
 
-for phrase in ["Five-minute watchdog","YELLOW","RED","ACT / VERIFY / REROUTE","maximum two reviews","aggregate model/API time"]:
+for phrase in ["Output firewall","Context watchdog","Five-minute watchdog","YELLOW","RED","ACT / VERIFY / REROUTE","4 KB","aggregate model/API time"]:
     require(phrase.lower() in efficiency.lower(),f"efficiency watchdog missing control: {phrase}")
 
-for phrase in ["Brain reviewer","Routine budget: <=2 Brain reviews","DIRECT/STANDARD tasks do not delegate","one consultant maximum","untrusted instruction-bearing packages","Do not vote"]:
+for phrase in ["Brain reviewer","Routine budget: <=2 Brain reviews","Fresh-context worker","Hard cap: 4 KB","DIRECT/STANDARD tasks do not delegate","one consultant maximum","untrusted instruction-bearing packages","Do not vote"]:
     require(phrase.lower() in orchestration.lower(),f"orchestration missing v2 control: {phrase}")
 
 require("cost-efficient-latest" in policy,"policy must use generic worker capability tier")
@@ -66,12 +70,15 @@ require("one-tier-stronger-cost-effective" in policy,"policy must use generic Br
 require("MAX_BRAIN_REVIEWS = 2" in policy,"policy must cap routine Brain reviews")
 require('VALID_PATHS = {"DIRECT", "STANDARD", "ESCALATED"}' in policy,"policy must expose DIRECT/STANDARD/ESCALATED")
 require('execution_path == "DIRECT"' in policy,"DIRECT must stay single-agent")
-require('execution_path == "STANDARD"' in policy,"STANDARD must stay single-agent")
+require('execution_path == "STANDARD"' in policy,"STANDARD must keep specialist budget zero by default")
+require("VALID_CONTEXT_HEALTH" in policy,"policy must expose context health")
+require("MAX_FRESH_CONTEXT_WORKERS = 1" in policy,"policy must cap fresh-context workers")
+require('"fresh-context-worker"' in policy,"policy must support context-isolation recovery")
 
 for phrase in ["DEFAULT_CHECKPOINT_SECONDS = 300","YELLOW_AFTER_SECONDS = 300","RED_AFTER_SECONDS = 600","ORDINARY_BRAIN_AFTER_SECONDS = 1200","MAX_BRAIN_REVIEWS = 2",'"BLOCKED"']:
     require(phrase in task_state,f"task-state helper missing: {phrase}")
 
-for path,msg in [(DISCOVERY,"installed-skill discovery broker is missing"),(ROUTING,"routing reference is missing"),(AWS_DEEP,"AWS deep knowledge card is missing"),(MAINTENANCE_GATE,"maintenance evidence gate is missing"),(MAINTENANCE_EVIDENCE,"maintenance evidence is missing"),(RESEARCH_LOG,"research log is missing")]:
+for path,msg in [(DISCOVERY,"installed-skill discovery broker is missing"),(CONTEXT_GUARD,"context guard is missing"),(EVIDENCE_EXEC,"evidence executor is missing"),(BRAIN_PACKET,"Brain packet builder is missing"),(ROUTING,"routing reference is missing"),(AWS_DEEP,"AWS deep knowledge card is missing"),(MAINTENANCE_GATE,"maintenance evidence gate is missing"),(MAINTENANCE_EVIDENCE,"maintenance evidence is missing"),(RESEARCH_LOG,"research log is missing")]:
     require(path.exists(),msg)
 
 for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`",skill):
@@ -79,12 +86,35 @@ for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`",skill):
     require(p.exists(),f"missing referenced file: {p.relative_to(ROOT)}")
 
 require(VERSION.read_text().strip()==SKILL_VERSION.read_text().strip(),"root VERSION and skill VERSION differ")
-require(VERSION.read_text().strip()=="2.1.0","Plat runtime release must be version 2.1.0")
+require(VERSION.read_text().strip()=="2.2.0","Plat context-economy release must be version 2.2.0")
 
 payload=json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
 require(payload.get("schema_version")==1,"maintenance evidence schema_version must be 1")
 require(any(x.get("id")=="2026-09-24-v2.0.2-all-agent-installer" for x in payload.get("entries",[])),"missing v2.0.2 all-agent maintenance evidence entry")
 require(any(x.get("id")=="2026-09-24-v2.1-final-runtime-contract" for x in payload.get("entries",[])),"missing v2.1 runtime maintenance evidence entry")
+require(any(x.get("id")=="2026-09-24-v2.2-context-economy" for x in payload.get("entries",[])),"missing v2.2 context-economy maintenance evidence entry")
+
+context_guard=CONTEXT_GUARD.read_text(encoding="utf-8")
+evidence_exec=EVIDENCE_EXEC.read_text(encoding="utf-8")
+brain_packet=BRAIN_PACKET.read_text(encoding="utf-8")
+for phrase in [
+    "TOOL_RESULT_TARGET_BYTES = 6 * 1024",
+    "YELLOW_RETURNED_BYTES = 64 * 1024",
+    "RED_RETURNED_BYTES = 128 * 1024",
+    "MAX_FRESH_CONTEXT_WORKERS = 1",
+]:
+    require(phrase in context_guard,f"context guard missing v2.2 control: {phrase}")
+for phrase in [
+    "DEFAULT_MAX_RETURN_BYTES = 6 * 1024",
+    ".plat/logs",
+    "context_guard.record",
+]:
+    require(phrase in evidence_exec,f"evidence executor missing v2.2 control: {phrase}")
+for phrase in [
+    "DEFAULT_MAX_BYTES = 4096",
+    "brain packet exceeds hard limit",
+]:
+    require(phrase in brain_packet,f"Brain packet missing v2.2 control: {phrase}")
 
 update_check=UPDATE_CHECK.read_text(encoding="utf-8")
 for phrase in [
