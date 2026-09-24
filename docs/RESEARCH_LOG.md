@@ -829,3 +829,80 @@ Targets, not achieved claims:
 - <=1 fresh-context worker per active slice;
 - Brain packet <=4 KB;
 - normally <=1 broad final regression per repository state.
+
+
+## v2.3 — Cross-agent context runtime
+
+Evidence ID: `2026-09-24-v2.3-cross-agent-context`
+
+### Goal
+
+Keep the v2.2 context-economy behavior common across every coding-agent host while using richer host signals when they exist. A host with no usage API, transcript path, or lifecycle hooks must still receive the same output firewall, byte/read watchdog, Task Capsule, Brain cap, and context-reset behavior.
+
+### Market patterns inspected
+
+#### bm629/agent-skills — MIT
+
+Its token-optimization material explicitly treats verbose tool output as the largest unbounded token source, recommends replacing consumed observations with re-fetchable references, and uses the filesystem as cold context.
+
+Plat adaptation: add deterministic consumed-evidence masking for file ranges and make read count a first-class pressure signal. No source text/code copied.
+
+#### rohitg00/agentmemory — Apache-2.0
+
+Its current cross-host architecture uses lifecycle hooks including PreCompact and durable handoff/context state across Claude Code and Codex.
+
+Plat adaptation: expose one host-neutral checkpoint/hook bridge, but keep hooks optional so unsupported hosts do not lose functionality.
+
+#### bonfire-systems/goalkeeper — MIT
+
+Its chain mode uses fresh-context executors with shared on-disk state to keep the parent context bounded.
+
+Plat adaptation: reinforces the existing one-fresh-context-worker exception; v2.3 supplies a stronger compact checkpoint/evidence boundary for that handoff.
+
+#### anthropics/claude-code — Commercial Terms / rights reserved
+
+The official Hook Development skill confirms that PreCompact exists and hook input includes `transcript_path`, `cwd`, and `hook_event_name`.
+
+Plat adaptation: `context_hook.py` accepts those fields but uses a generic event schema so other hosts can map equivalent lifecycle events. Principle-only.
+
+### Architecture
+
+```text
+coding agent
+   |
+   +-- always: proxy context signals
+   |     returned bytes / large outputs / reads / repeated reads / broad suites
+   |
+   +-- optional: host_context.py
+   |     canonical JSON/env/file/transcript telemetry
+   |     token/cache/context deltas + dynamic capabilities
+   |
+   v
+context_guard.py
+   |
+ GREEN / YELLOW / RED
+   |
+   +-- evidence_exec.py  -> full noisy logs on disk
+   +-- evidence_read.py  -> unchanged consumed reads become pointers
+   +-- precompact_checkpoint.py -> compact durable checkpoint
+   +-- context_hook.py   -> optional lifecycle bridge
+   +-- one fresh-context worker when RED + host isolation exists
+```
+
+### Starting real-telemetry thresholds
+
+Task-local, benchmarkable defaults:
+
+- YELLOW at context utilization >=65% or cache-read delta >=8M.
+- RED at context utilization >=80% or cache-read delta >=20M.
+- First observed host-usage snapshot becomes the task baseline so lifetime/session totals do not immediately trip the guard.
+
+If real telemetry is unavailable, Plat continues using the v2.2 proxy guard plus new total-read thresholds: YELLOW at 12 file reads, RED at 24.
+
+### License boundary
+
+A non-commercial session-handoff package was also inspected at a high level during market research. Its licensing is incompatible with unrestricted redistribution, so Plat does not copy or adapt its implementation/text. Similar state-vs-transcript ideas are implemented independently from permissively licensed/official sources.
+
+### Claims boundary
+
+v2.3 does not claim universal live savings across every host. The implementation makes the control path portable; matched multi-host A/B runs are still required to quantify cache/cost reductions outside the existing Claude Code baseline.
