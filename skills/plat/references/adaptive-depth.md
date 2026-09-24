@@ -1,47 +1,57 @@
-# Execution Routing
+# Execution Path Selection
 
-Use only when the cheapest sufficient path is genuinely uncertain or a task may deserve ESCALATED execution.
+Read only when DIRECT vs STANDARD vs ESCALATED is genuinely uncertain.
 
-## Paths
+## DIRECT
 
-### DIRECT
+Choose DIRECT when all are true enough:
 
-Tiny, local, reversible, obvious owner, cheap direct proof. No specialist context.
+- ownership is obvious;
+- requested delta is local and reversible;
+- no protected contract/data/security boundary changes;
+- direct proof is cheap.
 
-### STANDARD
+Examples: copy/constant change, isolated styling, known-file correction, simple config update.
 
-Default engineering path. One lead agent, targeted inspection, zero subagents/external skills by default, at most one primary domain reference when useful.
+## STANDARD
 
-### ESCALATED
+Default for normal product engineering:
 
-Earned by a concrete unresolved boundary: distributed/concurrent state, security, destructive data, public migration/contract coexistence, production-only/intermittent failure, major architecture choice, measured performance/capacity issue, complex AI behavior, or repeated falsified hypotheses.
+- one subsystem or understandable cross-file path;
+- targeted repository discovery can localize ownership;
+- no concrete high-risk boundary remains unresolved;
+- one knowledge card is enough if guidance is needed.
 
-Load one specialist reference first. One bounded specialist/subagent may be used if it has a specific capability advantage. A second requires new evidence exposing a distinct unresolved boundary.
+Large prompt length or repository size alone does not change STANDARD to ESCALATED.
 
-## Research mode
+## ESCALATED
 
-Research describes the requested output, not unlimited engineering depth. Orient first, derive a task-scoped map/matrix, then widen only unresolved high-impact branches.
+Choose only for a named hard question such as:
 
-## Escalation question
+- concurrency, ordering, distributed state, retries/idempotency;
+- production-only/intermittent failure;
+- authentication/authorization/tenant isolation/money/destructive data;
+- public API/schema/data migration/coexistence;
+- major architecture boundary;
+- measured performance/capacity requiring profiling/load evidence;
+- complex RAG/agent/eval/memory/tool behavior;
+- mobile lifecycle/offline/process death;
+- two or more failed hypotheses/reroutes on the same unresolved question.
 
-Before escalating, name one unresolved question that deeper context/another agent can answer and explain why that answer could materially change correctness, architecture, compatibility, risk, or expensive rework.
+Escalation is an investment. Name the unresolved question before loading deeper guidance or another agent.
 
-If no such question exists, remain DIRECT/STANDARD.
+## Research is a task type, not a fourth depth
 
-## De-escalation
+A research/audit request still uses STANDARD or ESCALATED execution. The lead first creates a task-scoped comparison model/evidence ledger, then may use one bounded scout if it materially saves wall time/context. Do not turn "research" into permission for unrestricted reading.
 
-Return to STANDARD/DIRECT as soon as evidence localizes the problem. Do not stay escalated because the task started there.
+## De-escalate
 
-## Model tiers
+Return to STANDARD/DIRECT when evidence localizes the problem. Do not stay ESCALATED because the task started there.
 
-Choose capabilities dynamically from the current host:
+## Reference budget
 
-- worker = latest cost-effective capable coding model;
-- Brain = stronger cost-effective reasoning/coding tier, normally one step above worker;
-- bounded mechanical/read-only worker = cheapest adequate tier when the host supports it.
+- DIRECT: 0 extra references normally.
+- STANDARD: 1 directly relevant knowledge card.
+- ESCALATED: 1 relevant card plus at most 1 deep card for the named hard question.
 
-Never encode a permanent provider/model identifier in Plat policy.
-
-## Output depth
-
-Detailed user-facing output is independent of execution path. A one-line code fix may deserve a detailed explanation, and an ESCALATED internal investigation may still end with a short result.
+No reference-to-reference exploration without a new named unresolved question.
