@@ -694,3 +694,50 @@ Adopted: keep the scheduled check lightweight/non-fatal and notification-only; p
 5. Any installation still stale after the native update gets a targeted compatibility reinstall.
 6. Re-running the installer for any registered agent registers that copy and then synchronizes all other registered Plat installations.
 7. Background checks never silently mutate skill files mid-session.
+
+
+## v2.0.2 — Full coding-agent catalog installation
+
+Evidence ID: `2026-09-24-v2.0.2-all-agent-installer`
+
+### Problem
+
+Plat's engineering runtime was host-agnostic, but its installer still hardcoded Claude Code, Codex, and Cursor. That created a mismatch: users could run Plat conceptually in many coding agents, while installation verification, registry paths, and fallback updates rejected other valid hosts such as Antigravity, Cline, Kiro CLI, OpenCode, Qwen Code, Roo Code, Windsurf, and Zed.
+
+### Sources inspected
+
+#### vercel-labs/skills — MIT
+
+Inspected the current `agents.ts`, `add.ts`, `list.ts`, and update behavior.
+
+Relevant current capabilities:
+- the Skills CLI owns a large and changing agent catalog;
+- `--agent '*'` selects the full catalog;
+- arbitrary specific agent IDs are validated by the upstream catalog;
+- agent storage paths are defined upstream, including universal `.agents/skills` and host-specific directories;
+- `skills list --json` returns installed skill path, scope, and the agents connected to that skill;
+- scoped `skills update` already knows how to update the installed agent topology.
+
+Plat adaptation: consume those interfaces instead of mirroring the catalog. Reuse: principle-only.
+
+#### jdx/mise — MIT
+
+Re-inspected current update/source ownership patterns.
+
+Adopted principle: when an external package/source manager owns platform-specific installation knowledge, delegate to that manager and keep local state to the minimum needed for verification, scheduling, and compatibility fallback. Reuse: principle-only.
+
+### Plat adaptation
+
+1. Installer accepts `--agent all` or any current Skills CLI agent ID.
+2. Interactive installer keeps quick choices for Claude Code/Codex/Cursor, plus **All supported agents** and **Another supported agent ID**.
+3. `--agent all` maps to the upstream wildcard rather than a copied Plat list.
+4. Installation verification no longer guesses a host-specific skill directory; it calls `skills list --json` and registers the returned Plat path/agent group.
+5. Registry schema v3 stores the selector plus upstream display names for the installed group.
+6. Update fallback accepts arbitrary upstream agent IDs and wildcard groups.
+7. Native scoped `skills update plat` remains the first update path.
+8. Existing extra persistent instruction wiring remains only for Claude Code, Codex, and Cursor. Other hosts use their native Skill discovery.
+9. The two-hour notification-only update checker remains unchanged in principle.
+
+### Non-goal
+
+Plat does not promise identical host semantics. Installation support means Plat is placed in the host's Skills-compatible location by the current Skills CLI; invocation/model/subagent capabilities still depend on the individual coding agent.
