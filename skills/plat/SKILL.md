@@ -1,6 +1,6 @@
 ---
 name: plat
-description: Autonomous engineering control layer for coding agents. Use for software engineering work where the agent should preserve exact task intent, solve directly from repository/runtime evidence, keep model-visible context small, course-correct stalled or drifting work, consult specialist guidance only when a concrete boundary earns it, and verify requested behavior before completion. Works across coding-agent hosts; model names are never hardcoded.
+description: Autonomous engineering control layer for coding agents. Use for software engineering work that must preserve task intent, solve from repo/runtime evidence, keep context small, course-correct stalls/drift, consult specialists only when earned, and verify requested behavior. Works across coding-agent hosts; model names are never hardcoded.
 ---
 
 # Plat
@@ -34,7 +34,7 @@ For non-trivial work:
 Tiny/local/reversible, obvious owner and proof. **0 subagents, 0 external skills, normally 0 extra Plat references.** Target -> act -> direct proof.
 
 ### STANDARD
-Default path. One lead owns the work. **0 specialists and 0 external skills by default.** Load at most one primary domain reference when useful. Use targeted inspection. One fresh-context worker is allowed only when context health is RED and the host supports isolation; this is garbage collection, not specialist fan-out.
+Default path. One lead owns the work. **0 specialists and 0 external skills by default.** Load at most one useful domain reference. One fresh-context worker is allowed only on RED context when the host supports isolation; this is garbage collection, not specialist fan-out.
 
 ### ESCALATED
 Use only for concrete unresolved risk: concurrency/distributed state, security, destructive data, public migration/contract, production-only failure, major architecture, measured performance, complex AI behavior, or repeated falsified hypotheses.
@@ -51,13 +51,13 @@ Remain host-agnostic. Never hardcode a provider/model family as Plat architectur
 
 ## Brain reviewer
 
-Brain is interrupt-driven supervision, not an implementer. Use preflight only for genuinely large/high-risk tasks. During execution invoke it when health becomes RED, repeated failed hypotheses invalidate the approach, or scope/architecture materially drifts.
+Brain supervises; it does not implement. Use it only for large/high-risk preflight, RED progress health, repeated failed hypotheses, or material scope/architecture drift.
 
 Build Brain input with `scripts/brain_packet.py`; cap it at 4 KB of task truth, evidence pointers, counters, and one question. Brain never inherits full chat/logs, edits code, performs broad discovery, runs large suites, recursively delegates, or takes task ownership. Max two routine reviews.
 
 ## Progress + context watchdog
 
-Record start time for non-trivial work. Check progress around meaningful boundaries at roughly five-minute intervals without a separate reasoning turn just to read the clock.
+Record start time for non-trivial work. Check progress around meaningful boundaries at roughly five-minute intervals.
 
 Progress health:
 - **GREEN:** continue while meaningful progress is recent.
@@ -71,7 +71,7 @@ Context health uses `context_guard.py`. Start with a best-effort `host_context.p
 - **YELLOW:** stop large raw returns; use summaries + pointers.
 - **RED:** run `precompact_checkpoint.py`, then one fresh-context worker when supported; otherwise compact/reset and resume from pointers.
 
-Noisy commands and reads normally return <=6 KB; full logs stay under `.plat/logs/`. Hosts exposing lifecycle hooks may route PreCompact/preCompact through `context_hook.py`; hooks are optional, never required.
+Noisy commands and reads normally return <=6 KB; full logs stay under `.plat/logs/`. Hook-capable hosts may route PreCompact through `context_hook.py`; hooks are optional.
 
 ## Task capsule and compaction
 
