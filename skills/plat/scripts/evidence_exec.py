@@ -104,9 +104,17 @@ def run_command(
     )
     log_path.write_bytes(combined)
 
-    excerpt = _interesting_excerpt(_decode(stdout + b"\n" + stderr), max_return_bytes)
+    command_display = " ".join(command)
+    if len(command_display) > 512:
+        command_display = command_display[:496].rstrip() + " ...[truncated]"
+
+    excerpt_budget = max(0, max_return_bytes - 1536)
+    excerpt = _interesting_excerpt(
+        _decode(stdout + b"\n" + stderr),
+        excerpt_budget,
+    )
     result = {
-        "command": command,
+        "command": command_display,
         "exit_code": proc.returncode,
         "duration_ms": duration_ms,
         "stdout_bytes": len(stdout),
@@ -116,19 +124,53 @@ def run_command(
         "excerpt": excerpt,
     }
 
-    rendered = json.dumps(result, sort_keys=True)
-    rendered_bytes = len(rendered.encode("utf-8"))
-
+    provisional_bytes = len(
+        json.dumps(result, indent=2, sort_keys=True).encode("utf-8")
+    )
     state = context_guard.load(context_state)
     state = context_guard.record(
         state,
-        returned_bytes=rendered_bytes,
+        returned_bytes=min(provisional_bytes, max_return_bytes),
         kind="test" if kind == "test" else kind,
-        key=" ".join(command[:4]),
+        key=command_display[:256],
         broad_suite=broad_suite,
     )
     context_guard.save(context_state, state)
     result["context_health"] = state["health"]
+
+    rendered = json.dumps(result, indent=2, sort_keys=True)
+    rendered_bytes = len(rendered.encode("utf-8"))
+    if rendered_bytes > max_return_bytes:
+        overflow = rendered_bytes - max_return_bytes
+        excerpt_bytes = result["excerpt"].encode("utf-8")
+        keep = max(0, len(excerpt_bytes) - overflow - 64)
+        result["excerpt"] = excerpt_bytes[:keep].decode(
+            "utf-8", errors="ignore"
+        ).rstrip()
+        if keep < len(excerpt_bytes):
+            suffix = "\n...[excerpt truncated]"
+            suffix_bytes = suffix.encode("utf-8")
+            while (
+                len(
+                    json.dumps(
+                        {**result, "excerpt": result["excerpt"] + suffix},
+                        indent=2,
+                        sort_keys=True,
+                    ).encode("utf-8")
+                )
+                > max_return_bytes
+                and result["excerpt"]
+            ):
+                result["excerpt"] = result["excerpt"][:-16]
+            result["excerpt"] = result["excerpt"].rstrip() + suffix
+
+    final_bytes = len(
+        json.dumps(result, indent=2, sort_keys=True).encode("utf-8")
+    )
+    if final_bytes > max_return_bytes:
+        raise RuntimeError(
+            f"evidence summary exceeds hard limit: {final_bytes} > {max_return_bytes}"
+        )
     return result
 
 
