@@ -6,17 +6,15 @@ Use for long/non-trivial work, context pressure/compaction, agent switching, or 
 
 Preserve the smallest durable set of facts needed to resume correctly. Repository/code/tests remain authority; the capsule is a cache of current task truth.
 
-Default location:
-
-```text
-.plat/session.json
-```
+Task truth: `.plat/session.json`  
+Context pressure: `.plat/context.json`  
+Full noisy evidence: `.plat/logs/`
 
 Prefer local exclusion through `.git/info/exclude` unless the developer explicitly wants shared state.
 
 ## Capsule budget
 
-Target <= 2 KB; treat 4 KB as a hard warning threshold. Store facts and pointers, never transcripts or reasoning history.
+Target <= 2 KB; treat 4 KB as a hard warning threshold. Store facts and pointers, never transcripts, reasoning history, raw logs, or full tool output.
 
 Recommended shape:
 
@@ -69,14 +67,22 @@ For each new developer message compare against `goal`, `must`, `must_not`, and `
 - Materially different interpretations -> inspect cheap evidence first; ask one focused question only if ambiguity remains.
 - New work that exceeds authority or contradicts an explicit exclusion -> ask before crossing that boundary.
 
+## Context-pressure recovery
+
+Use `scripts/context_guard.py` to track host-neutral pressure proxies. YELLOW means stop returning large raw output and rely on compact summaries + file/log pointers. RED means checkpoint the capsule before continuing.
+
+If the host supports isolated execution, allow one fresh-context worker for the current slice. Give it only the capsule, a <=4 KB task/evidence brief, exact evidence pointers, allowed scope, and proof. It returns <=2 KB of result/evidence pointers. This worker is context garbage collection, not a second planner/reviewer.
+
+If isolated context is unavailable or already used, compact/reset the host context where supported and resume from disk state.
+
 ## Compaction/resume fast path
 
 1. Read the capsule once.
 2. Inspect branch/HEAD and the smallest useful diff/worktree summary.
-3. Revalidate only facts that could have become stale.
-4. Resume `next` if evidence still agrees.
+3. Read only evidence pointers needed for stale facts.
+4. Resume `next` if evidence agrees.
 
-Do not replay the conversation, regenerate a long plan, or rebuild a repository map merely because context compacted.
+Do not replay conversation history, raw logs, or repository discovery merely because context compacted.
 
 ## Keep only high-signal state
 
