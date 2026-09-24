@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Out-of-band Plat release checker and multi-install updater.
+"""Out-of-band Plat release checker and cross-agent updater.
 
-The checker is installed by Plat's installer and runs from the OS scheduler.
-It never runs inside normal engineering prompts, so update discovery adds no
-model/tool overhead.
+Agent paths and supported agent IDs are delegated to the upstream Skills CLI.
+Plat stores only the installed Plat scope/group returned by `skills list --json`.
 """
 
 from __future__ import annotations
@@ -31,7 +30,7 @@ LOG_DIR = PLAT_HOME / "logs"
 REGISTRY = PLAT_HOME / "installations.json"
 STATUS = PLAT_HOME / "update-status.json"
 PERSISTED_SCRIPT = BIN_DIR / "update_check.py"
-LABEL = "com.plat.daily-update-check"  # Keep label stable for existing installs.
+LABEL = "com.plat.daily-update-check"  # Stable label for upgrades from older releases.
 CHECK_INTERVAL_SECONDS = 2 * 60 * 60
 
 
@@ -104,14 +103,49 @@ def persist_self() -> None:
         pass
 
 
+def npx_path() -> str:
+    npx = shutil.which("npx")
+    if not npx:
+        raise RuntimeError("npx is required to manage Plat installations")
+    return npx
+
+
+def run_skills_list(*, scope: str, project_root: Path | None = None) -> list[dict]:
+    command = [npx_path(), "-y", "skills@latest", "list", "--json"]
+    cwd = None
+    if scope == "global":
+        command.append("-g")
+    else:
+        if project_root is None:
+            raise RuntimeError("project scope requires a project root")
+        cwd = str(project_root.expanduser().resolve())
+
+    result = subprocess.run(
+        command,
+        cwd=cwd,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        detail = (result.stderr or result.stdout).strip()
+        raise RuntimeError(f"skills list failed: {detail or result.returncode}")
+
+    try:
+        payload = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("skills list did not return valid JSON") from exc
+    if not isinstance(payload, list):
+        raise RuntimeError("skills list JSON must be an array")
+    return [x for x in payload if isinstance(x, dict)]
+
+
 def infer_project_root(skill_dir: Path, agent: str) -> Path | None:
+    """Legacy fallback for v2.0.1 registrations that did not persist project_root."""
     skill_dir = skill_dir.expanduser().resolve()
-    parts = list(skill_dir.parents)
-    if agent == "claude-code":
-        for parent in parts:
-            if parent.name == ".claude":
-                return parent.parent
-    for parent in parts:
+    for parent in skill_dir.parents:
+        if agent == "claude-code" and parent.name == ".claude":
+            return parent.parent
         if parent.name == ".agents":
             return parent.parent
     return None
@@ -122,31 +156,69 @@ def register_install(
     agent: str,
     scope: str,
     project_root: Path | None = None,
+    agents: list[str] | None = None,
 ) -> None:
     skill_dir = skill_dir.expanduser().resolve()
     root = project_root.expanduser().resolve() if project_root else None
     if scope == "project" and root is None:
         root = infer_project_root(skill_dir, agent)
 
-    data = load_json(REGISTRY, {"version": 2, "installations": []})
+    data = load_json(REGISTRY, {"version": 3, "installations": []})
     items = data.get("installations", [])
-    items = [x for x in items if x.get("path") != str(skill_dir)]
+    items = [
+        x for x in items
+        if not (x.get("path") == str(skill_dir) and x.get("scope") == scope)
+    ]
     item = {
         "path": str(skill_dir),
         "agent": agent,
+        "agents": sorted(set(agents or [])),
         "scope": scope,
         "registered_at": now_iso(),
     }
     if root is not None:
         item["project_root"] = str(root)
     items.append(item)
-    data["version"] = 2
+    data["version"] = 3
     data["installations"] = items
     write_json(REGISTRY, data)
 
 
+def register_scope(scope: str, agent_selector: str, project_root: Path | None = None) -> list[dict]:
+    entries = run_skills_list(scope=scope, project_root=project_root)
+    plat_entries = [x for x in entries if str(x.get("name", "")).lower() == "plat"]
+    if not plat_entries:
+        raise RuntimeError(f"Plat install verification failed: skills list found no Plat entry in {scope} scope")
+
+    registered = []
+    for entry in plat_entries:
+        raw_path = str(entry.get("path", "")).strip()
+        if not raw_path:
+            continue
+        agent_names = [str(x) for x in entry.get("agents", []) if str(x).strip()]
+        register_install(
+            Path(raw_path),
+            agent_selector,
+            scope,
+            project_root,
+            agents=agent_names,
+        )
+        registered.append(
+            {
+                "path": str(Path(raw_path).expanduser().resolve()),
+                "scope": scope,
+                "agent": agent_selector,
+                "agents": agent_names,
+            }
+        )
+
+    if not registered:
+        raise RuntimeError("Plat install verification failed: no usable installed Plat path")
+    return registered
+
+
 def active_installations() -> list[dict]:
-    registry = load_json(REGISTRY, {"version": 2, "installations": []})
+    registry = load_json(REGISTRY, {"version": 3, "installations": []})
     active = []
     for raw in registry.get("installations", []):
         item = dict(raw)
@@ -154,6 +226,7 @@ def active_installations() -> list[dict]:
         version = read_installed_version(skill_dir)
         if not version:
             continue
+        item.setdefault("agents", [])
         item["installed_version"] = version
         if item.get("scope") == "project" and not item.get("project_root"):
             inferred = infer_project_root(skill_dir, str(item.get("agent", "")))
@@ -161,7 +234,7 @@ def active_installations() -> list[dict]:
                 item["project_root"] = str(inferred)
         active.append(item)
 
-    registry["version"] = 2
+    registry["version"] = 3
     registry["installations"] = [
         {k: v for k, v in item.items() if k != "installed_version"} for item in active
     ]
@@ -169,12 +242,20 @@ def active_installations() -> list[dict]:
     return active
 
 
-def display_agent(agent: str) -> str:
+def display_installation(item: dict) -> str:
+    agents = [str(x) for x in item.get("agents", []) if str(x).strip()]
+    if agents:
+        if len(agents) <= 4:
+            return ", ".join(agents)
+        return ", ".join(agents[:4]) + f" +{len(agents) - 4} more"
+    selector = str(item.get("agent", "")).strip()
+    if selector in {"*", "all"}:
+        return "all supported agents"
     return {
         "codex": "Codex",
         "claude-code": "Claude Code",
         "cursor": "Cursor",
-    }.get(agent, agent or "unknown")
+    }.get(selector, selector or "registered agent group")
 
 
 def notification_signature(latest: str, outdated: list[dict]) -> str:
@@ -252,10 +333,11 @@ def check_updates() -> int:
 
         signature = notification_signature(latest, outdated) if outdated else None
         if outdated and previous.get("last_notified_signature") != signature:
-            agents = ", ".join(sorted({display_agent(str(x.get("agent", ""))) for x in outdated}))
+            labels = sorted({display_installation(x) for x in outdated})
+            target = "; ".join(labels)
             notify(
                 "Plat update available",
-                f"Plat v{latest} is available for {agents}. Run the Plat updater once to sync all registered agents.",
+                f"Plat v{latest} is available for {target}. Run the Plat updater once to sync registered agent groups.",
             )
             state["last_notified_signature"] = signature
             state["last_notified_version"] = latest
@@ -271,10 +353,7 @@ def check_updates() -> int:
 
 
 def run_skills_update(*, global_scope: bool, project_root: Path | None = None) -> subprocess.CompletedProcess:
-    npx = shutil.which("npx")
-    if not npx:
-        raise RuntimeError("npx is required to update Plat installations")
-    command = [npx, "-y", "skills@latest", "update", "plat", "-y"]
+    command = [npx_path(), "-y", "skills@latest", "update", "plat", "-y"]
     command.append("-g" if global_scope else "-p")
     cwd = None if global_scope else str(project_root) if project_root else None
     if not global_scope and not cwd:
@@ -283,29 +362,23 @@ def run_skills_update(*, global_scope: bool, project_root: Path | None = None) -
 
 
 def fallback_reinstall(item: dict) -> subprocess.CompletedProcess:
-    npx = shutil.which("npx")
-    if not npx:
-        raise RuntimeError("npx is required to update Plat installations")
-    agent = str(item.get("agent", ""))
-    scope = str(item.get("scope", ""))
-    if agent not in {"codex", "claude-code", "cursor"}:
-        raise RuntimeError(f"unsupported registered agent: {agent}")
-
+    selector = str(item.get("agent", "")).strip()
     command = [
-        npx,
+        npx_path(),
         "-y",
         "skills@latest",
         "add",
         REPO,
         "--skill",
         "plat",
-        "-a",
-        agent,
         "--copy",
         "-y",
     ]
+    if selector and selector not in {"auto", "unknown"}:
+        command.extend(["-a", "*" if selector == "all" else selector])
+
     cwd = None
-    if scope == "global":
+    if item.get("scope") == "global":
         command.append("-g")
     else:
         root = item.get("project_root")
@@ -354,9 +427,6 @@ def update_all_registered() -> int:
         except Exception as exc:
             print(f"Project native update failed for {root}: {type(exc).__name__}: {exc}", file=sys.stderr)
 
-    # Verify every registered copy. If the native scoped updater did not refresh
-    # a copy (for example an older install without usable lock metadata), fall
-    # back to a targeted reinstall for that registered agent.
     remaining = []
     latest_tuple = parse_version(latest)
     for item in outdated:
@@ -369,7 +439,7 @@ def update_all_registered() -> int:
         try:
             result = fallback_reinstall(item)
             if result.returncode != 0:
-                print(f"Fallback update failed for {item.get('agent')} at {item.get('path')}", file=sys.stderr)
+                print(f"Fallback update failed for {display_installation(item)} at {item.get('path')}", file=sys.stderr)
         except Exception as exc:
             print(f"Fallback update failed for {item.get('path')}: {type(exc).__name__}: {exc}", file=sys.stderr)
 
@@ -380,12 +450,12 @@ def update_all_registered() -> int:
     if final_outdated:
         print("Plat update incomplete for:")
         for item in final_outdated:
-            print(f"- {display_agent(str(item.get('agent', '')))}: {item.get('path')} (v{item.get('installed_version')})")
+            print(f"- {display_installation(item)}: {item.get('path')} (v{item.get('installed_version')})")
         return 1
 
     print(f"✓ Updated all registered Plat installations to v{latest}.")
     for item in final_active:
-        print(f"- {display_agent(str(item.get('agent', '')))}: {item.get('path')}")
+        print(f"- {display_installation(item)}: {item.get('path')}")
     return 0
 
 
@@ -486,7 +556,6 @@ def install_windows_scheduler() -> str:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    # Remove the old daily task name if it exists.
     subprocess.run(
         ["schtasks", "/Delete", "/TN", "PlatDailyUpdateCheck", "/F"],
         check=False,
@@ -515,14 +584,27 @@ def print_status() -> None:
     print(json.dumps(state, indent=2, sort_keys=True))
 
 
+def finish_registration() -> None:
+    persist_self()
+    try:
+        scheduler = install_scheduler()
+        print(f"✓ Plat update check enabled every 2 hours: {scheduler}")
+    except Exception as exc:
+        print(f"Warning: Plat update scheduler was not installed: {exc}", file=sys.stderr)
+        print(f"You can still check manually with: {sys.executable} {PERSISTED_SCRIPT} --run", file=sys.stderr)
+    check_updates()
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Plat release checker and multi-install updater")
+    parser = argparse.ArgumentParser(description="Plat release checker and cross-agent updater")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--run", action="store_true", help="Run one background update check")
     group.add_argument("--status", action="store_true", help="Print cached status; no network")
-    group.add_argument("--update-all", action="store_true", help="Update every registered Plat installation")
-    group.add_argument("--register", metavar="SKILL_DIR", help="Register an installed Plat path")
+    group.add_argument("--update-all", action="store_true", help="Update every registered Plat installation group")
+    group.add_argument("--register", metavar="SKILL_DIR", help="Register a legacy installed Plat path")
+    group.add_argument("--register-scope", action="store_true", help="Discover and register Plat through skills list --json")
     parser.add_argument("--agent", default="unknown")
+    parser.add_argument("--agent-selector", default="unknown")
     parser.add_argument("--scope", choices=["global", "project"], default="global")
     parser.add_argument("--project-root")
     args = parser.parse_args()
@@ -535,20 +617,22 @@ def main() -> int:
     if args.update_all:
         return update_all_registered()
 
-    persist_self()
+    project_root = Path(args.project_root) if args.project_root else None
+    if args.register_scope:
+        registered = register_scope(args.scope, args.agent_selector, project_root)
+        for item in registered:
+            label = display_installation(item)
+            print(f"✓ Registered Plat for {label}: {item['path']}")
+        finish_registration()
+        return 0
+
     register_install(
         Path(args.register),
         args.agent,
         args.scope,
-        Path(args.project_root) if args.project_root else None,
+        project_root,
     )
-    try:
-        scheduler = install_scheduler()
-        print(f"✓ Plat update check enabled every 2 hours: {scheduler}")
-    except Exception as exc:
-        print(f"Warning: Plat update scheduler was not installed: {exc}", file=sys.stderr)
-        print(f"You can still check manually with: {sys.executable} {PERSISTED_SCRIPT} --run", file=sys.stderr)
-    check_updates()
+    finish_registration()
     return 0
 
 

@@ -6,7 +6,7 @@
 
 **Minimum sufficient engineering depth for AI coding agents.**
 
-**v2.0.1 · fast autonomous runtime · 2-hour update checks · multi-agent sync · proof-first execution**
+**v2.0.2 · fast autonomous runtime · full coding-agent catalog · 2-hour updates · proof-first execution**
 
 Plat is an engineering control plane for AI coding agents. It helps an agent understand the real task, keep the requested scope intact, choose the smallest sufficient reasoning depth, load only the engineering knowledge it actually needs, reuse repository truth, and prove the result before calling the work complete.
 
@@ -56,12 +56,15 @@ Invoke-WebRequest `
 & $installer
 ~~~
 
-You should see the installer prompt after the download completes. It will ask for your coding agent and whether Plat should be installed globally or only in the current project.
+You should see the installer prompt after the download completes. You can choose Claude Code, Codex, Cursor, **all agents supported by the current Skills CLI catalog**, or enter any other supported agent ID (for example Antigravity, Cline, Kiro CLI, OpenCode, Qwen Code, Roo Code, Windsurf, or Zed). Then choose global or project-local scope.
 
 For non-interactive installs, pass the agent and scope explicitly. Example for Codex in the current repository:
 
 ~~~bash
 bash /tmp/plat-install.sh --agent codex --scope project
+
+# Or install to the full current Skills CLI agent catalog
+bash /tmp/plat-install.sh --agent all --scope global
 ~~~
 
 If the download cannot reach GitHub Raw, it now fails visibly instead of waiting indefinitely; retry after checking your network/VPN/DNS access to `raw.githubusercontent.com`.
@@ -317,13 +320,11 @@ That number measures how much credible evaluation infrastructure/evidence exists
 
 ## Compatibility
 
-| Host | Install path supported by installer | Notes |
-| --- | --- | --- |
-| Claude Code | Global or project-local | persistent CLAUDE.md instruction wiring |
-| Codex | Global or project-local | persistent AGENTS.md instruction wiring |
-| Cursor | Global or project-local | persistent Cursor rule / project instruction wiring |
+Plat delegates agent names, install directories, and wildcard support to the **current `skills@latest` catalog** instead of maintaining a fixed three-agent whitelist. The installer supports `--agent all` for the full catalog and `--agent <id>` for any current upstream agent ID.
 
-Plat follows the standard Skill bundle shape: **SKILL.md + agents/openai.yaml + optional references/scripts/assets**. Host invocation details may differ, but the engineering instructions remain vendor-neutral.
+Examples in the current ecosystem include Claude Code, Codex, Cursor, Antigravity, Cline, Gemini CLI, GitHub Copilot, Kiro CLI, OpenCode, Qwen Code, Roo Code, Windsurf, Zed, and many others. Supported hosts can change upstream without requiring a Plat release just to add another name/path.
+
+Plat follows the standard Skill bundle shape: **SKILL.md + agents/openai.yaml + optional references/scripts/assets**. Claude Code, Codex, and Cursor retain Plat's additional persistent instruction wiring; other hosts use their native Skill discovery semantics.
 
 ## Evidence so far
 
@@ -366,7 +367,7 @@ The course-correction case in the earlier independent pilot **failed with Plat**
 
 Plat does **not** spend engineering-session tokens checking the network for updates. The installer registers a user-level background task that checks GitHub Releases **every 2 hours**, writes cached status to `~/.plat/update-status.json`, and shows an OS notification when a newer version exists for any registered Plat installation.
 
-Plat tracks every registered Codex, Claude Code, and Cursor installation in `~/.plat/installations.json`. Re-running the installer for any one registered agent, or running `python3 ~/.plat/bin/update_check.py --update-all`, synchronizes all registered Plat installations to the latest release. The background check itself remains notification-only so it never mutates an agent installation mid-session.
+Plat tracks registered **agent groups from the live Skills CLI catalog** in `~/.plat/installations.json`. Registration is discovered from `skills list --json`, so Plat does not need to know each host's filesystem path. Re-running the installer for any supported agent—or running `python3 ~/.plat/bin/update_check.py --update-all`—synchronizes registered Plat groups to the latest release. The background check itself remains notification-only so it never mutates an agent installation mid-session.
 
 The background checker sends only a normal GitHub release request. It does not send repository code, prompts, profile contents, or project data.
 
