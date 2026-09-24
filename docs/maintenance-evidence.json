@@ -220,6 +220,60 @@
         "Python compileall and installer shell syntax",
         "main-branch GitHub Actions before release"
       ]
+    },
+    {
+      "id": "2026-09-24-v2-runtime-kernel",
+      "date": "2026-09-24",
+      "capability": "Replace Plat's orchestration-heavy hot path with a fast autonomous runtime kernel: compact task state, deterministic time/progress health, capability-tier Brain course correction, single-agent Quick/Standard execution, and evidence-earned specialist/third-party skill escalation.",
+      "material_files": [
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/agents/openai.yaml",
+        "skills/plat/references/adaptive-depth.md",
+        "skills/plat/references/context.md",
+        "skills/plat/references/efficiency.md",
+        "skills/plat/references/orchestration.md",
+        "skills/plat/references/subagents.md",
+        "skills/plat/scripts/orchestration_policy.py",
+        "skills/plat/scripts/task_state.py",
+        "scripts/validate_plat.py"
+      ],
+      "sources": [
+        {
+          "repo": "openai/codex",
+          "license": "Apache-2.0",
+          "inspected": "current Codex skill and agent architecture, progressive skill loading, bounded specialized workflows, and coding-agent execution patterns",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "openai/skills",
+          "license": "Apache-2.0 for system skill-creator",
+          "inspected": "current skill-creator guidance emphasizing concise control planes, progressive disclosure, one-level references, and deterministic scripts for repeatable logic",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "small always-loaded control plane with progressive specialist knowledge",
+        "deterministic scripts for task clock, health thresholds, and Brain intervention budget",
+        "host-agnostic worker/Brain capability tiers rather than permanent provider/model identifiers",
+        "single-agent Quick/Standard execution and one-specialist-first escalation",
+        "compact task capsule for compaction/resume instead of transcript replay",
+        "five-minute checkpoint cadence with YELLOW/RED based on lack of meaningful progress rather than elapsed time alone"
+      ],
+      "rejected": [
+        "hardcoding GPT, Claude, or any provider/model name into the runtime architecture",
+        "asking the developer for confirmation at every alignment checkpoint",
+        "using prompt length alone as the trigger for a stronger Brain",
+        "continuous Brain approval after every implementation step",
+        "allowing references or third-party skills to recursively create their own orchestration trees"
+      ],
+      "tests": [
+        "task-state unit tests for <5m no-op, 10m YELLOW, 20m RED, progress reset, generic model tiers, and two-review Brain cap",
+        "orchestration policy regressions proving Quick/Standard remain single-agent, Deep starts with one specialist, external skill needs a real capability gap, and blocked work surfaces instead of delegating",
+        "state-space invariant coverage for specialist caps, external-skill conditions, and no recursive delegation",
+        "Plat v2 structural validator with <=7000-character hot-path budget and explicit v2 runtime controls",
+        "GitHub Actions full unit/compile/maintenance validation before merge"
+      ]
     }
   ]
 }
