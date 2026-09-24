@@ -78,7 +78,7 @@ Context RED can earn one isolated execution worker even on STANDARD work when th
 
 The lead checkpoints task truth first. The worker receives a <=4 KB execution brief plus file/log pointers, owns only the current implementation slice, and returns <=2 KB plus proof pointers. It does not rediscover the repo, redesign scope, or spawn more workers. Max one per active slice.
 
-If the host cannot isolate context, or the one-worker budget is used, checkpoint/compact instead.
+If the host cannot isolate context, or the one-worker budget is used, checkpoint/compact instead. Determine isolation capability from current host evidence/capability input, not a hardcoded provider list.
 
 ## Parallel vs sequential scheduling
 
