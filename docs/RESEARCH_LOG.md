@@ -741,3 +741,31 @@ Adopted principle: when an external package/source manager owns platform-specifi
 ### Non-goal
 
 Plat does not promise identical host semantics. Installation support means Plat is placed in the host's Skills-compatible location by the current Skills CLI; invocation/model/subagent capabilities still depend on the individual coding agent.
+
+
+## v2.1 — Final runtime contract alignment
+
+Evidence ID: `2026-09-24-v2.1-final-runtime-contract`
+
+### Gap closed
+
+The shipped v2 runtime already had the compact task capsule, single-agent normal path, Brain reviewer, and host-neutral model tiers, but two deterministic details still differed from the finalized architecture: YELLOW/RED health happened at 10/20 minutes instead of 5/10, and the policy helper still exposed Quick/Standard/Deep/Research as its primary API.
+
+### Sources inspected
+
+#### openai/openai-agents-python — MIT
+
+Inspected current manager-style orchestration/handoff guidance and runtime flow-control structure. Adopted the principle that one lead should retain control and that extra agent contexts should be bounded to explicit orchestration needs. Reuse: principle-only.
+
+#### anthropics/claude-plugins-official — Apache-2.0
+
+Inspected current plugin/skill progressive-disclosure guidance: essential core instructions in SKILL.md, detailed references/examples loaded only when needed. Adopted this as supporting evidence for keeping Plat's hot path small. Reuse: principle-only.
+
+### Plat adaptation
+
+1. Watchdog checkpoint cadence remains ~5 minutes, with **YELLOW at 5m** without meaningful progress and **RED at 10m**.
+2. **20m** becomes an ordinary-task safeguard: Brain review is strongly preferred before more exploration when progress is still weak.
+3. Known long-running operations can be marked waiting so elapsed time alone never causes false escalation.
+4. Deterministic orchestration now uses **DIRECT / STANDARD / ESCALATED** as the canonical API.
+5. Legacy depth inputs remain mapped for compatibility, but no longer define the architecture.
+6. Normal DIRECT/STANDARD execution remains zero-subagent/zero-external-skill by default; ESCALATED begins with one bounded specialist.

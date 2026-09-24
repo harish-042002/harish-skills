@@ -369,6 +369,50 @@
         "structural guards preventing restoration of the PowerShell three-agent ValidateSet and requiring wildcard/catalog registration controls",
         "GitHub Actions maintenance gate, full unittest discovery, syntax checks, validation snapshot, and release packaging"
       ]
+    },
+    {
+      "id": "2026-09-24-v2.1-final-runtime-contract",
+      "date": "2026-09-24",
+      "capability": "Align the shipped fast autonomous runtime with the finalized 5/10/20 progress watchdog and make DIRECT/STANDARD/ESCALATED the canonical deterministic policy API while preserving legacy compatibility.",
+      "material_files": [
+        "scripts/validate_plat.py",
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/references/efficiency.md",
+        "skills/plat/scripts/orchestration_policy.py",
+        "skills/plat/scripts/task_state.py"
+      ],
+      "sources": [
+        {
+          "repo": "openai/openai-agents-python",
+          "license": "MIT",
+          "inspected": "current agent orchestration guidance distinguishing manager-style orchestration and handoffs, plus keeping runtime flow control focused and bounded",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "anthropics/claude-plugins-official",
+          "license": "Apache-2.0",
+          "inspected": "current plugin/skill guidance using compact core SKILL instructions with references/examples loaded as needed",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "keep a single lead runtime and make supervisory escalation bounded rather than another implementation path",
+        "keep core skill control compact and progressively load detailed specialist guidance",
+        "encode runtime health thresholds and execution-path caps deterministically in scripts/tests"
+      ],
+      "rejected": [
+        "periodic LLM polling just to check elapsed time",
+        "provider-specific model names in runtime policy",
+        "using old Quick/Deep/Research depth labels as the primary runtime API",
+        "multi-agent fan-out for ordinary STANDARD work"
+      ],
+      "tests": [
+        "task-state regression updated for YELLOW at 5 minutes and RED at 10 minutes",
+        "orchestration policy tests updated to canonical DIRECT/STANDARD/ESCALATED paths",
+        "legacy depth compatibility retained inside policy helper",
+        "structural validator checks 5/10/20 constants and canonical paths"
+      ]
     }
   ]
 }

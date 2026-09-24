@@ -37,15 +37,15 @@ class TaskStateTests(unittest.TestCase):
         self.assertEqual(result["state"]["health"]["status"], "GREEN")
         self.assertEqual(result["since_progress"], 0)
 
-    def test_ten_minutes_without_progress_is_yellow(self):
+    def test_five_minutes_without_progress_is_yellow(self):
+        state = self.mod.new_state("x", started_at="2026-09-24T10:00:00+00:00")
+        result = self.mod.evaluate_checkpoint(state, at="2026-09-24T10:05:00+00:00")
+        self.assertEqual(result["state"]["health"]["status"], "YELLOW")
+        self.assertEqual(result["state"]["health"]["action"], "act-verify-reroute")
+
+    def test_ten_minutes_without_progress_requests_brain(self):
         state = self.mod.new_state("x", started_at="2026-09-24T10:00:00+00:00")
         result = self.mod.evaluate_checkpoint(state, at="2026-09-24T10:10:00+00:00")
-        self.assertEqual(result["state"]["health"]["status"], "YELLOW")
-        self.assertEqual(result["state"]["health"]["action"], "self-correct")
-
-    def test_twenty_minutes_without_progress_requests_brain(self):
-        state = self.mod.new_state("x", started_at="2026-09-24T10:00:00+00:00")
-        result = self.mod.evaluate_checkpoint(state, at="2026-09-24T10:20:00+00:00")
         self.assertEqual(result["state"]["health"]["status"], "RED")
         self.assertEqual(result["state"]["health"]["action"], "brain-review")
 

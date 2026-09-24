@@ -20,53 +20,53 @@ class OrchestrationPolicyV2Tests(unittest.TestCase):
     def setUpClass(cls):
         cls.policy = load_module()
 
-    def test_quick_and_standard_are_single_agent(self):
-        for depth in ["Quick", "Standard"]:
-            d = self.policy.decide(depth=depth, unresolved=5, capability_gap=True, built_in_sufficient=False, external_match=True)
+    def test_direct_and_standard_are_single_agent(self):
+        for execution_path in ["DIRECT", "STANDARD"]:
+            d = self.policy.decide(execution_path=execution_path, unresolved=5, capability_gap=True, built_in_sufficient=False, external_match=True)
             self.assertEqual(d.max_specialists, 0)
             self.assertFalse(d.external_skill)
 
     def test_deep_starts_with_one(self):
-        d = self.policy.decide(depth="Deep", unresolved=4, independent=4)
+        d = self.policy.decide(execution_path="ESCALATED", unresolved=4, independent=4)
         self.assertEqual(d.initial_specialists, 1)
         self.assertEqual(d.max_specialists, 1)
         self.assertEqual(d.parallel_limit, 1)
 
     def test_second_specialist_requires_earned_boundary(self):
-        d = self.policy.decide(depth="Deep", unresolved=2, independent=2, second_boundary_earned=True)
+        d = self.policy.decide(execution_path="ESCALATED", unresolved=2, independent=2, second_boundary_earned=True, wall_time_critical=True)
         self.assertEqual(d.max_specialists, 2)
         self.assertEqual(d.parallel_limit, 2)
 
     def test_external_skill_requires_real_capability_gap(self):
-        no_gap = self.policy.decide(depth="Deep", unresolved=1, built_in_sufficient=False, external_match=True, capability_gap=False)
+        no_gap = self.policy.decide(execution_path="ESCALATED", unresolved=1, built_in_sufficient=False, external_match=True, capability_gap=False)
         self.assertFalse(no_gap.external_skill)
-        gap = self.policy.decide(depth="Deep", unresolved=1, built_in_sufficient=False, external_match=True, capability_gap=True)
+        gap = self.policy.decide(execution_path="ESCALATED", unresolved=1, built_in_sufficient=False, external_match=True, capability_gap=True)
         self.assertTrue(gap.external_skill)
 
     def test_research_orients_before_consulting(self):
-        d = self.policy.decide(depth="Research", unresolved=3, research_oriented=False)
+        d = self.policy.decide(execution_path="ESCALATED", research_task=True, unresolved=3, research_oriented=False)
         self.assertEqual(d.action, "lead")
         self.assertEqual(d.max_specialists, 0)
 
     def test_red_health_triggers_brain_until_budget(self):
-        d = self.policy.decide(depth="Standard", unresolved=1, health="RED", brain_reviews=1)
+        d = self.policy.decide(execution_path="STANDARD", unresolved=1, health="RED", brain_reviews=1)
         self.assertTrue(d.brain_review)
-        capped = self.policy.decide(depth="Standard", unresolved=1, health="RED", brain_reviews=2)
+        capped = self.policy.decide(execution_path="STANDARD", unresolved=1, health="RED", brain_reviews=2)
         self.assertFalse(capped.brain_review)
         self.assertIn("brain-budget-exhausted", capped.reason_codes)
 
     def test_model_policy_is_capability_based(self):
-        d = self.policy.decide(depth="Standard")
+        d = self.policy.decide(execution_path="STANDARD")
         self.assertEqual(d.worker_tier, "cost-efficient-latest")
         self.assertEqual(d.brain_tier, "one-tier-stronger-cost-effective")
 
     def test_same_question_circuit_breaker(self):
-        d = self.policy.decide(depth="Deep", unresolved=2, same_question_rounds=2)
+        d = self.policy.decide(execution_path="ESCALATED", unresolved=2, same_question_rounds=2)
         self.assertEqual(d.action, "reroute")
         self.assertEqual(d.max_specialists, 0)
 
     def test_blocked_surfaces_without_delegation(self):
-        d = self.policy.decide(depth="Deep", unresolved=2, health="BLOCKED")
+        d = self.policy.decide(execution_path="ESCALATED", unresolved=2, health="BLOCKED")
         self.assertEqual(d.action, "surface-blocker")
         self.assertEqual(d.max_specialists, 0)
 

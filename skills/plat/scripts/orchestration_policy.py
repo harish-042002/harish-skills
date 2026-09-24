@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Deterministic Plat v2 runtime/orchestration guardrails."""
+"""Deterministic Plat runtime escalation/Brain policy."""
 from __future__ import annotations
 import argparse, json
 from dataclasses import asdict, dataclass
 
-VALID_DEPTHS = {"Quick", "Standard", "Deep", "Research"}
+VALID_PATHS = {"DIRECT", "STANDARD", "ESCALATED"}
+LEGACY_DEPTH_MAP = {"Quick": "DIRECT", "Standard": "STANDARD", "Deep": "ESCALATED", "Research": "ESCALATED"}
 VALID_HEALTH = {"GREEN", "YELLOW", "RED", "BLOCKED"}
 MAX_BRAIN_REVIEWS = 2
 
 @dataclass(frozen=True)
 class Decision:
     action: str
-    lead_control: str
+    execution_path: str
     initial_specialists: int
     max_specialists: int
     parallel_limit: int
@@ -22,39 +23,73 @@ class Decision:
     recursive_delegation: bool
     reason_codes: tuple[str, ...]
 
-def decide(*, depth: str, unresolved: int = 0, independent: int = 0, built_in_sufficient: bool = True,
-           external_match: bool = False, capability_gap: bool = False, second_boundary_earned: bool = False,
-           mutating: bool = False, shared_state: bool = False, same_question_rounds: int = 0,
-           research_oriented: bool = False, wall_time_critical: bool = False, health: str = "GREEN",
-           brain_preflight: bool = False, brain_reviews: int = 0, **_legacy: object) -> Decision:
-    if depth not in VALID_DEPTHS:
-        raise ValueError(f"invalid depth: {depth}")
+def decide(
+    *,
+    execution_path: str | None = None,
+    depth: str | None = None,
+    unresolved: int = 0,
+    independent: int = 0,
+    built_in_sufficient: bool = True,
+    external_match: bool = False,
+    capability_gap: bool = False,
+    second_boundary_earned: bool = False,
+    mutating: bool = False,
+    shared_state: bool = False,
+    same_question_rounds: int = 0,
+    research_task: bool = False,
+    research_oriented: bool = False,
+    wall_time_critical: bool = False,
+    health: str = "GREEN",
+    brain_preflight: bool = False,
+    brain_reviews: int = 0,
+    failed_hypotheses: int = 0,
+    reroutes: int = 0,
+    scope_drift: bool = False,
+    **_legacy: object,
+) -> Decision:
+    if execution_path is None:
+        if depth is None:
+            execution_path = "STANDARD"
+        elif depth in LEGACY_DEPTH_MAP:
+            execution_path = LEGACY_DEPTH_MAP[depth]
+            research_task = research_task or depth == "Research"
+        else:
+            raise ValueError(f"invalid legacy depth: {depth}")
+    execution_path = execution_path.upper()
+    if execution_path not in VALID_PATHS:
+        raise ValueError(f"invalid execution_path: {execution_path}")
     if health not in VALID_HEALTH:
         raise ValueError(f"invalid health: {health}")
-    if min(unresolved, independent, same_question_rounds, brain_reviews) < 0:
+    if min(unresolved, independent, same_question_rounds, brain_reviews, failed_hypotheses, reroutes) < 0:
         raise ValueError("counts must be >= 0")
 
     reasons: list[str] = []
     worker_tier = "cost-efficient-latest"
     brain_tier = "one-tier-stronger-cost-effective"
-    brain_review = bool(brain_reviews < MAX_BRAIN_REVIEWS and (brain_preflight or health == "RED"))
+    unhealthy = bool(health == "RED" or failed_hypotheses >= 2 or reroutes >= 2 or scope_drift)
+    brain_review = bool(brain_reviews < MAX_BRAIN_REVIEWS and (brain_preflight or unhealthy))
     if brain_review:
         reasons.append("brain-course-correction")
-    elif health == "RED" and brain_reviews >= MAX_BRAIN_REVIEWS:
+    elif unhealthy and brain_reviews >= MAX_BRAIN_REVIEWS:
         reasons.append("brain-budget-exhausted")
 
     if health == "BLOCKED":
-        return Decision("surface-blocker", "manager", 0, 0, 0, False, False, worker_tier, brain_tier, False, tuple(reasons + ["blocked-authority"]))
+        return Decision("surface-blocker", execution_path, 0, 0, 0, False, False, worker_tier, brain_tier, False, tuple(reasons + ["blocked-authority"]))
 
     if same_question_rounds >= 2:
-        return Decision("reroute", "manager", 0, 0, 0, False, brain_review, worker_tier, brain_tier, False, tuple(reasons + ["same-question-circuit-breaker"]))
+        return Decision("reroute", execution_path, 0, 0, 0, False, brain_review, worker_tier, brain_tier, False, tuple(reasons + ["same-question-circuit-breaker"]))
 
-    if depth in {"Quick", "Standard"} or unresolved == 0:
-        reasons.append("single-agent-hot-path")
-        return Decision("lead", "manager", 0, 0, 0, False, brain_review, worker_tier, brain_tier, False, tuple(reasons))
+    if execution_path == "DIRECT":
+        return Decision("reroute" if unhealthy else "lead", execution_path, 0, 0, 0, False, False, worker_tier, brain_tier, False, tuple(reasons + ["direct-fast-path"]))
 
-    if depth == "Research" and not research_oriented:
-        return Decision("lead", "manager", 0, 0, 0, False, brain_review, worker_tier, brain_tier, False, tuple(reasons + ["research-orient-first"]))
+    if execution_path == "STANDARD":
+        return Decision("brain-review" if brain_review else "lead", execution_path, 0, 0, 0, False, brain_review, worker_tier, brain_tier, False, tuple(reasons + ["standard-single-agent"]))
+
+    if research_task and not research_oriented:
+        return Decision("lead", execution_path, 0, 0, 0, False, brain_review, worker_tier, brain_tier, False, tuple(reasons + ["research-orient-first"]))
+
+    if unresolved == 0 and not capability_gap:
+        return Decision("brain-review" if brain_review else "lead", execution_path, 0, 0, 0, False, brain_review, worker_tier, brain_tier, False, tuple(reasons + ["no-unresolved-boundary"]))
 
     max_specialists = 1
     if second_boundary_earned and unresolved >= 2:
@@ -62,21 +97,19 @@ def decide(*, depth: str, unresolved: int = 0, independent: int = 0, built_in_su
         reasons.append("second-boundary-earned")
 
     parallel_limit = 1
-    if max_specialists == 2 and independent >= 2 and not mutating and not shared_state and (depth == "Deep" or wall_time_critical):
+    if max_specialists == 2 and independent >= 2 and not mutating and not shared_state and wall_time_critical:
         parallel_limit = 2
         reasons.append("independent-readonly-parallel")
 
     use_external = bool(capability_gap and not built_in_sufficient and external_match)
     if use_external:
         reasons.append("bounded-external-specialist")
-    elif capability_gap and not built_in_sufficient:
-        reasons.append("capability-gap-no-external-match")
 
-    reasons.append("escalated-one-first")
-    return Decision("consult", "manager", 1, max_specialists, parallel_limit, use_external, brain_review, worker_tier, brain_tier, False, tuple(reasons))
+    action = "brain-review" if brain_review else "consult"
+    return Decision(action, execution_path, 1, max_specialists, parallel_limit, use_external, brain_review, worker_tier, brain_tier, False, tuple(reasons + ["escalated-one-first"]))
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Evaluate Plat v2 runtime guardrails.")
+    parser = argparse.ArgumentParser(description="Evaluate Plat runtime guardrails.")
     parser.add_argument("--json", help="JSON object with already-classified facts.")
     args = parser.parse_args()
     payload = json.loads(args.json) if args.json else json.load(__import__("sys").stdin)
