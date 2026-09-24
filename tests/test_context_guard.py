@@ -71,6 +71,98 @@ class ContextGuardTests(unittest.TestCase):
         state = self.mod.record(state, returned_bytes=100, kind="test", broad_suite=True)
         self.assertEqual(state["health"]["status"], "YELLOW")
 
+    def test_file_read_count_is_a_cross_agent_pressure_signal(self):
+        state = self.mod.new_state()
+        for i in range(self.mod.YELLOW_FILE_READS):
+            state = self.mod.record(
+                state,
+                returned_bytes=50,
+                kind="read",
+                key=f"file-{i}",
+            )
+        self.assertEqual(state["file_reads"], self.mod.YELLOW_FILE_READS)
+        self.assertEqual(state["health"]["status"], "YELLOW")
+
+    def test_first_real_telemetry_sample_becomes_baseline(self):
+        state = self.mod.new_state()
+        state = self.mod.apply_telemetry(
+            state,
+            {
+                "available": True,
+                "host": "any",
+                "source": "test",
+                "cache_read_tokens": 1000000,
+                "cache_write_tokens": 1000,
+                "input_tokens": 100,
+                "output_tokens": 20,
+                "context_utilization": 0.4,
+            },
+        )
+        self.assertEqual(state["telemetry"]["cache_read_delta"], 0)
+        self.assertEqual(state["health"]["status"], "GREEN")
+
+    def test_real_cache_replay_can_turn_red_even_when_proxies_are_green(self):
+        state = self.mod.new_state()
+        state = self.mod.apply_telemetry(
+            state,
+            {
+                "available": True,
+                "host": "any",
+                "source": "test",
+                "cache_read_tokens": 1000000,
+                "cache_write_tokens": 1000,
+                "input_tokens": 100,
+                "output_tokens": 20,
+                "context_utilization": 0.3,
+            },
+        )
+        state = self.mod.apply_telemetry(
+            state,
+            {
+                "available": True,
+                "host": "any",
+                "source": "test",
+                "cache_read_tokens": 22000000,
+                "cache_write_tokens": 2000,
+                "input_tokens": 200,
+                "output_tokens": 40,
+                "context_utilization": 0.4,
+            },
+        )
+        self.assertGreaterEqual(
+            state["telemetry"]["cache_read_delta"],
+            self.mod.RED_CACHE_READ_DELTA,
+        )
+        self.assertEqual(state["health"]["status"], "RED")
+        self.assertEqual(state["health"]["action"], "fresh-context-worker")
+
+    def test_real_context_utilization_can_turn_yellow(self):
+        state = self.mod.new_state()
+        state = self.mod.apply_telemetry(
+            state,
+            {
+                "available": True,
+                "host": "any",
+                "source": "test",
+                "cache_read_tokens": 0,
+                "cache_write_tokens": 0,
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "context_utilization": self.mod.YELLOW_CONTEXT_UTILIZATION,
+            },
+        )
+        self.assertEqual(state["health"]["status"], "YELLOW")
+
+    def test_missing_telemetry_never_disables_proxy_guard(self):
+        state = self.mod.new_state()
+        state = self.mod.record(
+            state,
+            returned_bytes=self.mod.YELLOW_RETURNED_BYTES,
+            kind="command",
+        )
+        state = self.mod.apply_telemetry(state, {"available": False})
+        self.assertEqual(state["health"]["status"], "YELLOW")
+
 
 if __name__ == "__main__":
     unittest.main()
