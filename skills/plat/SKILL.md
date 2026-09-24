@@ -1,6 +1,6 @@
 ---
 name: plat
-description: Autonomous engineering control layer for coding agents. Use for software engineering work where the agent should preserve exact task intent across long sessions, solve directly from current repository/runtime evidence, choose the cheapest sufficient reasoning path, course-correct when progress stalls or scope drifts, consult specialist guidance or third-party skills only when a concrete unresolved boundary earns it, and verify the requested behavior before completion. Works across coding-agent hosts; model names are never hardcoded.
+description: Autonomous engineering control layer for coding agents. Use for software engineering work where the agent should preserve exact task intent, solve directly from repository/runtime evidence, keep model-visible context small, course-correct stalled or drifting work, consult specialist guidance only when a concrete boundary earns it, and verify requested behavior before completion. Works across coding-agent hosts; model names are never hardcoded.
 ---
 
 # Plat
@@ -23,8 +23,9 @@ For non-trivial work:
 4. **Inspect** only until ownership, required delta, and direct proof are known.
 5. **Act** once those three are known.
 6. **Verify** narrowly; widen only when risk earns it.
-7. **Checkpoint** health during long work. Time alone is not failure; lack of meaningful progress is.
-8. **Persist** only compact truth expensive to rediscover.
+7. **Contain** noisy command/test/diff output with `scripts/evidence_exec.py`; keep full logs on disk and return only bounded evidence.
+8. **Checkpoint** both progress and context health. Time alone is not failure; repeated context replay is.
+9. **Persist** only compact truth and evidence pointers expensive to rediscover.
 
 ## Execution paths
 
@@ -32,7 +33,7 @@ For non-trivial work:
 Tiny/local/reversible, obvious owner and proof. **0 subagents, 0 external skills, normally 0 extra Plat references.** Target -> act -> direct proof.
 
 ### STANDARD
-Default engineering path. One lead owns the work. **0 subagents and 0 external skills by default.** Load at most one primary Plat domain reference when it materially improves the decision. Use targeted repository inspection, not a broad map.
+Default engineering path. One lead owns the work. **0 specialists and 0 external skills by default.** Load at most one primary Plat domain reference when it materially improves the decision. Use targeted repository inspection, not a broad map. One fresh-context execution worker is allowed only when context health is RED and the host supports isolated context; this is context garbage collection, not specialist fan-out.
 
 ### ESCALATED
 Use only for a concrete unresolved risk: distributed/concurrent state, security boundary, destructive data, public migration/contract, production-only failure, major architecture choice, hard measured performance, complex AI behavior, or repeated falsified hypotheses.
@@ -51,25 +52,31 @@ Remain host-agnostic. Never hardcode a provider/model family as Plat architectur
 
 Brain is interrupt-driven supervision, not an implementer. Use preflight only for genuinely large/high-risk tasks. During execution invoke it when health becomes RED, repeated failed hypotheses invalidate the approach, or scope/architecture materially drifts.
 
-Brain may inspect the capsule and concise decisive evidence, then return the smallest corrective direction. It must not edit code, perform broad discovery, run large suites, recursively delegate, or take ownership from the worker. Routine tasks get at most two Brain reviews; after that re-localize or surface the blocker.
+Build Brain input with `scripts/brain_packet.py`; hard-cap it at 4 KB of task truth, evidence pointers, trajectory counters, and one question. Brain must not inherit the full chat/log stream, edit code, perform broad discovery, run large suites, recursively delegate, or take ownership from the worker. Routine tasks get at most two Brain reviews.
 
-## Time and progress watchdog
+## Progress + context watchdog
 
-Record start time for non-trivial work. Check health around meaningful boundaries at roughly five-minute intervals without a separate reasoning turn just to read the clock.
+Record start time for non-trivial work. Check progress around meaningful boundaries at roughly five-minute intervals without a separate reasoning turn just to read the clock.
 
-Meaningful progress means uncertainty reduced, ownership/delta/proof localized, implementation advanced, a hypothesis discriminated/retired, or verification produced useful evidence.
-
+Progress health:
 - **GREEN:** continue while meaningful progress is recent.
-- **YELLOW (~5m without meaningful progress):** stop generic exploration; choose ACT / VERIFY / REROUTE.
-- **RED (~10m without meaningful progress, or repeated failed hypotheses/reroutes):** bounded Brain review if budget remains; otherwise reroute or surface blocker.
-- **~20m ordinary-task safeguard:** if progress is still weak, Brain review is strongly preferred before any further exploration.
-- **BLOCKED:** ask only for missing authority/access/decision that cannot be safely inferred.
+- **YELLOW (~5m without progress):** stop generic exploration; ACT / VERIFY / REROUTE.
+- **RED (~10m, repeated failures/reroutes):** bounded Brain review if earned.
+- **~20m safeguard:** prefer Brain review before more ordinary exploration.
+- **BLOCKED:** ask only for missing authority/access/decision.
+
+Context health uses `scripts/context_guard.py` and host-neutral byte/read proxies:
+- **GREEN:** continue.
+- **YELLOW:** stop large raw returns; summarize and use file/log pointers.
+- **RED:** checkpoint the Task Capsule, then use one fresh-context worker when supported; otherwise compact/reset context and resume from pointers.
+
+Route noisy commands through `scripts/evidence_exec.py`. Model-visible command output should normally stay <=6 KB; full output lives under `.plat/logs/`.
 
 ## Task capsule and compaction
 
-Use `references/context.md` when work is long, may compact/switch agents, or is expensive to rediscover. Store current truth, never hidden reasoning or transcript history.
+Use `references/context.md` when work is long, may compact/switch agents, or is expensive to rediscover. Store current truth and evidence pointers, never hidden reasoning, transcripts, or large tool output.
 
-After compaction/resume: **read capsule -> inspect branch/diff -> revalidate only stale facts -> resume `next`**. Do not replay the whole conversation or repository discovery.
+After compaction/fresh-context handoff: **read capsule -> inspect branch/diff -> revalidate only stale facts -> resume `next`**. Do not replay the whole conversation, logs, or repository discovery.
 
 ## Primary knowledge routes
 
