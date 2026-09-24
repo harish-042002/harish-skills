@@ -36,24 +36,24 @@ def build_packet(
     health = state.get("health", {}) if isinstance(state.get("health"), dict) else {}
 
     packet: dict[str, Any] = {
-        "goal": _clip(state.get("goal", ""), 700),
-        "must": _clip(state.get("must", []), 320),
-        "must_not": _clip(state.get("must_not", []), 320),
-        "current_slice": _clip(state.get("current_slice", ""), 500),
-        "owner": _clip(state.get("owner", []), 320),
-        "proof": _clip(state.get("proof", []), 320),
-        "next": _clip(state.get("next", ""), 500),
+        "goal": _clip(state.get("goal", ""), 500),
+        "must": _clip(state.get("must", []), 220),
+        "must_not": _clip(state.get("must_not", []), 220),
+        "current_slice": _clip(state.get("current_slice", ""), 320),
+        "owner": _clip(state.get("owner", []), 220),
+        "proof": _clip(state.get("proof", []), 220),
+        "next": _clip(state.get("next", ""), 320),
         "health": {
             "status": health.get("status"),
-            "reason": _clip(health.get("reason", ""), 320),
+            "reason": _clip(health.get("reason", ""), 220),
         },
         "trajectory": {
             "failed_hypotheses": execution.get("failed_hypotheses", 0),
             "reroutes": execution.get("reroutes", 0),
             "brain_reviews": execution.get("brain_reviews", 0),
         },
-        "evidence": _clip(evidence or [], 400),
-        "question": _clip(question, 800),
+        "evidence": _clip(evidence or [], 300),
+        "question": _clip(question, 500),
     }
 
     def size() -> int:
@@ -79,13 +79,34 @@ def build_packet(
 
     if size() > max_bytes:
         packet["question"] = _clip(str(packet["question"]), 300)
-        packet["goal"] = _clip(str(packet["goal"]), 400)
-        packet["current_slice"] = _clip(str(packet["current_slice"]), 250)
-        packet["next"] = _clip(str(packet["next"]), 250)
+        packet["goal"] = _clip(str(packet["goal"]), 320)
+        packet["current_slice"] = _clip(str(packet["current_slice"]), 220)
+        packet["next"] = _clip(str(packet["next"]), 220)
+        packet["health"]["reason"] = _clip(
+            str(packet["health"].get("reason", "")),
+            160,
+        )
+        for field in ("proof", "owner", "must_not", "must"):
+            values = packet.get(field)
+            if isinstance(values, list):
+                packet[field] = [_clip(x, 140) for x in values[:2]]
+
+    if size() > max_bytes:
+        packet["evidence"] = []
+        packet["proof"] = packet.get("proof", [])[:1]
+        packet["owner"] = packet.get("owner", [])[:1]
+        packet["must"] = packet.get("must", [])[:1]
+        packet["must_not"] = packet.get("must_not", [])[:1]
+        packet["question"] = _clip(str(packet["question"]), 220)
+        packet["goal"] = _clip(str(packet["goal"]), 240)
+        packet["current_slice"] = _clip(str(packet["current_slice"]), 160)
+        packet["next"] = _clip(str(packet["next"]), 160)
 
     rendered_size = size()
     if rendered_size > max_bytes:
-        raise ValueError(f"brain packet exceeds hard limit: {rendered_size} > {max_bytes}")
+        raise ValueError(
+            f"brain packet exceeds hard limit: {rendered_size} > {max_bytes}"
+        )
 
     return packet
 
