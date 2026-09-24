@@ -49,7 +49,7 @@ for phrase in [
 ]:
     require(phrase.lower() in skill.lower(),f"missing v2 hot-path rule: {phrase}")
 
-for phrase in ["Target <= 2 KB","4 KB","Compaction/resume fast path","current_slice","brain_reviews","never hidden reasoning"]:
+for phrase in ["Target <= 2 KB","4 KB","Compaction/resume fast path","current_slice","brain_reviews","hidden chain-of-thought"]:
     require(phrase.lower() in context.lower(),f"context capsule missing control: {phrase}")
 
 for phrase in ["Five-minute watchdog","YELLOW","RED","ACT / VERIFY / REROUTE","maximum two reviews","aggregate model/API time"]:
