@@ -769,3 +769,63 @@ Inspected current plugin/skill progressive-disclosure guidance: essential core i
 4. Deterministic orchestration now uses **DIRECT / STANDARD / ESCALATED** as the canonical API.
 5. Legacy depth inputs remain mapped for compatibility, but no longer define the architecture.
 6. Normal DIRECT/STANDARD execution remains zero-subagent/zero-external-skill by default; ESCALATED begins with one bounded specialist.
+
+
+## v2.2 — Context economy and evidence isolation
+
+Evidence ID: `2026-09-24-v2.2-context-economy`
+
+### Triggering real trajectory
+
+A user-observed Claude Code Notification V2 fix/audit session produced strong engineering evidence but severe context replay:
+
+- cost **$29.41**;
+- API/model time **43m17s**;
+- active time **34m02s**;
+- cache read **108.1M**;
+- cache write **797.3K**;
+- cache hit **99%**;
+- `/platSkill` usage share **70%**;
+- Sonnet: **90M cache read / 2.5K output**;
+- Opus: **18.1M cache read / 66.1K output**.
+
+The task itself still produced broad backend/mobile verification and correctly separated pre-existing integration/environment failures from regressions. The v2.2 target is therefore less context replay, not less proof.
+
+### Sources inspected
+
+#### anthropics/claude-code — all rights reserved / Commercial Terms
+
+Inspected current source/release material around context metering/compaction and the official security-guidance hook that explicitly caps large diffs because unbounded diffs burn tokens and can exhaust context.
+
+Adopted principle: large tool/diff output is a context resource that should be bounded before entering the model loop. Reuse: principle-only; no Anthropic code/text copied.
+
+#### openai/skills — Apache-2.0 for system skill-creator
+
+Inspected current skill-creator guidance on concise control planes, progressive disclosure, deterministic scripts, and resources that stay outside model context until explicitly needed.
+
+Adopted principle: enforce repeatable context-economy behavior in scripts rather than growing SKILL.md with advisory prose. Reuse: principle-only.
+
+### Plat adaptation
+
+1. Added `scripts/evidence_exec.py`: full stdout/stderr is stored under `.plat/logs/`; the model receives a bounded summary/excerpt.
+2. Added `scripts/context_guard.py`: provider-neutral context health based on cumulative returned bytes, large outputs, repeated reads, broad-suite runs, and fresh-context-worker count.
+3. Starting context thresholds are YELLOW at 64 KB cumulative returned evidence / 3 large outputs / 2 repeated reads / >1 broad suite, and RED at 128 KB / 6 large outputs / 4 repeated reads.
+4. Added one fresh-context execution-worker exception on STANDARD/ESCALATED work when context is RED and the host supports isolated context. Specialist count remains zero for STANDARD.
+5. Added `scripts/brain_packet.py` with a hard 4096-byte packet budget.
+6. Brain packets exclude full chat history, raw logs, large diffs, and the Task Capsule's accepted-evidence history.
+7. Compaction/fresh-context recovery resumes from Task Capsule + branch/diff + exact evidence pointers instead of replaying prior tool output.
+8. Verification remains focused-first then broad when blast radius earns it; v2.2 changes evidence transport, not the quality bar.
+9. Added `benchmarks/context-economy-v2.2/` with the observed baseline and a matched rerun protocol.
+
+### Candidate live gates
+
+Targets, not achieved claims:
+
+- preserve correctness/verification quality;
+- active time <=35 minutes for the same task shape;
+- cache read <40M, stretch <25M;
+- cache write <500K;
+- zero large raw command/test dumps returned to the model;
+- <=1 fresh-context worker per active slice;
+- Brain packet <=4 KB;
+- normally <=1 broad final regression per repository state.
