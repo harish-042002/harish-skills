@@ -537,6 +537,41 @@
         "precompact/context-hook tests for repo-relative checkpoints, compact task truth, PreCompact aliases, and no-op unknown events",
         "existing output-firewall, Brain packet, orchestration invariant, installer, update, maintenance, syntax, and release tests remain enabled"
       ]
+    },
+    {
+      "id": "2026-09-24-v2.3-release-metadata-correction",
+      "date": "2026-09-24",
+      "capability": "Correct the v2.3.0 GitHub Release description so public release metadata accurately describes the already-shipped cross-agent context runtime instead of legacy orchestration behavior.",
+      "material_files": [
+        ".github/workflows/release-plat.yml"
+      ],
+      "sources": [
+        {
+          "repo": "bm629/agent-skills",
+          "license": "MIT",
+          "inspected": "token-optimization context-management patterns already cited by v2.3 for observation masking and filesystem cold context; used to verify the corrected release summary matches shipped provenance",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "rohitg00/agentmemory",
+          "license": "Apache-2.0",
+          "inspected": "cross-host PreCompact and durable context patterns already cited by v2.3; used to verify the corrected release summary matches shipped provenance",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "release highlights must describe the actual v2.3 context runtime and current two-hour update behavior",
+        "metadata-only correction must not change packaged Plat skill logic"
+      ],
+      "rejected": [
+        "leaving legacy manager-orchestrator release notes attached to v2.3.0",
+        "bumping the skill version solely to correct release prose"
+      ],
+      "tests": [
+        "maintenance gate must pass with a fresh evidence record",
+        "full repository validation remains unchanged because no skill runtime files changed",
+        "existing v2.3.0 packaged skill SHA/content remains the product artifact"
+      ]
     }
   ]
 }
