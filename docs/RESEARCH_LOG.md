@@ -906,3 +906,14 @@ A non-commercial session-handoff package was also inspected at a high level duri
 ### Claims boundary
 
 v2.3 does not claim universal live savings across every host. The implementation makes the control path portable; matched multi-host A/B runs are still required to quantify cache/cost reductions outside the existing Claude Code baseline.
+
+
+## v2.3 release metadata correction
+
+Evidence ID: `2026-09-24-v2.3-release-metadata-correction`
+
+This is a metadata-only correction. The published v2.3.0 skill already contains the validated cross-agent context runtime, but the release workflow still carried a legacy highlight block.
+
+The corrected description is checked against the same public provenance already used for v2.3: `bm629/agent-skills` (MIT) for observation masking/filesystem cold-context patterns and `rohitg00/agentmemory` (Apache-2.0) for cross-host PreCompact/durable context patterns. No source code or prose is copied.
+
+No Plat runtime behavior changes and no version bump is warranted; the release description is refreshed for the existing v2.3.0 release.
