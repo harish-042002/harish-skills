@@ -413,6 +413,62 @@
         "legacy depth compatibility retained inside policy helper",
         "structural validator checks 5/10/20 constants and canonical paths"
       ]
+    },
+    {
+      "id": "2026-09-24-v2.2-context-economy",
+      "date": "2026-09-24",
+      "capability": "Reduce Plat context replay without weakening verification by adding bounded command evidence, deterministic context-pressure health, one fresh-context execution worker on RED pressure, and hard-capped Brain review packets.",
+      "material_files": [
+        ".github/workflows/release-plat.yml",
+        "scripts/validate_plat.py",
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/agents/openai.yaml",
+        "skills/plat/references/context.md",
+        "skills/plat/references/efficiency.md",
+        "skills/plat/references/orchestration.md",
+        "skills/plat/scripts/brain_packet.py",
+        "skills/plat/scripts/context_guard.py",
+        "skills/plat/scripts/evidence_exec.py",
+        "skills/plat/scripts/orchestration_policy.py"
+      ],
+      "sources": [
+        {
+          "repo": "anthropics/claude-code",
+          "license": "All rights reserved; use subject to Anthropic Commercial Terms of Service",
+          "inspected": "current Claude Code source/release material showing explicit context metering/compaction behavior and a security hook warning that unbounded diffs burn tokens and risk context-length failures",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "openai/skills",
+          "license": "Apache-2.0 for the system skill-creator",
+          "inspected": "current skill-creator guidance favoring concise hot-path instructions, progressive disclosure, deterministic scripts, and resources that avoid loading unnecessary content into model context",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "treat context size/replay as a first-class health dimension separate from elapsed-time progress",
+        "persist full noisy command output to evidence files and return only a bounded summary/excerpt",
+        "use host-neutral byte/read proxies because coding hosts do not expose comparable live token telemetry to every skill",
+        "allow one fresh isolated execution worker only when context health is RED; keep specialist budgets unchanged",
+        "hard-cap Brain input at 4096 bytes and exclude raw logs/full chat",
+        "benchmark against the user-observed 108.1M cache-read Claude Code session while preserving its verification rigor"
+      ],
+      "rejected": [
+        "reducing test coverage merely to lower token usage",
+        "optimizing cache-hit percentage instead of reducing context replay",
+        "hardcoding Claude/Opus/Sonnet model names into Plat policy",
+        "restoring broad multi-agent fan-out on STANDARD work",
+        "using provider-specific token counters as the only context-health signal",
+        "putting full command logs into the Task Capsule"
+      ],
+      "tests": [
+        "context_guard unit tests for GREEN/YELLOW/RED byte pressure, repeated reads, broad-suite pressure, and one-worker cap",
+        "evidence_exec tests proving full noisy output is saved while model-visible excerpts remain byte-bounded and errors remain discoverable",
+        "brain_packet tests proving oversize state/evidence is deterministically reduced below 4096 bytes without copying accepted-evidence history",
+        "orchestration tests proving STANDARD context RED can earn one fresh worker without increasing specialist count, then falls back to compaction",
+        "expanded orchestration state-space invariants plus full repository unittest/compile/shell/maintenance validation in CI"
+      ]
     }
   ]
 }
