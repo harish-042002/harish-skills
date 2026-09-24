@@ -1,94 +1,74 @@
 from __future__ import annotations
-
 import importlib.util
-import json
 from pathlib import Path
 import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_PATH = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
-CASES_PATH = ROOT / "tests" / "orchestration-cases.json"
+SCRIPT = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
 
-
-def load_policy():
-    spec = importlib.util.spec_from_file_location("plat_orchestration_policy", POLICY_PATH)
+def load_module():
+    spec = importlib.util.spec_from_file_location("plat_orchestration_policy_v2", SCRIPT)
     module = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
 
-
-class OrchestrationPolicyTests(unittest.TestCase):
+class OrchestrationPolicyV2Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.mod = load_policy()
-        cls.cases = json.loads(CASES_PATH.read_text(encoding="utf-8"))["cases"]
+        cls.policy = load_module()
 
-    def test_frozen_cases(self):
-        for case in self.cases:
-            with self.subTest(case=case["id"]):
-                decision = self.mod.decide(**case["input"])
-                actual = decision.__dict__
-                for key, expected in case["expect"].items():
-                    self.assertEqual(actual[key], expected)
+    def test_quick_and_standard_are_single_agent(self):
+        for depth in ["Quick", "Standard"]:
+            d = self.policy.decide(depth=depth, unresolved=5, capability_gap=True, built_in_sufficient=False, external_match=True)
+            self.assertEqual(d.max_specialists, 0)
+            self.assertFalse(d.external_skill)
 
-    def test_invalid_depth_rejected(self):
-        with self.assertRaises(ValueError):
-            self.mod.decide(depth="Maximum", unresolved=1)
+    def test_deep_starts_with_one(self):
+        d = self.policy.decide(depth="Deep", unresolved=4, independent=4)
+        self.assertEqual(d.initial_specialists, 1)
+        self.assertEqual(d.max_specialists, 1)
+        self.assertEqual(d.parallel_limit, 1)
 
-    def test_negative_counts_rejected(self):
-        with self.assertRaises(ValueError):
-            self.mod.decide(depth="Deep", unresolved=-1)
+    def test_second_specialist_requires_earned_boundary(self):
+        d = self.policy.decide(depth="Deep", unresolved=2, independent=2, second_boundary_earned=True)
+        self.assertEqual(d.max_specialists, 2)
+        self.assertEqual(d.parallel_limit, 2)
 
-    def test_research_orients_before_any_specialist(self):
-        decision = self.mod.decide(
-            depth="Research",
-            unresolved=5,
-            independent=5,
-            built_in_sufficient=False,
-            external_match=True,
-        )
-        self.assertEqual(decision.action, "lead")
-        self.assertEqual(decision.initial_specialists, 0)
-        self.assertIn("research-orient-first", decision.reason_codes)
+    def test_external_skill_requires_real_capability_gap(self):
+        no_gap = self.policy.decide(depth="Deep", unresolved=1, built_in_sufficient=False, external_match=True, capability_gap=False)
+        self.assertFalse(no_gap.external_skill)
+        gap = self.policy.decide(depth="Deep", unresolved=1, built_in_sufficient=False, external_match=True, capability_gap=True)
+        self.assertTrue(gap.external_skill)
 
-    def test_research_parallelism_is_cost_capped_by_default(self):
-        decision = self.mod.decide(
-            depth="Research",
-            unresolved=5,
-            independent=5,
-            built_in_sufficient=True,
-            research_oriented=True,
-        )
-        self.assertEqual(decision.parallel_limit, 2)
-        self.assertIn("research-cost-cap-two", decision.reason_codes)
+    def test_research_orients_before_consulting(self):
+        d = self.policy.decide(depth="Research", unresolved=3, research_oriented=False)
+        self.assertEqual(d.action, "lead")
+        self.assertEqual(d.max_specialists, 0)
 
-    def test_research_can_use_third_worker_when_wall_time_is_explicitly_critical(self):
-        decision = self.mod.decide(
-            depth="Research",
-            unresolved=5,
-            independent=5,
-            built_in_sufficient=True,
-            research_oriented=True,
-            wall_time_critical=True,
-        )
-        self.assertEqual(decision.parallel_limit, 3)
-        self.assertIn("research-wall-time-override", decision.reason_codes)
+    def test_red_health_triggers_brain_until_budget(self):
+        d = self.policy.decide(depth="Standard", unresolved=1, health="RED", brain_reviews=1)
+        self.assertTrue(d.brain_review)
+        capped = self.policy.decide(depth="Standard", unresolved=1, health="RED", brain_reviews=2)
+        self.assertFalse(capped.brain_review)
+        self.assertIn("brain-budget-exhausted", capped.reason_codes)
 
-    def test_manager_is_default(self):
-        decision = self.mod.decide(
-            depth="Deep",
-            unresolved=2,
-            independent=2,
-            built_in_sufficient=False,
-            external_match=True,
-        )
-        self.assertEqual(decision.lead_control, "manager")
-        self.assertFalse(decision.handoff)
-        self.assertFalse(decision.recursive_delegation)
+    def test_model_policy_is_capability_based(self):
+        d = self.policy.decide(depth="Standard")
+        self.assertEqual(d.worker_tier, "cost-efficient-latest")
+        self.assertEqual(d.brain_tier, "one-tier-stronger-cost-effective")
 
+    def test_same_question_circuit_breaker(self):
+        d = self.policy.decide(depth="Deep", unresolved=2, same_question_rounds=2)
+        self.assertEqual(d.action, "reroute")
+        self.assertEqual(d.max_specialists, 0)
+
+    def test_blocked_surfaces_without_delegation(self):
+        d = self.policy.decide(depth="Deep", unresolved=2, health="BLOCKED")
+        self.assertEqual(d.action, "surface-blocker")
+        self.assertEqual(d.max_specialists, 0)
 
 if __name__ == "__main__":
     unittest.main()

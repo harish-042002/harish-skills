@@ -612,3 +612,52 @@ Reuse: principle-only.
 - skipping full-suite verification when blast radius genuinely warrants it;
 - claiming cost savings before a matched v1.8/v1.9 rerun.
 
+
+
+## v2.0 — Fast autonomous runtime kernel
+
+Evidence ID: `2026-09-24-v2-runtime-kernel`
+
+### Triggering failure
+
+Real Plat sessions were producing good output but unacceptable execution economics: ordinary coding tasks could run for one to four hours, and the v1.9 DAY1 baseline already showed 49m53s aggregate model/API time with 91% general-purpose subagent share. The failure was architectural: efficiency guidance remained advisory while routing, verification, delegation, and specialist loading had many imperative paths.
+
+### Sources inspected first
+
+#### openai/codex — Apache-2.0
+
+Inspected current Codex skill/agent patterns and the role of focused skills and bounded agent work.
+
+Adopted principle: keep ordinary coding work with the lead; use specialization only for a concrete unresolved boundary. Reuse: principle-only.
+
+#### openai/skills — Apache-2.0 for system skill-creator
+
+Inspected the current skill-creator guidance on concise SKILL.md control planes, progressive disclosure, one-level references, and scripts for repeatable deterministic logic.
+
+Adopted principle: the hot path should remain small while detailed knowledge is loaded only when needed; deterministic runtime bookkeeping belongs in scripts rather than repeated model reasoning. Reuse: principle-only.
+
+### Plat v2 adaptation
+
+1. Replaced the orchestration-centric hot path with DIRECT / STANDARD / ESCALATED execution.
+2. DIRECT and STANDARD are hard single-agent paths: zero subagents and zero external skills by default.
+3. Added a compact `.plat/session.json` Task Capsule for goal, hard scope, owner, current slice, proof, next action, time/health counters, and model capability tiers.
+4. Added deterministic `task_state.py`: 5-minute cheap checkpoint cadence, YELLOW after 10 minutes without meaningful progress, RED after 20 minutes, BLOCKED for missing authority/access, and a two-review Brain budget.
+5. Added interrupt-driven Brain review: course-correct only; no editing, broad discovery, large-suite verification, or recursive delegation.
+6. Model policy is host-agnostic: normal worker = latest cost-effective capable coding tier; Brain = stronger cost-effective tier, normally one step above worker. No permanent model/provider names.
+7. Third-party skill federation remains available but only after a concrete capability gap; one best match first.
+8. References are knowledge cards, not child orchestrators; automatic reference-to-reference chains are prohibited.
+9. Compaction/resume uses capsule -> branch/diff -> revalidate stale facts -> next, rather than replaying conversation/repository discovery.
+10. Completion still requires fresh direct proof, preserving Plat's existing quality bar.
+
+### Rejected patterns
+
+- per-step Brain approval;
+- prompt-length-only escalation;
+- provider-specific model hardcoding;
+- asking the developer at every alignment checkpoint;
+- multi-agent fan-out for Standard work;
+- removing third-party skill support entirely.
+
+### Validation target
+
+Plat v2 must preserve or improve correctness while materially reducing time-to-first-edit, tool calls, reference loads, duplicated reads, subagent share, aggregate model/API time, and wall time. Claims of actual percentage savings remain pending matched live A/B runs.

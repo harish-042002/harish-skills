@@ -1,241 +1,99 @@
-# Research and Execution Economics
+# Runtime Economics and Progress Watchdog
 
-Use for broad repository analysis, cross-branch mapping, AFK report tasks, expensive Deep/Research sessions, or any task where tokens, cache reads, tool calls, subagents, full-suite runs, or wall time may dominate cost.
-
-## Contents
-
-1. Objective
-2. Lead-first orientation
-3. Golden-reference mapping pattern
-4. Evidence ledger and read deduplication
-5. Subagent economics
-6. Test economics
-7. Branch / merge research
-8. AFK / report mode
-9. Parallelism vs cost
-10. Research stop conditions
-11. Metrics for live evaluation
+Use for broad/expensive work, research, repeated stalls, or any trajectory where wall time, model/API time, tool calls, rereads, or subagents may dominate cost.
 
 ## Objective
 
-Minimize **total cost to a correct verified result**:
+Preserve correctness while minimizing total work to a verified result:
 
 ```text
-correctness / requested scope
-        ↓
-avoid wrong work + repair turns
-        ↓
-avoid duplicate discovery + duplicate verification
-        ↓
-use the cheapest adequate worker/model
-        ↓
-minimize narration/output overhead
+current truth -> smallest useful action -> focused proof
 ```
 
-Do not optimize one metric while making the whole task worse. A cheaper worker that causes retries is not cheaper. A fast parallel wave that duplicates repository discovery can reduce wall time while multiplying API cost.
+Do not optimize token price while creating repair turns. Do not reduce wall time by multiplying overlapping workers.
 
-## 1. Lead-first orientation
+## Lead-first orientation
 
-For broad Research, P-01 should orient before delegating.
+Before broad work establish goal, hard scope, current branch state, likely owner/reference flow, proof shape, and the comparison dimensions that actually matter. Do not dispatch a general-purpose scout to rediscover the repository for the lead.
 
-First establish:
+## Five-minute watchdog
 
-- active goal and hard scope;
-- current branch/worktree state;
-- golden/reference flow if one exists;
-- inventory of peer components/adapters/features;
-- comparison dimensions;
-- direct evidence sources;
-- final report shape.
+Record task start time for non-trivial work. Around meaningful boundaries, check whether roughly five minutes have elapsed since the last checkpoint. Do not create a separate LLM turn just to read the clock; use deterministic local time/state when available.
 
-Do **not** dispatch a general-purpose subagent to rediscover the repository before this map exists.
+Time alone is not a failure. A long build/test/download can be healthy. Evaluate whether the interval produced meaningful progress.
 
-A subagent becomes useful only after P-01 can give it a bounded partition such as:
+Meaningful progress includes:
 
-```text
-Compare adapters A-D against these 8 fixed dimensions.
-Return only missing/present/partial + file:line evidence.
-Do not inspect unrelated modules.
-```
+- a plausible path was eliminated;
+- ownership or required delta became clearer;
+- implementation advanced;
+- a test/log/profiler result discriminated hypotheses;
+- requested behavior was proven.
 
-## 2. Golden-reference mapping pattern
+Suggested health thresholds are starting defaults to benchmark, not universal deadlines:
 
-When one implementation is the complete example and many peers must be audited:
+- `<10m without meaningful progress`: continue or tighten next action.
+- `>=10m`: YELLOW -> prohibit generic exploration; choose ACT / VERIFY / REROUTE.
+- `>=20m`: RED for ordinary work -> bounded Brain review if available/budgeted; otherwise re-localize or surface the blocker.
 
-1. reconstruct the golden flow once;
-2. derive a fixed comparison matrix once;
-3. enumerate peers;
-4. inspect each peer only against the matrix;
-5. investigate deltas/unknowns, not already-green dimensions;
-6. synthesize one consolidated report.
+Use `scripts/task_state.py` to make these thresholds deterministic where supported.
 
-Do not independently rediscover the full architecture for every peer.
+## Stop generic discovery
 
-Typical matrix dimensions:
+Once ownership, required delta, and direct proof are known, another search/read is forbidden unless a named unresolved question or new contradictory evidence justifies it.
 
-- entry point / trigger;
-- context/data acquisition;
-- eligibility/rules;
-- candidate construction;
-- presentation/copy;
-- action/deep-link;
-- persistence/state;
-- orchestration/worker handoff;
-- observability/trace;
-- tests/fixtures;
-- failure/retry behavior;
-- integration contract.
+A search must answer a concrete question. "Be thorough" is not a question.
 
-Adjust dimensions to the repository; do not force this list mechanically.
+## Evidence ledger
 
-## 3. Evidence ledger and read deduplication
+For long Research keep compact accepted facts + pointers. Do not reread unchanged large files to recover already accepted facts.
 
-Keep a compact evidence ledger during long Research:
+For same-shape peers/adapters:
 
-```text
-Reference: path#symbol / range -> accepted fact
-Peer A: present / missing / partial -> evidence
-Peer B: ...
-Unknown: question -> next smallest check
-```
+1. reconstruct one golden/reference path once;
+2. derive a fixed comparison matrix;
+3. inspect peers only against that matrix;
+4. investigate deltas/unknowns only.
 
-Store pointers and conclusions, not copied source.
+## Worker economics
 
-Rules:
+Normal work stays with the lead.
 
-- search exact symbols before reading whole files;
-- read the smallest useful range;
-- do not reread an unchanged large file unless a new question requires a different range;
-- do not make a subagent read files P-01 already summarized unless independent verification is the point;
-- after a fact is accepted, carry its pointer forward instead of re-opening it;
-- stop a discovery branch when another read is unlikely to change a matrix cell or decision.
+- DIRECT: no subagents.
+- STANDARD: no subagents.
+- ESCALATED: one bounded specialist initially.
+- Research: orient first with zero specialists; normally one batched read-only scout after partitioning.
 
-If a graph/index/tool exceeds its useful size or latency budget, fall back immediately to targeted source search instead of repeatedly retrying it.
+When host model selection exists, every delegated worker uses the lowest adequate current tier for its bounded job. Never hardcode provider/model names; map capability tiers to what the host currently offers.
 
-## 4. Subagent economics
+## Brain economics
 
-Subagents are for **critical-path reduction or isolated fresh judgment**, not for making Research feel parallel.
+Brain review is not implementation. Give it only goal, hard constraints, task health, decisive evidence, failed hypotheses, current direction, and the specific question: "What is the smallest corrective direction?"
 
-Default for broad Research:
+Routine Brain budget: maximum two reviews. A Brain review that merely summarizes the task has failed its economics test.
 
-1. P-01 orients first.
-2. Start with **0 subagents** during orientation.
-3. After the work is partitioned, use **1 bounded scout** first when it materially saves context/time.
-4. Use a second concurrent scout only for genuinely independent partitions.
-5. A third requires a clear wall-time benefit and cheap integration; it is exceptional, not default.
+## Test economics
 
-Batch homogeneous peers into one worker rather than one worker per file/adapter.
+Use the verification ladder:
 
-If a worker returns mostly repository summary that P-01 already knew, do not dispatch another worker of the same shape.
+1. syntax/import/static checks that fail fast;
+2. focused behavior test/check;
+3. related suite if blast radius warrants;
+4. full suite once when release/high-impact confidence warrants.
 
-### Model selection
+If a broad suite fails, baseline the failing tests first instead of rerunning the entire baseline suite.
 
-When the host supports per-worker model selection:
+## Research and AFK/report mode
 
-- every dispatch names a model/tier explicitly;
-- use the lowest adequate tier for bounded search, inventory, mechanical comparison, and deterministic verification;
-- use the strongest model for integration, ambiguous architecture, subtle debugging, or high-risk judgment;
-- never omit a worker model when omission silently inherits the lead session's most expensive model.
+For broad Research, spend output budget on the final artifact rather than repeated progress narration. Parallelize only genuinely independent partitions with cheap integration.
 
-When the host does **not** support worker model selection, raise the delegation bar because a bounded scout may cost the same as the lead.
+Track both:
 
-## 5. Test economics
+- wall time experienced by the developer;
+- aggregate model/API time consumed across workers.
 
-Use the verification ladder, but avoid duplicate broad suites.
+A result is not "faster and cheaper" unless both economics improve or the quality gain clearly justifies the difference.
 
-For integration/merge work:
+## Stop conditions
 
-1. run syntax/import/static checks that fail fast;
-2. run tests directly covering changed/shared boundaries;
-3. widen to the related suite;
-4. run the full suite **once** when blast radius justifies it or before final integration confidence.
-
-If a broad suite fails:
-
-- identify the failing tests first;
-- compare **those failing tests** against the clean baseline branch/worktree;
-- do not rerun the entire baseline suite merely to prove the same failures existed before;
-- rerun the full current suite only after changes that could affect its result or when final release evidence requires it.
-
-A baseline comparison should answer one question: **did this change introduce the failure?** Use the cheapest check that separates yes from no.
-
-## 6. Branch / merge research
-
-When the requested analysis requires integrating another branch, the merge can be part of the research workspace.
-
-Economy rules:
-
-- fetch once;
-- inspect branch tips/diff before merge when useful;
-- resolve required conflicts once;
-- record merge/conflict decisions compactly;
-- after integration, inspect the resulting changed surfaces rather than rereading unaffected modules;
-- if the final deliverable is a report, do not drift into feature implementation.
-
-Use a temporary worktree when it avoids disrupting the developer's active workspace or enables a clean baseline comparison. Do not create worktrees merely as ceremony.
-
-## 7. AFK / report mode
-
-When the developer says they are AFK or asks for a finished report:
-
-- do the work autonomously unless genuinely blocked;
-- minimize progress narration;
-- keep detailed intermediate notes internal/compact;
-- surface only blockers that require user input;
-- spend output tokens on the final report, not repeated status prose.
-
-This does not reduce verification. It reduces conversational overhead.
-
-## 8. Parallelism vs cost
-
-Parallel work can make wall time faster while increasing aggregate API time and cost.
-
-Before parallelizing, ask:
-
-- Are the partitions truly independent?
-- Will they read mostly different files?
-- Is their output easy to merge?
-- Does wall-time matter enough to justify duplicated model overhead?
-- Can one batched scout finish nearly as fast?
-
-Prefer **one batched scout** over several overlapping scouts.
-
-Measure both:
-
-- **wall time** — what the developer waits;
-- **aggregate model/API time** — total compute consumed across concurrent workers.
-
-A 5-minute wall-time result with 40 minutes of aggregate agent time may be fast but expensive.
-
-## 9. Research stop conditions
-
-Stop expanding when:
-
-- the golden/reference flow is understood;
-- every peer has a status for each material comparison dimension;
-- remaining unknowns do not change the next-step plan;
-- another repository read would only add completeness, not a decision;
-- failures have been attributed to current change vs baseline;
-- the final report can state evidence, gaps, priorities, and unverified areas.
-
-Do not keep reading to make the report feel exhaustive.
-
-## 10. Metrics for live evaluation
-
-For expensive Research/Deep trajectories, capture when the host exposes them:
-
-- verifier/report completeness;
-- input/output/cache-read/cache-write tokens;
-- model cost;
-- wall time;
-- aggregate model/API time;
-- tool calls;
-- repository file reads;
-- duplicate reads;
-- subagent count and model/tier;
-- subagent share of total cost/tokens;
-- broad-suite runs;
-- baseline-suite runs;
-- repair turns.
-
-The optimization target is **same-or-better correctness with lower total economics**, not a specific token number.
+Stop expanding when another read, specialist, or test is unlikely to change implementation, proof, risk, or the requested report. Finish the task instead of optimizing the process indefinitely.
