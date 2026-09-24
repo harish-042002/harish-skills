@@ -11,7 +11,8 @@ CONTEXT = ROOT / "skills" / "plat" / "references" / "context.md"
 EFFICIENCY = ROOT / "skills" / "plat" / "references" / "efficiency.md"
 TASK_STATE = ROOT / "skills" / "plat" / "scripts" / "task_state.py"
 POLICY = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
-DISCOVERY = ROOT / "skills" / "plat" / "scripts" / "discover_skills.py"\nUPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
+DISCOVERY = ROOT / "skills" / "plat" / "scripts" / "discover_skills.py"
+UPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
 VERSION = ROOT / "VERSION"
 SKILL_VERSION = ROOT / "skills" / "plat" / "VERSION"
 MAINTENANCE_GATE = ROOT / "scripts" / "maintenance_gate.py"
@@ -35,7 +36,9 @@ task_state=TASK_STATE.read_text(encoding="utf-8")
 require(len(skill)<=7000,f"SKILL.md hot path too large: {len(skill)} chars > 7000")
 require(len(skill.splitlines())<=150,f"SKILL.md too many lines: {len(skill.splitlines())} > 150")
 
-m=re.match(r"^---\n(.*?)\n---",skill,re.S)
+m=re.match(r"^---
+(.*?)
+---",skill,re.S)
 require(bool(m),"SKILL.md missing valid frontmatter")
 if m:
     keys=[line.split(":",1)[0].strip() for line in m.group(1).splitlines() if ":" in line and not line.startswith((" ","\t"))]
@@ -80,7 +83,20 @@ payload=json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
 require(payload.get("schema_version")==1,"maintenance evidence schema_version must be 1")
 require(any(x.get("id")=="2026-09-24-v2.0.1-multi-install-updater" for x in payload.get("entries",[])),"missing v2.0.1 updater maintenance evidence entry")
 
-update_check=UPDATE_CHECK.read_text(encoding="utf-8")\nfor phrase in [\n    "CHECK_INTERVAL_SECONDS = 2 * 60 * 60",\n    "OnUnitActiveSec=2h",\n    "\"HOURLY\"",\n    "\"2\"",\n    "--update-all",\n    "last_notified_signature",\n    "skills@latest",\n    "\"update\"",\n]:\n    require(phrase in update_check,f"update checker missing v2.0.1 control: {phrase}")\n\nfor name in ["cases.json","trigger-cases.json","run_behavioral_eval.py","score_results.py"]:
+update_check=UPDATE_CHECK.read_text(encoding="utf-8")
+for phrase in [
+    "CHECK_INTERVAL_SECONDS = 2 * 60 * 60",
+    "OnUnitActiveSec=2h",
+    "\"HOURLY\"",
+    "\"2\"",
+    "--update-all",
+    "last_notified_signature",
+    "skills@latest",
+    "\"update\"",
+]:
+    require(phrase in update_check,f"update checker missing v2.0.1 control: {phrase}")
+
+for name in ["cases.json","trigger-cases.json","run_behavioral_eval.py","score_results.py"]:
     require((BEHAVIORAL_DIR/name).exists(),f"behavioral asset missing: {name}")
 
 if errors:
