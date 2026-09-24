@@ -81,7 +81,7 @@ After compaction/fresh-context handoff: **read capsule/checkpoint -> inspect bra
 
 ## Primary knowledge routes
 
-References are knowledge cards, not orchestrators. Load one when needed, then return to Plat:
+References are knowledge cards. Load one when needed, then return to Plat:
 
 - Existing repo -> `repository-understanding.md`
 - Debugging -> `debugging.md`
