@@ -38,7 +38,7 @@ Use Brain for:
 - repeated failed hypotheses;
 - material scope/architecture drift.
 
-Send only goal, hard constraints, current slice, task health/time, decisive evidence, failed hypotheses, and current proposed direction.
+Build Brain input with `scripts/brain_packet.py`. Send only goal, hard constraints, current slice, task health/time, counters, concise evidence pointers, current direction, and one question. Hard cap: 4 KB.
 
 Brain may return a correction/next discriminating action. It must not edit, run broad discovery/full suites, recursively delegate, or take task ownership.
 
@@ -71,6 +71,14 @@ A consultant returns concise evidence, not a second plan. Confidence is not proo
 Prefer current direct runtime/test/data evidence, then current code/contracts/config for the actual version, then authoritative version-correct docs, then supported specialist reasoning, then generic best practice.
 
 When advice conflicts, reduce it to one proposition and run the smallest discriminating check. Do not vote.
+
+## Fresh-context worker
+
+Context RED can earn one isolated execution worker even on STANDARD work when the host supports fresh contexts. This is not specialist delegation: it exists solely to stop replaying a swollen parent context.
+
+The lead checkpoints task truth first. The worker receives a <=4 KB execution brief plus file/log pointers, owns only the current implementation slice, and returns <=2 KB plus proof pointers. It does not rediscover the repo, redesign scope, or spawn more workers. Max one per active slice.
+
+If the host cannot isolate context, or the one-worker budget is used, checkpoint/compact instead.
 
 ## Parallel vs sequential scheduling
 

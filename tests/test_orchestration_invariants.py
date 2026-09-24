@@ -23,9 +23,10 @@ class OrchestrationInvariantTests(unittest.TestCase):
 
     def test_global_canonical_path_invariants(self):
         checked = 0
-        for execution_path, unresolved, independent, health, gap, match, second in itertools.product(
+        for execution_path, unresolved, independent, health, context_health, gap, match, second in itertools.product(
             ["DIRECT", "STANDARD", "ESCALATED"], range(0, 4), range(0, 4),
-            ["GREEN", "YELLOW", "RED"], [False, True], [False, True], [False, True]
+            ["GREEN", "YELLOW", "RED"], ["GREEN", "YELLOW", "RED"],
+            [False, True], [False, True], [False, True]
         ):
             checked += 1
             d = self.policy.decide(
@@ -33,6 +34,7 @@ class OrchestrationInvariantTests(unittest.TestCase):
                 unresolved=unresolved,
                 independent=independent,
                 health=health,
+                context_health=context_health,
                 capability_gap=gap,
                 built_in_sufficient=not gap,
                 external_match=match,
@@ -41,6 +43,10 @@ class OrchestrationInvariantTests(unittest.TestCase):
             self.assertFalse(d.recursive_delegation)
             self.assertLessEqual(d.max_specialists, 2)
             self.assertLessEqual(d.parallel_limit, d.max_specialists)
+            if d.fresh_context_worker:
+                self.assertNotEqual(execution_path, "DIRECT")
+                self.assertEqual(context_health, "RED")
+                self.assertEqual(d.max_specialists, 0)
             if execution_path in {"DIRECT", "STANDARD"}:
                 self.assertEqual(d.max_specialists, 0)
                 self.assertFalse(d.external_skill)

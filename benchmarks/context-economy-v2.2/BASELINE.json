@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "source": "user-observed Claude Code Notification V2 fix/audit session on 2026-09-24",
+  "comparable_live_benchmark": false,
+  "metrics": {
+    "cost_usd": 29.41,
+    "api_model_time_seconds": 2597,
+    "active_time_seconds": 2042,
+    "cache_read_tokens": 108100000,
+    "cache_write_tokens": 797300,
+    "output_tokens": 68700,
+    "cache_hit_pct": 99,
+    "plat_skill_usage_share_pct": 70,
+    "sonnet_cache_read_tokens": 90000000,
+    "sonnet_output_tokens": 2500,
+    "opus_cache_read_tokens": 18100000,
+    "opus_output_tokens": 66100
+  },
+  "candidate_targets": {
+    "preserve_task_correctness": true,
+    "active_time_seconds_max": 2100,
+    "cache_read_tokens_max": 40000000,
+    "cache_read_tokens_stretch": 25000000,
+    "cache_write_tokens_max": 500000,
+    "large_raw_command_outputs_in_model_context_max": 0,
+    "fresh_context_workers_per_slice_max": 1,
+    "brain_packet_bytes_max": 4096,
+    "broad_suite_runs_normal_max": 1
+  },
+  "caveat": "Single observed continuing session, not a matched A/B. Targets are candidate gates until the same frozen task/model/host is rerun."
+}

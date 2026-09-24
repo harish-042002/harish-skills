@@ -70,5 +70,46 @@ class OrchestrationPolicyV2Tests(unittest.TestCase):
         self.assertEqual(d.action, "surface-blocker")
         self.assertEqual(d.max_specialists, 0)
 
+    def test_standard_red_context_earns_one_fresh_worker(self):
+        d = self.policy.decide(
+            execution_path="STANDARD",
+            context_health="RED",
+            host_isolated_context=True,
+            fresh_context_workers=0,
+        )
+        self.assertEqual(d.action, "fresh-context-worker")
+        self.assertTrue(d.fresh_context_worker)
+        self.assertEqual(d.max_specialists, 0)
+        self.assertFalse(d.brain_review)
+
+    def test_fresh_worker_budget_falls_back_to_compaction(self):
+        d = self.policy.decide(
+            execution_path="STANDARD",
+            context_health="RED",
+            host_isolated_context=True,
+            fresh_context_workers=1,
+        )
+        self.assertEqual(d.action, "checkpoint-compact")
+        self.assertFalse(d.fresh_context_worker)
+
+    def test_direct_never_spawns_context_worker(self):
+        d = self.policy.decide(
+            execution_path="DIRECT",
+            context_health="RED",
+        )
+        self.assertEqual(d.action, "lead")
+        self.assertFalse(d.fresh_context_worker)
+
+    def test_reasoning_red_prefers_brain_over_context_worker(self):
+        d = self.policy.decide(
+            execution_path="STANDARD",
+            health="RED",
+            context_health="RED",
+            brain_reviews=0,
+        )
+        self.assertEqual(d.action, "brain-review")
+        self.assertTrue(d.brain_review)
+        self.assertFalse(d.fresh_context_worker)
+
 if __name__ == "__main__":
     unittest.main()
