@@ -57,6 +57,9 @@ def create_checkpoint(
     transcript: Path | None = None,
 ) -> dict[str, Any]:
     root = root.resolve()
+    session_path = session_path if session_path.is_absolute() else root / session_path
+    context_path = context_path if context_path.is_absolute() else root / context_path
+    output = output if output.is_absolute() else root / output
     session = load_json(session_path)
     context = load_json(context_path)
     telemetry = host_context.discover(host=host, transcript=transcript)
