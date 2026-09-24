@@ -19,7 +19,7 @@ The installer:
   2. verifies SKILL.md exists in the agent's real skill directory,
   3. runs one-time developer preference onboarding and creates only ~/.plat/profile.md,
   4. wires Plat into the agent instructions,
-  5. registers one user-level daily background release check.
+  5. registers one user-level background release check every 2 hours.
 
 Re-running this installer updates Plat while preserving existing preferences and the daily checker.
 EOF
@@ -220,7 +220,12 @@ wire_agent
 
 UPDATE_CHECKER="$SKILL_DIR/scripts/update_check.py"
 if [[ -f "$UPDATE_CHECKER" ]]; then
-  python3 "$UPDATE_CHECKER" --register "$SKILL_DIR" --agent "$AGENT" --scope "$SCOPE" || true
+  if [[ "$SCOPE" == "project" ]]; then
+    python3 "$UPDATE_CHECKER" --register "$SKILL_DIR" --agent "$AGENT" --scope "$SCOPE" --project-root "$(pwd)" || true
+  else
+    python3 "$UPDATE_CHECKER" --register "$SKILL_DIR" --agent "$AGENT" --scope "$SCOPE" || true
+  fi
+  python3 "$UPDATE_CHECKER" --update-all || true
 else
   echo "Warning: Plat daily update checker not found at $UPDATE_CHECKER" >&2
 fi
@@ -231,6 +236,6 @@ echo "  Developer profile: $HOME/.plat/profile.md"
 echo "  Skill:       $SKILL_DIR"
 echo
 echo "Ask normally. Plat decides the smallest useful mode, depth, and specialist team."
-echo "Daily update checks run outside engineering sessions and notify only when a newer release exists."
+echo "Update checks run every 2 hours outside engineering sessions and notify only when a newer release or remaining outdated installation exists."
 echo
-echo "To install an available update, re-run this same installer command."
+echo "Re-running this installer for any registered agent also syncs all other registered Plat installations."
