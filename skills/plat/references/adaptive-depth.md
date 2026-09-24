@@ -1,210 +1,47 @@
-# Adaptive Task Mode and Depth
+# Execution Routing
 
-Use when a task may deserve deep specialist reasoning, crosses several domains, involves a large codebase, or is broad Research. This file controls **how much Plat should load**, not how much prose it should produce.
+Use only when the cheapest sufficient path is genuinely uncertain or a task may deserve ESCALATED execution.
 
-## Contents
+## Paths
 
-1. Goal
-2. Mode selection
-3. Depth selection
-4. Escalation triggers
-5. De-escalation triggers
-6. Specialist routing
-7. Cross-domain combinations
-8. Context ROI
-9. Research mode
-10. Response depth
-11. Edge cases
+### DIRECT
 
-## Goal
+Tiny, local, reversible, obvious owner, cheap direct proof. No specialist context.
 
-Spend specialist context only where it is likely to reduce mistakes, rediscovery, tool churn, or repair turns. Deep mode is an investment, not a status symbol.
+### STANDARD
 
-A task can be cognitively deep but produce a concise final answer. A broad research request can produce a long structured answer without triggering implementation workflows.
+Default engineering path. One lead agent, targeted inspection, zero subagents/external skills by default, at most one primary domain reference when useful.
 
-## Mode selection
+### ESCALATED
 
-Choose the dominant mode from the requested outcome:
+Earned by a concrete unresolved boundary: distributed/concurrent state, security, destructive data, public migration/contract coexistence, production-only/intermittent failure, major architecture choice, measured performance/capacity issue, complex AI behavior, or repeated falsified hypotheses.
 
-- **Build** - the primary artifact is changed behavior/code.
-- **Debug** - the primary artifact is an explained and corrected failure.
-- **Review** - the primary artifact is findings on existing work.
-- **Research** - the primary artifact is verified understanding/decision support.
-- **Design** - the primary artifact is a user-facing interaction/visual/product-flow change.
-- **Optimize** - the primary artifact is a measured improvement.
-- **Migrate** - the primary artifact is a safe transition between contracts/data/runtime states.
-
-Mixed requests can have one dominant mode plus supporting concerns. Do not run separate full workflows for every label.
-
-## Depth selection
-
-### Quick
-
-Use when all are true enough:
-
-- ownership is obvious;
-- scope is local;
-- behavior is simple and reversible;
-- risk is low;
-- repository conventions are already clear;
-- direct verification is cheap.
-
-Examples: rename, copy change, isolated CSS correction, straightforward config edit, single obvious null guard with existing test pattern.
-
-### Standard
-
-Default for normal product engineering. Use basic process + domain guidance and targeted repository inspection.
-
-### Deep
-
-Escalate when one or more material triggers exist:
-
-- production-only/intermittent failure;
-- concurrency, ordering, distributed state, retries, idempotency, or partial failure;
-- public contract/data migration with coexistence risk;
-- authentication, authorization, money, tenant isolation, destructive action, sensitive data, code execution;
-- major architecture boundary or service decomposition;
-- large/legacy/monorepo path where ownership is not obvious;
-- repeated failed hypotheses/fixes;
-- performance/capacity problem that needs profiling or load evidence;
-- AI behavior with evaluation/retrieval/tool/memory complexity;
-- mobile lifecycle/offline/platform behavior that cannot be proven in a local widget/unit test;
-- user explicitly asks for a deep investigation and the task actually has depth to explore.
-
-### Research
-
-Use for broad codebase/subsystem understanding, architecture archaeology, comparison, audit planning, or a request whose main goal is knowledge rather than edits.
-
-Research is not automatically Deep implementation. Keep the workspace read-only unless the user also asks to change something.
-
-## Escalation triggers
-
-Escalate from Standard only when the extra specialist context can answer a concrete question such as:
-
-- Which boundary actually owns the invariant?
-- Why does this fail only under concurrency/load/deployment overlap?
-- Which of several plausible hypotheses best matches evidence?
-- What is the blast radius through callers/contracts/data?
-- What migration sequence keeps old/new versions compatible?
-- Which part of an AI pipeline is failing: retrieval, generation, routing, tool use, memory, or evaluation?
-- Which performance resource dominates the measured symptom?
-- Which testing technique can expose a fault ordinary examples cannot?
-
-If no concrete question exists, remain Standard.
-
-## De-escalation triggers
-
-Return to Standard/Quick when:
-
-- evidence localizes the problem to one simple boundary;
-- the supposedly distributed issue is a deterministic local bug;
-- a deep reference has already answered the needed decision and no second specialist adds value;
-- the user requests a small scoped change and no high-risk constraint requires extra work;
-- further investigation would only produce completeness, not a different decision.
-
-Do not stay Deep because the task started Deep.
-
-## Specialist routing
-
-Load the **basic domain reference first** when it is small enough to orient the work, then one deep specialist that addresses the actual hard part.
-
-- Repository scale/unknown architecture -> `repository-deep.md`
-- Complex production debugging -> `debugging-deep.md`
-- Major architecture/evolution -> `system-design-deep.md`
-- Distributed backend -> `backend-systems.md`
-- Frontend architecture/performance/state -> `frontend-deep.md`
-- Mobile lifecycle/offline/platform -> `mobile-deep.md`
-- Database concurrency/migrations/scale -> `database-deep.md`
-- API/event/public contract evolution -> `api-deep.md`
-- Security/threat/abuse review -> `security-deep.md`
-- Profiling/capacity -> `performance-deep.md`
-- Complex delivery/rollout/IaC -> `delivery-deep.md`
-- AWS-specific architecture/operations/IAM/serverless/event/data/IaC -> `aws-deep.md`
-- Advanced verification -> `testing-deep.md`
-- RAG/agent/eval/memory economics -> `ai-deep.md`
-
-Design has its own deep stack in the root router.
-
-## Cross-domain combinations
-
-Load the smallest useful pair, not the whole neighborhood.
-
-### Production duplicate writes
-
-`debugging.md` + `backend.md` -> if evidence shows race/retry semantics, add `backend-systems.md`; add `database-deep.md` only if the invariant depends on DB concurrency/constraints.
-
-### Large legacy feature change
-
-`repository-understanding.md` + domain basic -> add `repository-deep.md` to build a subsystem map; add a domain deep file only after ownership is localized.
-
-### AI latency/cost regression
-
-`ai-engineering.md` + `performance.md` -> add `ai-deep.md` if routing/retrieval/model loops are the issue; add `performance-deep.md` if representative profiling/capacity work is required.
-
-### Authentication migration
-
-`security.md` + `planning.md` -> add `security-deep.md`; add `api-deep.md` or `delivery-deep.md` only for contract/rollout coexistence concerns.
-
-### AWS serverless duplicate side effect
-
-`backend.md` + `delivery.md` -> if evidence localizes the unresolved boundary to AWS retry/event-source/IAM/service semantics, add `aws-deep.md`; add database/security deep guidance only when that boundary is separately earned.
-
-## Context ROI
-
-Treat every extra file/tool call as an investment.
-
-Load more context only if it is likely to:
-
-- eliminate a plausible wrong path;
-- avoid rereading many repository files;
-- expose a hidden failure mode;
-- resolve a high-impact tradeoff;
-- produce stronger verification;
-- shorten the critical path through safe parallel discovery.
-
-Avoid:
-
-- loading all deep modules for completeness;
-- rereading already available references;
-- broad repository dumps;
-- asking subagents to rediscover the same scope;
-- running the same broad suite on both current and baseline when only the failing tests are needed for attribution;
-- parallel scouts that read mostly the same files;
-- generating long plans that restate the request;
-- copying source files into session/project profiles.
+Load one specialist reference first. One bounded specialist/subagent may be used if it has a specific capability advantage. A second requires new evidence exposing a distinct unresolved boundary.
 
 ## Research mode
 
-Research should progressively widen evidence instead of starting exhaustive. For expensive/broad Research, also load `efficiency.md`.
+Research describes the requested output, not unlimited engineering depth. Orient first, derive a task-scoped map/matrix, then widen only unresolved high-impact branches.
 
-1. **Orient** - establish goal/scope, current branch state, golden/reference flow if any, peer inventory, and report shape.
-2. **Locate** - named behavior, routes, entry points, symbols, tests, configs.
-3. **Model once** - derive the comparison dimensions/invariants once instead of rediscovering the architecture per peer.
-4. **Trace** - inspect each peer only against the fixed model and follow unresolved deltas.
-5. **Validate** - compare docs/profile assumptions against current code/tests/config/history where material.
-6. **Expand** - only into unresolved/high-impact branches.
-7. **Synthesize** - produce a structured map with evidence and explicit unknowns.
+## Escalation question
 
-P-01 orients **before** dispatching broad scouts. Do not begin Research by sending a general-purpose subagent to rediscover the whole repository.
+Before escalating, name one unresolved question that deeper context/another agent can answer and explain why that answer could materially change correctness, architecture, compatibility, risk, or expensive rework.
 
-After orientation, prefer one batched read-only scout for homogeneous peers. Add a second concurrent scout only when partitions are genuinely independent and wall-time savings outweigh briefing/integration cost. A third is exceptional.
+If no such question exists, remain DIRECT/STANDARD.
 
-A useful Research output may be longer than normal execution output, but do not turn uncertain inference into fact.
+## De-escalation
 
-## Response depth
+Return to STANDARD/DIRECT as soon as evidence localizes the problem. Do not stay escalated because the task started there.
 
-Developer profile may request concise or explanatory output. Respect it unless the current request explicitly asks otherwise.
+## Model tiers
 
-- Quick/Standard execution: concise changed/verified/risk summary.
-- Deep execution: still concise by default; include root cause/tradeoff evidence when material.
-- Research: structured and sufficiently detailed to preserve the map/findings.
-- Review: prioritized findings with evidence, not a long tutorial.
+Choose capabilities dynamically from the current host:
 
-## Edge cases
+- worker = latest cost-effective capable coding model;
+- Brain = stronger cost-effective reasoning/coding tier, normally one step above worker;
+- bounded mechanical/read-only worker = cheapest adequate tier when the host supports it.
 
-- **User says "quick" on a high-risk task:** keep communication concise, but do not skip correctness/security verification needed to avoid harm.
-- **User says "deep" on a trivial task:** explain or inspect more if useful, but do not manufacture architecture complexity.
-- **Large repo but tiny known file change:** stay Standard if ownership and proof are already clear.
-- **Small repo but distributed production incident:** Deep can still be required; repository size is not risk.
-- **Profile says backend expert but task is frontend:** use the profile only for explanation level, not to avoid the frontend specialist.
-- **Several deep domains appear relevant:** localize first. Add the second specialist only after evidence crosses that boundary.
+Never encode a permanent provider/model identifier in Plat policy.
+
+## Output depth
+
+Detailed user-facing output is independent of execution path. A one-line code fix may deserve a detailed explanation, and an ESCALATED internal investigation may still end with a short result.
