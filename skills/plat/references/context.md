@@ -1,104 +1,97 @@
-# Task Capsule and Cross-Agent Continuity
+# Task Capsule and Compaction Recovery
 
-Use for long/non-trivial work, context pressure/compaction, agent switching, or unfinished work that would be expensive to rediscover.
+Use for non-trivial work, long sessions, compaction/context pressure, agent switching, or continuation after a pause.
 
-## Goal
+## Principle
 
-Preserve the smallest durable set of facts needed to resume correctly. Repository/code/tests remain authority; the capsule is a cache of current task truth.
+Repository/code/tests remain durable truth. `.plat/task.json` is a **small exact control capsule**, not a transcript or knowledge dump. Its job is to preserve the current task boundary when conversational context is compacted or lost.
 
-Default location:
+## When to create
 
-```text
-.plat/session.json
-```
+Create a capsule when work is expected to span several meaningful steps, may exceed a few minutes, crosses files/boundaries, or is likely to survive compaction/agent switching. Skip trivial one-shot edits.
 
-Prefer local exclusion through `.git/info/exclude` unless the developer explicitly wants shared state.
+Use `scripts/task_state.py start` when filesystem execution is available so start/progress timestamps are deterministic.
 
-## Capsule budget
+## Recommended schema
 
-Target <= 2 KB; treat 4 KB as a hard warning threshold. Store facts and pointers, never transcripts or reasoning history.
-
-Recommended shape:
+Keep it normally <=2 KB and hard-target <=4 KB:
 
 ```json
 {
+  "status": "active",
   "goal": "observable outcome",
-  "must": ["hard requirement"],
-  "must_not": ["explicit exclusion"],
+  "must": ["hard requirements"],
+  "must_not": ["hard exclusions"],
   "preserve": ["accepted behavior"],
-  "owner": ["current owning boundary"],
   "current_slice": "smallest active slice",
-  "proof": ["direct verification"],
+  "accepted_evidence": ["path#symbol -> fact"],
+  "proof": ["direct check"],
   "next": "exact next action",
   "execution": {
-    "route": "STANDARD",
-    "worker_tier": "cost-efficient-latest",
-    "brain_tier": "one-tier-stronger-cost-effective",
+    "route": "standard",
     "started_at": "...",
     "last_progress_at": "...",
     "brain_reviews": 0,
-    "reroutes": 0
+    "reroutes": 0,
+    "failed_hypotheses": 0
   },
-  "health": {"status": "GREEN", "action": "continue"}
+  "health": {"status": "green", "reason": "..."}
 }
 ```
 
-Use `scripts/task_state.py` for deterministic start/checkpoint/Brain-budget bookkeeping when the host can execute local scripts.
+The script may include additional small machine fields such as `schema_version`, `task_type`, or checkpoint timestamps.
 
-## Write/update rules
+## Never store
 
-Create/update only when continuity has real value. Skip tiny one-shot changes.
+- hidden chain-of-thought or chat transcripts;
+- secrets/credentials/customer-sensitive data;
+- copied source/tool output;
+- long plans or old decision history;
+- every file read;
+- speculative facts.
 
-Update the capsule when:
+Store pointers + accepted facts only.
 
-- a material developer correction changes goal/scope;
-- ownership or implementation direction becomes clear;
-- a slice is verified;
-- task health changes materially;
-- a Brain review changes direction;
-- work is about to compact/switch/stop unfinished.
+## Update rules
 
-Replace stale values; do not append history.
+Update only when one of these changes materially:
 
-## Alignment gate
-
-For each new developer message compare against `goal`, `must`, `must_not`, and `current_slice`.
-
-- Clearly aligned -> continue silently.
-- Clear correction -> update capsule and self-correct.
-- Materially different interpretations -> inspect cheap evidence first; ask one focused question only if ambiguity remains.
-- New work that exceeds authority or contradicts an explicit exclusion -> ask before crossing that boundary.
-
-## Compaction/resume fast path
-
-1. Read the capsule once.
-2. Inspect branch/HEAD and the smallest useful diff/worktree summary.
-3. Revalidate only facts that could have become stale.
-4. Resume `next` if evidence still agrees.
-
-Do not replay the conversation, regenerate a long plan, or rebuild a repository map merely because context compacted.
-
-## Keep only high-signal state
-
-Good state:
-
-- exact goal and exclusions;
-- current owner and slice;
-- accepted facts with file/symbol pointers;
-- current proof and result;
-- unresolved blocker;
+- goal/scope/constraint;
+- current slice;
+- evidence that changes the implementation;
+- reroute/correction;
+- proof result;
 - next action;
-- elapsed/health counters.
+- task health/Brain intervention.
 
-Never store:
+Do not rewrite it after every tool call.
 
-- hidden chain-of-thought;
-- chat transcripts;
-- secrets/credentials/private keys;
-- customer/user sensitive data;
-- large source/tool output;
-- rejected ideas that no longer constrain the task.
+## Progress timing
 
-## Completion cleanup
+Meaningful progress is one of:
 
-When fully complete, delete the capsule unless near-term continuation has clear value. If retained, leave only a tiny verified final state.
+- evidence that changes/reduces implementation uncertainty;
+- an implementation edit or completed slice;
+- direct proof/verification;
+- a valid correction/reroute that retires a wrong path.
+
+Generic searches, rereads, narration, and repeated planning are not progress.
+
+Use `task_state.py progress` for meaningful events and `checkpoint` when enough time has elapsed to justify a health check. Known long builds/tests/deployments can be marked as waiting so they are not mistaken for stalled investigation.
+
+## Resume after compaction/switch
+
+1. Read the capsule.
+2. Inspect current branch/HEAD/worktree or smallest useful diff.
+3. Verify only material capsule facts that could have changed.
+4. Resume the recorded `next` action if evidence still agrees.
+
+Do not replay the prior conversation, regenerate a full plan, or rebuild the repository map merely because context was compacted.
+
+## Corrections
+
+When the developer changes intent, replace stale scope/current/next entries rather than appending contradictory history. Preserve rejected reasoning only when forgetting it would cause an expensive repeated mistake, and even then keep one short pointer.
+
+## Completion
+
+When done, either delete the capsule or leave a tiny final state with final proof if near-term continuation is likely. Never let it become append-only history.
