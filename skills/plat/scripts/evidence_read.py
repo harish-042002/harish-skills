@@ -123,12 +123,24 @@ def read_evidence(
     state = context_guard.load(context_state)
     state = context_guard.record(
         state,
-        returned_bytes=len(rendered.encode("utf-8")),
+        returned_bytes=min(len(rendered.encode("utf-8")), max_return_bytes),
         kind="read",
         key=key,
     )
     context_guard.save(context_state, state)
     result["context_health"] = state["health"]
+
+    final = json.dumps(result, indent=2, sort_keys=True)
+    if len(final.encode("utf-8")) > max_return_bytes and "content" in result:
+        overflow = len(final.encode("utf-8")) - max_return_bytes
+        data = result["content"].encode("utf-8")
+        keep = max(0, len(data) - overflow - 64)
+        result["content"] = data[:keep].decode("utf-8", errors="ignore").rstrip()
+        if keep < len(data):
+            result["content"] += "\n...[read truncated]"
+        final = json.dumps(result, indent=2, sort_keys=True)
+    if len(final.encode("utf-8")) > max_return_bytes:
+        raise RuntimeError("evidence read exceeds hard return limit after health metadata")
     return result
 
 
