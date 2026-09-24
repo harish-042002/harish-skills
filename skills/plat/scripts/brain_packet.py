@@ -80,7 +80,6 @@ def build_packet(
     if rendered_size > max_bytes:
         raise ValueError(f"brain packet exceeds hard limit: {rendered_size} > {max_bytes}")
 
-    packet["_packet_bytes"] = rendered_size
     return packet
 
 
