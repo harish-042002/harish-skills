@@ -16,6 +16,23 @@ Do not optimize token price while creating repair turns. Do not reduce wall time
 
 Before broad work establish goal, hard scope, current branch state, likely owner/reference flow, proof shape, and the comparison dimensions that actually matter. Do not dispatch a general-purpose scout to rediscover the repository for the lead.
 
+## Output firewall
+
+For commands likely to produce more than a few KB—tests, builds, analyzers, broad diffs, verbose searches—prefer `scripts/evidence_exec.py`. It stores complete stdout/stderr under `.plat/logs/` and returns only a bounded summary/excerpt.
+
+Normal model-visible command output target: <=6 KB. Read exact log ranges only when they can change the current decision. Never paste a full log merely to be thorough.
+
+## Context watchdog
+
+Use `scripts/context_guard.py` when a task is non-trivial or output-heavy. It tracks returned-byte volume, repeated reads, large outputs, broad-suite count, and fresh-context-worker usage without depending on provider token telemetry.
+
+Starting thresholds:
+- GREEN: below pressure thresholds.
+- YELLOW: >=64 KB cumulative returned evidence, >=3 large outputs, >=2 repeated reads, or >1 broad-suite run.
+- RED: >=128 KB cumulative returned evidence, >=6 large outputs, or >=4 repeated reads.
+
+On YELLOW, stop broad raw returns and use summaries + pointers. On RED, checkpoint then use one fresh-context worker if supported; otherwise compact/reset and resume from disk.
+
 ## Five-minute watchdog
 
 Record task start time for non-trivial work. Around meaningful boundaries, check whether roughly five minutes have elapsed since the last checkpoint. Do not create a separate LLM turn just to read the clock; use deterministic local time/state when available.
@@ -69,9 +86,9 @@ When host model selection exists, every delegated worker uses the lowest adequat
 
 ## Brain economics
 
-Brain review is not implementation. Give it only goal, hard constraints, task health, decisive evidence, failed hypotheses, current direction, and the specific question: "What is the smallest corrective direction?"
+Brain review is not implementation. Build the input with `scripts/brain_packet.py`; hard cap the packet at 4 KB. Include only goal, hard constraints, slice, health, counters, evidence pointers, and one corrective question.
 
-Routine Brain budget: maximum two reviews. A Brain review that merely summarizes the task has failed its economics test.
+Routine Brain budget: maximum two reviews. Full chat history, raw logs, large diffs, and broad repo dumps are forbidden Brain input.
 
 ## Test economics
 
