@@ -321,6 +321,54 @@
         "structural validation for two-hour scheduler strings, update-all support, scoped skills update, and v2.0.1 evidence",
         "GitHub Actions full Python unit discovery, compile checks, Bash syntax, maintenance gate, and release validation"
       ]
+    },
+    {
+      "id": "2026-09-24-v2.0.2-all-agent-installer",
+      "date": "2026-09-24",
+      "capability": "Make Plat installation and synchronization consume the current Skills CLI coding-agent catalog instead of a Claude Code/Codex/Cursor-only whitelist, including wildcard all-agent installs, arbitrary upstream agent IDs, catalog-derived install verification, and generic update fallback.",
+      "material_files": [
+        ".github/workflows/release-plat.yml",
+        "install.ps1",
+        "install.sh",
+        "scripts/validate_plat.py",
+        "skills/plat/VERSION",
+        "skills/plat/scripts/update_check.py"
+      ],
+      "sources": [
+        {
+          "repo": "vercel-labs/skills",
+          "license": "MIT",
+          "inspected": "current agents.ts catalog, wildcard --agent '*' selection, installed-agent discovery, add flow, list --json output, agent-specific/global/project skill directories, and scoped update behavior",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "jdx/mise",
+          "license": "MIT",
+          "inspected": "delegating installation/update ownership to the package/source manager, explicit update flows, compatibility fallbacks, and avoiding duplicated static environment knowledge",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "delegate supported agent IDs and install paths to skills@latest instead of duplicating the catalog in Plat",
+        "support --agent all through the upstream wildcard selector and arbitrary upstream agent IDs through pass-through validation",
+        "verify and register installed Plat groups from skills list --json",
+        "store the upstream agent display group alongside the selector for notifications",
+        "remove the three-agent restriction from fallback reinstall while retaining native scoped skills update as the first path",
+        "keep extra persistent wiring only for Claude Code, Codex, and Cursor where Plat already has host-specific integration knowledge"
+      ],
+      "rejected": [
+        "copying the 70-plus upstream agent list and filesystem paths into Plat",
+        "creating Plat-specific install-path logic for every coding agent",
+        "silently treating an unknown agent ID as Codex/Cursor-style .agents storage",
+        "removing existing host-specific wiring for Claude Code, Codex, and Cursor",
+        "performing live catalog discovery inside normal engineering prompts"
+      ],
+      "tests": [
+        "updater tests for arbitrary agent IDs, wildcard fallback, skills list --json registration, registry schema v3, catalog-derived display groups, existing two-hour notifications, scoped native update, and offline behavior",
+        "Bash installer syntax and Python unit/compile validation",
+        "structural guards preventing restoration of the PowerShell three-agent ValidateSet and requiring wildcard/catalog registration controls",
+        "GitHub Actions maintenance gate, full unittest discovery, syntax checks, validation snapshot, and release packaging"
+      ]
     }
   ]
 }
