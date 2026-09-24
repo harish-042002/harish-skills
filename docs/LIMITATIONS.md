@@ -49,7 +49,7 @@ It is a control layer for deciding when and how to use those forms of evidence.
 
 ## Background update checks
 
-The installer attempts to register one user-level daily scheduler (LaunchAgent on macOS, systemd user timer or cron on Linux, Scheduled Task on Windows). Locked-down environments may block scheduler registration. That failure does not break Plat; installation continues and reports the warning. The cached checker never runs inside an engineering prompt.
+The installer attempts to register one user-level two-hour scheduler (LaunchAgent on macOS, systemd user timer or cron on Linux, Scheduled Task on Windows). Locked-down environments may block scheduler registration. That failure does not break Plat; installation continues and reports the warning. The cached checker never runs inside an engineering prompt.
 
 
 ## Specialist federation
@@ -96,3 +96,16 @@ The motivating DAY1 session is a **single observed baseline**, not a controlled 
 Plat cannot guarantee a cheaper worker tier on hosts that do not expose per-subagent model selection. In those hosts, the skill raises the delegation bar instead.
 
 Parallelism can reduce developer wall time while increasing aggregate model/API time. v1.9 therefore treats those as separate metrics and does not call a trajectory "faster and cheaper" unless both the user wait time and total compute economics support that claim.
+
+
+## v2.3 cross-agent context boundary
+
+v2.3 makes the context-control architecture portable, but coding-agent hosts expose different levels of observability.
+
+- The proxy guard (returned bytes, large outputs, total/repeated reads, broad-suite runs) is the common baseline.
+- Real token/cache/context telemetry is opportunistic. It is used only when the host, wrapper, hook, or transcript exposes compatible data.
+- Lifecycle hooks such as PreCompact are optional accelerators; unsupported hosts still checkpoint from the normal RED-context path.
+- Transcript JSONL normalization is best-effort because host schemas can evolve. It must never be treated as stronger authority than the host's own usage UI/API.
+- Dynamic host capability inputs can enable isolated-context behavior, but Plat cannot create a host feature that the coding agent itself does not support.
+
+The 65/80% context and 8M/20M task-local cache-read thresholds are starting benchmark values, not provider guarantees. They may need tuning after matched runs across Codex, Claude Code, Cursor, Kiro, Cline, OpenCode, and other hosts.
