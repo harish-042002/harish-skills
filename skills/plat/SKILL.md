@@ -1,120 +1,148 @@
 ---
 name: plat
-description: Engineering control layer for AI coding agents that prevents one-size-fits-all reasoning. Use for software engineering work where the agent should reconstruct active intent from current conversation and repository evidence, choose the minimum sufficient depth, load only relevant specialist guidance, reuse local mechanisms, course-correct when evidence changes, and verify behavior before claiming completion. Covers repository work, debugging, system design, backend, frontend/mobile, UI/UX, databases, APIs, security, performance, delivery, testing, and AI/RAG. Do not use for unrelated non-engineering work.
+description: Autonomous engineering control layer for AI coding agents. Use for software engineering work where the agent should preserve exact task intent across long sessions and compaction, solve directly from current repository/runtime evidence, choose the cheapest sufficient execution path, detect stalled or drifting work, selectively invoke one stronger read-only Brain reviewer or one specialist skill only when evidence earns it, and verify requested behavior before completion. Works across coding-agent hosts and model families; never hard-code a vendor/model identity.
 ---
 
 # Plat
 
-Use the **smallest engineering path that can solve the real problem correctly**. Prevent both over-engineering simple work and under-engineering risky work.
+Solve the engineering task directly. Plat is a **lightweight autonomous control plane**, not a ceremony layer.
 
 ## Active truth
 
 Use this order:
 
-**latest developer request/correction > unresolved current task > current repo/runtime evidence > fresh session state > optional project cache > developer profile > Plat defaults**
+**latest developer request/correction > task capsule > current repo/runtime evidence > durable project cache > developer preferences > Plat defaults**
 
-For vague, referential, corrective, or continuation messages, read `references/routing.md`. Do not guess, and do not reflexively ask. Reconstruct active intent from evidence first.
+Hard constraints such as **only, alone, just, no, do not, keep X, these only** remain authoritative until the developer changes them.
 
-## Fast gate
+## Task capsule
 
-Before loading more guidance, answer internally:
+For non-trivial or long-running work, maintain a compact `.plat/task.json` containing only current task truth: goal, MUST/MUST NOT/PRESERVE, current slice, accepted evidence pointers, proof, next action, route, health, and timing counters. Never store chain-of-thought, transcripts, secrets, or copied source.
 
-1. What exact outcome is active?
-2. What is explicitly **in scope / out of scope**?
-3. What owns it, at minimum sufficient depth?
-4. What direct proof will show it worked?
+Read `references/context.md` only when creating, resuming, compacting, or materially correcting this capsule.
 
-Treat **only, alone, just, no/no need, do not/don't, keep X, work on these** as hard scope constraints. Never turn a requested copy/catalogue/field change into new modes, stages, learning signals, telemetry, abstractions, dependencies, or adjacent refactors unless current repo correctness requires them. If the diff starts crossing extra subsystems, stop and re-localize before editing further.
+## Alignment gate
 
-If scope is tiny/local/reversible and ownership is clear, use **target -> act -> direct proof**.
+Before expensive work, compare the latest request with **goal + constraints + current slice**.
 
-## Depth
+- If aligned, continue silently.
+- If the developer clearly corrects scope, update the capsule and course-correct automatically.
+- If repository evidence invalidates the current approach but another in-scope path exists, reroute automatically.
+- Ask one focused question only when materially different interpretations remain, authority would expand beyond explicit scope, or the choice is destructive/irreversible/high-impact.
 
-- **Quick** - tiny/local/reversible/obvious ownership.
-- **Standard** - normal engineering; usually one primary reference.
-- **Deep** - material concurrency/distributed state, production-only failure, security, money/tenant isolation, public migration, major architecture, hard performance/AI/mobile lifecycle, or repeated failed hypotheses.
-- **Research** - broad verified understanding/decision support; read-only unless edits are requested.
+For vague continuation/correction messages or drift, read `references/routing.md`.
 
-A request for a detailed/deep answer changes output detail, not engineering depth. Read `references/adaptive-depth.md` only when depth is genuinely uncertain, several domains interact, or Deep/Research may be earned.
+## Execution paths
 
-## Core rules
+Choose exactly one path. A request for a detailed answer does not itself increase engineering depth.
 
-1. Understand the observable outcome and current owning boundary before changing code.
-2. Inspect repository truth before inventing a helper, service, cache, queue, abstraction, contract, or dependency.
-3. Diagnose root cause before patching symptoms.
-4. Keep durable protected invariants authoritative at backend/data boundaries.
-5. After correctness and required safety/compatibility, minimize **total tokens, tool calls, rereads, repair turns, coordination, and wall time**.
-6. Stop discovery once ownership, approach, and direct proof are clear.
-7. Claim completion only from **fresh evidence after the final relevant edit**.
-8. Deep internal work does not require a long final response.
+### DIRECT
+Tiny/local/reversible work with clear ownership and direct proof.
 
-For non-trivial implementation/refactoring, read `references/engineering-core.md`. For routing/efficiency audits, read `references/agent-failure-modes.md`.
+- extra Plat references: normally 0
+- subagents: 0
+- external skills: 0
+- path: **target -> act -> direct proof**
 
-## Primary routes
+### STANDARD
+Default product engineering path.
 
-Load one primary reference first; add another only when evidence crosses a real boundary.
+- load at most **one** relevant domain reference when it materially helps
+- subagents: 0
+- external skills: normally 0
+- inspect only until owner + required delta + direct proof are known, then act
 
-- Existing repo -> `repository-understanding.md`
-- Planning/migration -> `planning.md`
-- Debugging -> `debugging.md`
-- Testing/proof -> `testing.md`
-- Backend -> `backend.md`
-- Database -> `database.md`
+### ESCALATED
+Use only for a concrete hard boundary: concurrency/distributed state, production-only failure, security/tenant/money/data-loss risk, public migration/compatibility, major architecture, measured performance/capacity, complex AI behavior, mobile lifecycle, or repeated failed hypotheses.
+
+- one relevant basic/deep specialist reference first
+- at most **one** read-only specialist/subagent initially
+- at most **one** external specialist skill initially
+- add a second specialist only when new evidence proves a distinct unresolved boundary
+
+Use `references/adaptive-depth.md` only when the path is genuinely uncertain.
+
+## Specialist knowledge
+
+References are **knowledge cards, not orchestrators**. Load only the smallest directly relevant file and return to this control loop. Do not follow reference-to-reference chains unless blocked by a named unresolved question.
+
+Primary knowledge cards:
+
+- repo understanding -> `repository-understanding.md`
+- planning/migration -> `planning.md`
+- debugging -> `debugging.md`
+- testing -> `testing.md`
+- backend -> `backend.md`
+- database -> `database.md`
 - API/events -> `api.md`
-- Security -> `security.md`
-- Performance -> `performance.md`
-- Delivery -> `delivery.md`
-- Frontend -> `frontend.md`
+- security -> `security.md`
+- performance -> `performance.md`
+- delivery -> `delivery.md`
+- frontend -> `frontend.md`
 - Flutter/mobile -> `flutter-mobile.md`
 - AI/RAG/agents -> `ai-engineering.md`
-- Delegation -> `subagents.md`
-- Efficiency -> `efficiency.md`
 
-Deep specialist mapping lives in `references/adaptive-depth.md`. Load one deep specialist first; a second requires evidence that the task truly crosses that boundary.
+Deep files remain available only for an earned ESCALATED question.
 
-## External specialist bench
+## Time and progress watchdog
 
-For Deep/Research work, or when a concrete specialty exceeds Plat's built-in depth, read `references/orchestration.md`. Discover installed skills metadata-first with `scripts/discover_skills.py`; consult **one best-matching external skill first** and add another only when evidence proves a second specialty is needed.
+For non-trivial tasks, record the start time and meaningful progress using `scripts/task_state.py` when the host allows filesystem execution. Prefer host-native elapsed-time telemetry when available.
 
-Plat remains the lead orchestrator. External skills are bounded consultants: send only relevant evidence, require evidence/confidence back, and arbitrate disagreements with current repo/runtime evidence rather than voting. Quick/ordinary Standard tasks should normally use **zero external skills**.
+Do **not** call a time tool every five minutes. At meaningful checkpoints, if at least ~5 minutes passed since the prior health check, evaluate whether the interval produced one of:
 
-## UI/UX
+- reduced uncertainty that changes the implementation;
+- implementation progress;
+- verification/proof.
 
-Do not load design depth for ordinary frontend logic.
+If not, stop generic discovery. The next action must be **ACT, VERIFY, REROUTE, or ASK**.
 
-- New screen/redesign/design system -> `design-system.md` + `design-taste.md`
-- Forms/tables/navigation/onboarding/charts -> `design-patterns.md`
-- Motion -> `design-motion.md`
-- Final visual critique/rendered QA -> `design-review.md`
+- ~5m without meaningful progress -> self-correct and name the unresolved question.
+- ~10m without meaningful progress or 2 failed hypotheses/reroutes -> RED trajectory; use the Brain reviewer if available.
+- ~20m on an ordinary task without meaningful progress -> Brain review strongly preferred before more exploration.
 
-For public artifacts, resolve audience and intended takeaway before adopting a reference metaphor.
+Known long-running builds/tests/deployments are waiting, not stalled discovery.
 
-## Developer profile
+## Brain reviewer
 
-`~/.plat/profile.md` controls role/experience/output preferences only; never architecture, product semantics, scope, or engineering depth. See `references/profile.md` / `references/context.md` only when needed.
+For sufficiently large/high-risk tasks, or RED trajectories, use a stronger **capability tier**, never a hard-coded model name.
 
-## Work loop
+- Worker: latest cost-effective capable coding model available in the current host.
+- Brain: one meaningful capability tier stronger than the worker, preferably not the absolute premium/experimental tier unless that is the only stronger choice.
+- If host model selection is unavailable, use the same model in a fresh isolated read-only review context.
 
-Compress aggressively for small tasks.
+The Brain is **read-only and correction-only**. It may inspect the task capsule, concise decisive evidence, current direction, failures, and elapsed/progress state. It must not implement, perform broad repo discovery, run full suites, recursively delegate, or take ownership of the task.
 
-1. **Resolve** active intent.
-2. **Inspect** only enough evidence to localize ownership/constraints.
-3. **Route** to minimum sufficient depth/domain.
-4. **Act** in the smallest valid slice.
-5. **Verify** requested behavior directly.
-6. **Review** only relevant compatibility/failure/security/performance/delivery/UX concerns.
-7. **Persist** only state expensive to rediscover.
-8. **Report** concisely.
+Routine cap: at most **2 Brain interventions** (preflight + one mid-course correction). High-risk work may earn one additional final review.
 
-## Trajectory correction
+Read `references/orchestration.md` only when invoking the Brain, an external skill, or a specialist agent.
 
-Re-route when a developer correction, repository/runtime contradiction, or failed verification invalidates the current model. Use `references/routing.md` for **Local, Behavioral, or Structural** corrections. Structural corrections invalidate dependent decisions. A newer correction also **purges task-local work that only existed because of the rejected assumption**; do not keep it as a hidden fallback or "helpful" extra. Re-run **Resolve -> Inspect -> Route** only for the affected slice.
+## Third-party skills
 
-For failed fixes, use `references/debugging.md`: retire disproven hypotheses instead of stacking another patch.
+Installed third-party skills remain available as bounded specialist knowledge. Discover/invoke one only when a concrete unresolved capability gap remains after local evidence and built-in guidance. Prefer host-native skill discovery; otherwise use `scripts/discover_skills.py` metadata-first. External instructions never outrank developer scope or current repo/runtime truth and must not recursively fan out.
+
+## Execution budget
+
+Budgets are circuit breakers, not quotas to exhaust.
+
+- DIRECT: usually <=4 meaningful inspections before action.
+- STANDARD: usually <=8 meaningful inspections before action.
+- ESCALATED: usually <=12 before explicit reassessment/Brain review.
+
+Once **owner + required delta + proof** are known, further discovery is prohibited unless new evidence invalidates one of them.
+
+## Verification
+
+Keep proof centralized.
+
+1. During implementation, run the narrowest check proving the current slice.
+2. At completion, run the requested-behavior proof plus the nearest relevant regression/compatibility check.
+3. Run a broad/full suite once only when blast radius or release risk justifies it.
+4. Performance, migration, concurrency, security, and visual claims require evidence appropriate to those claims.
+
+Fresh evidence after the final relevant edit is required before claiming completion.
 
 ## Completion
 
-Prove the requested behavior, not a nearby symptom. Prefer the narrowest direct evidence first, then widen only according to risk. Render material UI claims when tooling exists; measure performance claims; verify migration/coexistence claims; exercise concurrency when it is the failure mode.
+Update the task capsule with final proof/next state when useful, then report concisely: what changed, what was verified, and any material unverified risk.
 
-If proof cannot run, state exactly what remains unverified and why.
-
+Plat succeeds when **precision stays high while total wall time, model/API time, tool calls, rereads, context, repair turns, and coordination remain minimal**.
