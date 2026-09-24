@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Daily out-of-band Plat release checker.
+"""Out-of-band Plat release checker and multi-install updater.
 
-Runs from an OS scheduler installed by Plat's installer. It never runs inside
-normal engineering prompts, so update discovery adds no model/tool overhead.
+The checker is installed by Plat's installer and runs from the OS scheduler.
+It never runs inside normal engineering prompts, so update discovery adds no
+model/tool overhead.
 """
 
 from __future__ import annotations
@@ -30,7 +31,8 @@ LOG_DIR = PLAT_HOME / "logs"
 REGISTRY = PLAT_HOME / "installations.json"
 STATUS = PLAT_HOME / "update-status.json"
 PERSISTED_SCRIPT = BIN_DIR / "update_check.py"
-LABEL = "com.plat.daily-update-check"
+LABEL = "com.plat.daily-update-check"  # Keep label stable for existing installs.
+CHECK_INTERVAL_SECONDS = 2 * 60 * 60
 
 
 def now_iso() -> str:
@@ -79,7 +81,7 @@ def fetch_latest_release() -> tuple[str, str]:
         LATEST_RELEASE_API,
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": "plat-daily-update-check",
+            "User-Agent": "plat-update-check",
         },
     )
     with urllib.request.urlopen(req, timeout=10) as response:
@@ -102,22 +104,85 @@ def persist_self() -> None:
         pass
 
 
-def register_install(skill_dir: Path, agent: str, scope: str) -> None:
+def infer_project_root(skill_dir: Path, agent: str) -> Path | None:
     skill_dir = skill_dir.expanduser().resolve()
-    data = load_json(REGISTRY, {"version": 1, "installations": []})
+    parts = list(skill_dir.parents)
+    if agent == "claude-code":
+        for parent in parts:
+            if parent.name == ".claude":
+                return parent.parent
+    for parent in parts:
+        if parent.name == ".agents":
+            return parent.parent
+    return None
+
+
+def register_install(
+    skill_dir: Path,
+    agent: str,
+    scope: str,
+    project_root: Path | None = None,
+) -> None:
+    skill_dir = skill_dir.expanduser().resolve()
+    root = project_root.expanduser().resolve() if project_root else None
+    if scope == "project" and root is None:
+        root = infer_project_root(skill_dir, agent)
+
+    data = load_json(REGISTRY, {"version": 2, "installations": []})
     items = data.get("installations", [])
     items = [x for x in items if x.get("path") != str(skill_dir)]
-    items.append(
-        {
-            "path": str(skill_dir),
-            "agent": agent,
-            "scope": scope,
-            "registered_at": now_iso(),
-        }
-    )
-    data["version"] = 1
+    item = {
+        "path": str(skill_dir),
+        "agent": agent,
+        "scope": scope,
+        "registered_at": now_iso(),
+    }
+    if root is not None:
+        item["project_root"] = str(root)
+    items.append(item)
+    data["version"] = 2
     data["installations"] = items
     write_json(REGISTRY, data)
+
+
+def active_installations() -> list[dict]:
+    registry = load_json(REGISTRY, {"version": 2, "installations": []})
+    active = []
+    for raw in registry.get("installations", []):
+        item = dict(raw)
+        skill_dir = Path(str(item.get("path", ""))).expanduser()
+        version = read_installed_version(skill_dir)
+        if not version:
+            continue
+        item["installed_version"] = version
+        if item.get("scope") == "project" and not item.get("project_root"):
+            inferred = infer_project_root(skill_dir, str(item.get("agent", "")))
+            if inferred:
+                item["project_root"] = str(inferred)
+        active.append(item)
+
+    registry["version"] = 2
+    registry["installations"] = [
+        {k: v for k, v in item.items() if k != "installed_version"} for item in active
+    ]
+    write_json(REGISTRY, registry)
+    return active
+
+
+def display_agent(agent: str) -> str:
+    return {
+        "codex": "Codex",
+        "claude-code": "Claude Code",
+        "cursor": "Cursor",
+    }.get(agent, agent or "unknown")
+
+
+def notification_signature(latest: str, outdated: list[dict]) -> str:
+    parts = [
+        f"{item.get('path')}@{item.get('installed_version')}"
+        for item in sorted(outdated, key=lambda x: str(x.get("path", "")))
+    ]
+    return latest + "|" + "|".join(parts)
 
 
 def notify(title: str, message: str) -> None:
@@ -125,9 +190,9 @@ def notify(title: str, message: str) -> None:
     try:
         if system == "Darwin":
             script = (
-                'display notification '
+                "display notification "
                 + json.dumps(message)
-                + ' with title '
+                + " with title "
                 + json.dumps(title)
             )
             subprocess.run(
@@ -154,57 +219,173 @@ def notify(title: str, message: str) -> None:
         pass
 
 
+def get_outdated(active: list[dict], latest: str) -> list[dict]:
+    latest_tuple = parse_version(latest)
+    if latest_tuple is None:
+        return []
+    return [
+        item
+        for item in active
+        if parse_version(str(item.get("installed_version", "")))
+        and parse_version(str(item["installed_version"])) < latest_tuple
+    ]
+
+
 def check_updates() -> int:
     previous = load_json(STATUS, {})
-    registry = load_json(REGISTRY, {"installations": []})
-    active = []
-    for item in registry.get("installations", []):
-        skill_dir = Path(str(item.get("path", ""))).expanduser()
-        version = read_installed_version(skill_dir)
-        if version:
-            active.append({**item, "installed_version": version})
-
-    # Prune paths that no longer contain an installed Plat skill.
-    registry["installations"] = [
-        {k: v for k, v in item.items() if k != "installed_version"} for item in active
-    ]
-    write_json(REGISTRY, registry)
-
+    active = active_installations()
     state = {
         "checked_at": now_iso(),
+        "check_interval_seconds": CHECK_INTERVAL_SECONDS,
         "update_available": False,
         "installations": active,
-        "last_notified_version": previous.get("last_notified_version"),
+        "last_notified_signature": previous.get("last_notified_signature"),
     }
 
     try:
         latest, release_url = fetch_latest_release()
+        outdated = get_outdated(active, latest)
         state["latest_version"] = latest
         state["release_url"] = release_url
-        latest_tuple = parse_version(latest)
-        outdated = [
-            item
-            for item in active
-            if latest_tuple
-            and parse_version(item["installed_version"])
-            and parse_version(item["installed_version"]) < latest_tuple
-        ]
         state["update_available"] = bool(outdated)
         state["outdated_installations"] = outdated
 
-        if outdated and previous.get("last_notified_version") != latest:
+        signature = notification_signature(latest, outdated) if outdated else None
+        if outdated and previous.get("last_notified_signature") != signature:
+            agents = ", ".join(sorted({display_agent(str(x.get("agent", ""))) for x in outdated}))
             notify(
                 "Plat update available",
-                f"Plat v{latest} is available. Re-run the Plat installer to update.",
+                f"Plat v{latest} is available for {agents}. Run the Plat updater once to sync all registered agents.",
             )
+            state["last_notified_signature"] = signature
             state["last_notified_version"] = latest
+        elif not outdated:
+            state["last_notified_signature"] = None
     except Exception as exc:
         state["last_error"] = f"{type(exc).__name__}: {exc}"
-        # A failed background check must never affect engineering work.
         write_json(STATUS, state)
         return 1
 
     write_json(STATUS, state)
+    return 0
+
+
+def run_skills_update(*, global_scope: bool, project_root: Path | None = None) -> subprocess.CompletedProcess:
+    npx = shutil.which("npx")
+    if not npx:
+        raise RuntimeError("npx is required to update Plat installations")
+    command = [npx, "-y", "skills@latest", "update", "plat", "-y"]
+    command.append("-g" if global_scope else "-p")
+    cwd = None if global_scope else str(project_root) if project_root else None
+    if not global_scope and not cwd:
+        raise RuntimeError("project update requires a project root")
+    return subprocess.run(command, cwd=cwd, check=False, text=True)
+
+
+def fallback_reinstall(item: dict) -> subprocess.CompletedProcess:
+    npx = shutil.which("npx")
+    if not npx:
+        raise RuntimeError("npx is required to update Plat installations")
+    agent = str(item.get("agent", ""))
+    scope = str(item.get("scope", ""))
+    if agent not in {"codex", "claude-code", "cursor"}:
+        raise RuntimeError(f"unsupported registered agent: {agent}")
+
+    command = [
+        npx,
+        "-y",
+        "skills@latest",
+        "add",
+        REPO,
+        "--skill",
+        "plat",
+        "-a",
+        agent,
+        "--copy",
+        "-y",
+    ]
+    cwd = None
+    if scope == "global":
+        command.append("-g")
+    else:
+        root = item.get("project_root")
+        if not root:
+            raise RuntimeError(f"missing project root for {item.get('path')}")
+        cwd = str(root)
+    return subprocess.run(command, cwd=cwd, check=False, text=True)
+
+
+def update_all_registered() -> int:
+    active = active_installations()
+    if not active:
+        print("No registered Plat installations found.")
+        return 0
+
+    try:
+        latest, _release_url = fetch_latest_release()
+    except Exception as exc:
+        print(f"Could not determine latest Plat release: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 1
+
+    outdated = get_outdated(active, latest)
+    if not outdated:
+        print(f"All registered Plat installations are already on v{latest}.")
+        check_updates()
+        return 0
+
+    global_outdated = [x for x in outdated if x.get("scope") == "global"]
+    project_groups: dict[str, list[dict]] = {}
+    for item in outdated:
+        if item.get("scope") != "project":
+            continue
+        root = str(item.get("project_root", ""))
+        if root:
+            project_groups.setdefault(root, []).append(item)
+
+    if global_outdated:
+        try:
+            run_skills_update(global_scope=True)
+        except Exception as exc:
+            print(f"Global native update failed: {type(exc).__name__}: {exc}", file=sys.stderr)
+
+    for root in sorted(project_groups):
+        try:
+            run_skills_update(global_scope=False, project_root=Path(root))
+        except Exception as exc:
+            print(f"Project native update failed for {root}: {type(exc).__name__}: {exc}", file=sys.stderr)
+
+    # Verify every registered copy. If the native scoped updater did not refresh
+    # a copy (for example an older install without usable lock metadata), fall
+    # back to a targeted reinstall for that registered agent.
+    remaining = []
+    latest_tuple = parse_version(latest)
+    for item in outdated:
+        version = read_installed_version(Path(str(item["path"])))
+        if version and latest_tuple and parse_version(version) and parse_version(version) >= latest_tuple:
+            continue
+        remaining.append(item)
+
+    for item in remaining:
+        try:
+            result = fallback_reinstall(item)
+            if result.returncode != 0:
+                print(f"Fallback update failed for {item.get('agent')} at {item.get('path')}", file=sys.stderr)
+        except Exception as exc:
+            print(f"Fallback update failed for {item.get('path')}: {type(exc).__name__}: {exc}", file=sys.stderr)
+
+    final_active = active_installations()
+    final_outdated = get_outdated(final_active, latest)
+    check_updates()
+
+    if final_outdated:
+        print("Plat update incomplete for:")
+        for item in final_outdated:
+            print(f"- {display_agent(str(item.get('agent', '')))}: {item.get('path')} (v{item.get('installed_version')})")
+        return 1
+
+    print(f"✓ Updated all registered Plat installations to v{latest}.")
+    for item in final_active:
+        print(f"- {display_agent(str(item.get('agent', '')))}: {item.get('path')}")
     return 0
 
 
@@ -216,7 +397,7 @@ def install_macos_scheduler() -> str:
     payload = {
         "Label": LABEL,
         "ProgramArguments": [sys.executable, str(PERSISTED_SCRIPT), "--run"],
-        "StartInterval": 86400,
+        "StartInterval": CHECK_INTERVAL_SECONDS,
         "StandardOutPath": str(LOG_DIR / "update-check.log"),
         "StandardErrorPath": str(LOG_DIR / "update-check.err.log"),
         "ProcessType": "Background",
@@ -238,7 +419,6 @@ def install_macos_scheduler() -> str:
         stderr=subprocess.DEVNULL,
     )
     if result.returncode != 0:
-        # Compatibility fallback for older macOS launchctl behavior.
         result = subprocess.run(
             ["launchctl", "load", "-w", str(plist_path)],
             check=False,
@@ -260,56 +440,56 @@ def install_linux_scheduler() -> str:
         service = user_dir / "plat-update-check.service"
         timer = user_dir / "plat-update-check.timer"
         service.write_text(
-            "[Unit]\nDescription=Plat daily update check\n\n"
+            "[Unit]\nDescription=Plat update check\n\n"
             "[Service]\nType=oneshot\n"
             f"ExecStart={sys.executable} {PERSISTED_SCRIPT} --run\n",
             encoding="utf-8",
         )
         timer.write_text(
-            "[Unit]\nDescription=Run Plat update check daily\n\n"
-            "[Timer]\nOnBootSec=5m\nOnUnitActiveSec=24h\nPersistent=true\n\n"
+            "[Unit]\nDescription=Run Plat update check every two hours\n\n"
+            "[Timer]\nOnBootSec=5m\nOnUnitActiveSec=2h\nPersistent=true\n\n"
             "[Install]\nWantedBy=timers.target\n",
             encoding="utf-8",
         )
         subprocess.run([systemctl, "--user", "daemon-reload"], check=True)
-        subprocess.run(
-            [systemctl, "--user", "enable", "--now", "plat-update-check.timer"],
-            check=True,
-        )
+        subprocess.run([systemctl, "--user", "enable", "--now", "plat-update-check.timer"], check=True)
         return "systemd user timer"
 
     crontab = shutil.which("crontab")
     if not crontab:
         raise RuntimeError("Neither systemd user timers nor crontab are available")
-    existing = subprocess.run(
-        [crontab, "-l"], check=False, capture_output=True, text=True
-    ).stdout
-    marker = "# plat-daily-update-check"
-    line = f"@daily {python} {script} --run >/dev/null 2>&1 {marker}"
-    lines = [x for x in existing.splitlines() if marker not in x]
+    existing = subprocess.run([crontab, "-l"], check=False, capture_output=True, text=True).stdout
+    marker = "# plat-update-check"
+    line = f"0 */2 * * * {python} {script} --run >/dev/null 2>&1 {marker}"
+    lines = [x for x in existing.splitlines() if "plat-daily-update-check" not in x and marker not in x]
     lines.append(line)
     subprocess.run([crontab, "-"], input="\n".join(lines) + "\n", text=True, check=True)
     return "user crontab"
 
 
 def install_windows_scheduler() -> str:
-    when = (dt.datetime.now() + dt.timedelta(minutes=2)).strftime("%H:%M")
-    task_cmd = f'"{sys.executable}" "{PERSISTED_SCRIPT}" --run'
     subprocess.run(
         [
             "schtasks",
             "/Create",
             "/SC",
-            "DAILY",
+            "HOURLY",
+            "/MO",
+            "2",
             "/TN",
-            "PlatDailyUpdateCheck",
+            "PlatUpdateCheck",
             "/TR",
-            task_cmd,
-            "/ST",
-            when,
+            f'"{sys.executable}" "{PERSISTED_SCRIPT}" --run',
             "/F",
         ],
         check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    # Remove the old daily task name if it exists.
+    subprocess.run(
+        ["schtasks", "/Delete", "/TN", "PlatDailyUpdateCheck", "/F"],
+        check=False,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
@@ -336,13 +516,15 @@ def print_status() -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Plat daily release checker")
+    parser = argparse.ArgumentParser(description="Plat release checker and multi-install updater")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--run", action="store_true", help="Run one background check")
+    group.add_argument("--run", action="store_true", help="Run one background update check")
     group.add_argument("--status", action="store_true", help="Print cached status; no network")
+    group.add_argument("--update-all", action="store_true", help="Update every registered Plat installation")
     group.add_argument("--register", metavar="SKILL_DIR", help="Register an installed Plat path")
     parser.add_argument("--agent", default="unknown")
     parser.add_argument("--scope", choices=["global", "project"], default="global")
+    parser.add_argument("--project-root")
     args = parser.parse_args()
 
     if args.status:
@@ -350,19 +532,22 @@ def main() -> int:
         return 0
     if args.run:
         return check_updates()
+    if args.update_all:
+        return update_all_registered()
 
     persist_self()
-    register_install(Path(args.register), args.agent, args.scope)
+    register_install(
+        Path(args.register),
+        args.agent,
+        args.scope,
+        Path(args.project_root) if args.project_root else None,
+    )
     try:
         scheduler = install_scheduler()
-        print(f"✓ Daily Plat update check enabled: {scheduler}")
+        print(f"✓ Plat update check enabled every 2 hours: {scheduler}")
     except Exception as exc:
-        print(f"Warning: daily Plat update scheduler was not installed: {exc}", file=sys.stderr)
-        print(
-            f"You can still check manually with: {sys.executable} {PERSISTED_SCRIPT} --run",
-            file=sys.stderr,
-        )
-    # Populate the local status cache immediately; failures are non-fatal to install.
+        print(f"Warning: Plat update scheduler was not installed: {exc}", file=sys.stderr)
+        print(f"You can still check manually with: {sys.executable} {PERSISTED_SCRIPT} --run", file=sys.stderr)
     check_updates()
     return 0
 
