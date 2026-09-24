@@ -469,6 +469,74 @@
         "orchestration tests proving STANDARD context RED can earn one fresh worker without increasing specialist count, then falls back to compaction",
         "expanded orchestration state-space invariants plus full repository unittest/compile/shell/maintenance validation in CI"
       ]
+    },
+    {
+      "id": "2026-09-24-v2.3-cross-agent-context",
+      "date": "2026-09-24",
+      "capability": "Make Plat context-economy controls common across coding agents while opportunistically consuming real host telemetry/hooks: canonical usage normalization, provider-neutral context health with telemetry overlay, consumed-evidence masking, file-read pressure, and deterministic pre-compaction checkpoints.",
+      "material_files": [
+        ".github/workflows/release-plat.yml",
+        "scripts/validate_plat.py",
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/agents/openai.yaml",
+        "skills/plat/references/context.md",
+        "skills/plat/references/efficiency.md",
+        "skills/plat/references/orchestration.md",
+        "skills/plat/scripts/context_guard.py",
+        "skills/plat/scripts/context_hook.py",
+        "skills/plat/scripts/evidence_read.py",
+        "skills/plat/scripts/host_context.py",
+        "skills/plat/scripts/precompact_checkpoint.py"
+      ],
+      "sources": [
+        {
+          "repo": "bm629/agent-skills",
+          "license": "MIT",
+          "inspected": "token-optimization context-management guidance covering observation masking, filesystem-as-cold-context, bounded always-loaded instructions, and read/output compression",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "rohitg00/agentmemory",
+          "license": "Apache-2.0",
+          "inspected": "cross-host lifecycle-hook architecture including PreCompact, session/handoff state, and Claude/Codex plugin integration",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "bonfire-systems/goalkeeper",
+          "license": "MIT",
+          "inspected": "fresh-context executor pattern backed by durable on-disk state and bounded orchestration",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "anthropics/claude-code",
+          "license": "Anthropic Commercial Terms / repository rights reserved",
+          "inspected": "official Hook Development skill confirming PreCompact, transcript_path, cwd, hook_event_name, and deterministic command-hook inputs",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "treat real host token/cache/context telemetry as an optional overlay on the same proxy guard used by every coding agent",
+        "define canonical telemetry inputs through JSON/env/file/transcript rather than hardcoding one provider's session format",
+        "mask unchanged consumed file evidence to digest/pointer form after its first useful read",
+        "count total file reads as an early context-pressure signal in addition to repeated reads and returned bytes",
+        "checkpoint compact task/repo/health/evidence state before compaction/reset and expose one generic hook bridge for hosts that support lifecycle hooks",
+        "accept host capabilities such as isolated context, precompact hooks, and usage telemetry dynamically instead of a permanent provider table"
+      ],
+      "rejected": [
+        "requiring Claude-specific JSONL availability for Plat to function",
+        "hardcoding every coding-agent log directory or hook configuration into the core skill",
+        "copying third-party skill code or prose when principle-level adaptation is sufficient",
+        "direct reuse from non-commercial skill packages for a generally distributable Plat release",
+        "replaying consumed evidence just because a new turn or fresh worker starts"
+      ],
+      "tests": [
+        "host_context tests for provider-shaped usage normalization, canonical capabilities, transcript deduplication, and no-telemetry fallback",
+        "context_guard tests for task-local telemetry baselines, cache-read/context-utilization pressure, file-read pressure, and proxy fallback",
+        "evidence_read tests for unchanged-read masking, changed-file refresh, and hard response caps",
+        "precompact/context-hook tests for repo-relative checkpoints, compact task truth, PreCompact aliases, and no-op unknown events",
+        "existing output-firewall, Brain packet, orchestration invariant, installer, update, maintenance, syntax, and release tests remain enabled"
+      ]
     }
   ]
 }
