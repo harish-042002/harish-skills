@@ -14,6 +14,10 @@ POLICY = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
 CONTEXT_GUARD = ROOT / "skills" / "plat" / "scripts" / "context_guard.py"
 EVIDENCE_EXEC = ROOT / "skills" / "plat" / "scripts" / "evidence_exec.py"
 BRAIN_PACKET = ROOT / "skills" / "plat" / "scripts" / "brain_packet.py"
+HOST_CONTEXT = ROOT / "skills" / "plat" / "scripts" / "host_context.py"
+EVIDENCE_READ = ROOT / "skills" / "plat" / "scripts" / "evidence_read.py"
+PRECOMPACT = ROOT / "skills" / "plat" / "scripts" / "precompact_checkpoint.py"
+CONTEXT_HOOK = ROOT / "skills" / "plat" / "scripts" / "context_hook.py"
 DISCOVERY = ROOT / "skills" / "plat" / "scripts" / "discover_skills.py"
 UPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
 INSTALL_SH = ROOT / "install.sh"
@@ -51,7 +55,7 @@ for phrase in [
     "latest developer request/correction","DIRECT","STANDARD","ESCALATED","0 specialists",
     "Model tiers, not model names","Worker tier:","Brain tier:","Brain reviewer","five-minute",
     "Task capsule and compaction","Do not follow reference-to-reference chains automatically",
-    "context_guard.py","evidence_exec.py","brain_packet.py","fresh-context worker",
+    "context_guard.py","evidence_exec.py","brain_packet.py","host_context.py","evidence_read.py","precompact_checkpoint.py","context_hook.py","fresh-context worker",
     "fresh evidence after the final relevant edit",
 ]:
     require(phrase.lower() in skill.lower(),f"missing v2 hot-path rule: {phrase}")
@@ -78,7 +82,7 @@ require('"fresh-context-worker"' in policy,"policy must support context-isolatio
 for phrase in ["DEFAULT_CHECKPOINT_SECONDS = 300","YELLOW_AFTER_SECONDS = 300","RED_AFTER_SECONDS = 600","ORDINARY_BRAIN_AFTER_SECONDS = 1200","MAX_BRAIN_REVIEWS = 2",'"BLOCKED"']:
     require(phrase in task_state,f"task-state helper missing: {phrase}")
 
-for path,msg in [(DISCOVERY,"installed-skill discovery broker is missing"),(CONTEXT_GUARD,"context guard is missing"),(EVIDENCE_EXEC,"evidence executor is missing"),(BRAIN_PACKET,"Brain packet builder is missing"),(ROUTING,"routing reference is missing"),(AWS_DEEP,"AWS deep knowledge card is missing"),(MAINTENANCE_GATE,"maintenance evidence gate is missing"),(MAINTENANCE_EVIDENCE,"maintenance evidence is missing"),(RESEARCH_LOG,"research log is missing")]:
+for path,msg in [(DISCOVERY,"installed-skill discovery broker is missing"),(CONTEXT_GUARD,"context guard is missing"),(EVIDENCE_EXEC,"evidence executor is missing"),(BRAIN_PACKET,"Brain packet builder is missing"),(HOST_CONTEXT,"host context adapter is missing"),(EVIDENCE_READ,"evidence reader is missing"),(PRECOMPACT,"precompact checkpoint is missing"),(CONTEXT_HOOK,"context hook bridge is missing"),(ROUTING,"routing reference is missing"),(AWS_DEEP,"AWS deep knowledge card is missing"),(MAINTENANCE_GATE,"maintenance evidence gate is missing"),(MAINTENANCE_EVIDENCE,"maintenance evidence is missing"),(RESEARCH_LOG,"research log is missing")]:
     require(path.exists(),msg)
 
 for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`",skill):
@@ -86,13 +90,14 @@ for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`",skill):
     require(p.exists(),f"missing referenced file: {p.relative_to(ROOT)}")
 
 require(VERSION.read_text().strip()==SKILL_VERSION.read_text().strip(),"root VERSION and skill VERSION differ")
-require(VERSION.read_text().strip()=="2.2.0","Plat context-economy release must be version 2.2.0")
+require(VERSION.read_text().strip()=="2.3.0","Plat cross-agent context release must be version 2.3.0")
 
 payload=json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
 require(payload.get("schema_version")==1,"maintenance evidence schema_version must be 1")
 require(any(x.get("id")=="2026-09-24-v2.0.2-all-agent-installer" for x in payload.get("entries",[])),"missing v2.0.2 all-agent maintenance evidence entry")
 require(any(x.get("id")=="2026-09-24-v2.1-final-runtime-contract" for x in payload.get("entries",[])),"missing v2.1 runtime maintenance evidence entry")
 require(any(x.get("id")=="2026-09-24-v2.2-context-economy" for x in payload.get("entries",[])),"missing v2.2 context-economy maintenance evidence entry")
+require(any(x.get("id")=="2026-09-24-v2.3-cross-agent-context" for x in payload.get("entries",[])),"missing v2.3 cross-agent context maintenance evidence entry")
 
 context_guard=CONTEXT_GUARD.read_text(encoding="utf-8")
 evidence_exec=EVIDENCE_EXEC.read_text(encoding="utf-8")
@@ -101,7 +106,14 @@ for phrase in [
     "TOOL_RESULT_TARGET_BYTES = 6 * 1024",
     "YELLOW_RETURNED_BYTES = 64 * 1024",
     "RED_RETURNED_BYTES = 128 * 1024",
+    "YELLOW_FILE_READS = 12",
+    "RED_FILE_READS = 24",
+    "YELLOW_CONTEXT_UTILIZATION = 0.65",
+    "RED_CONTEXT_UTILIZATION = 0.80",
+    "YELLOW_CACHE_READ_DELTA = 8_000_000",
+    "RED_CACHE_READ_DELTA = 20_000_000",
     "MAX_FRESH_CONTEXT_WORKERS = 1",
+    "def apply_telemetry",
 ]:
     require(phrase in context_guard,f"context guard missing v2.2 control: {phrase}")
 for phrase in [
@@ -115,6 +127,40 @@ for phrase in [
     "brain packet exceeds hard limit",
 ]:
     require(phrase in brain_packet,f"Brain packet missing v2.2 control: {phrase}")
+
+host_context=HOST_CONTEXT.read_text(encoding="utf-8")
+evidence_read=EVIDENCE_READ.read_text(encoding="utf-8")
+precompact=PRECOMPACT.read_text(encoding="utf-8")
+context_hook=CONTEXT_HOOK.read_text(encoding="utf-8")
+for phrase in [
+    "PLAT_TELEMETRY_JSON",
+    "PLAT_TELEMETRY_FILE",
+    "PLAT_HOST_CAPABILITIES_JSON",
+    "CLAUDE_TRANSCRIPT_PATH",
+    "CODEX_TRANSCRIPT_PATH",
+    "CURSOR_TRANSCRIPT_PATH",
+    "def parse_jsonl",
+]:
+    require(phrase in host_context,f"host context adapter missing v2.3 control: {phrase}")
+for phrase in [
+    "evidence-index.json",
+    "unchanged evidence already consumed",
+    "sha256",
+    "context_guard.record",
+]:
+    require(phrase in evidence_read,f"evidence reader missing v2.3 control: {phrase}")
+for phrase in [
+    "precompact-latest.json",
+    "read task capsule",
+    "revalidate only stale facts",
+]:
+    require(phrase in precompact,f"precompact checkpoint missing v2.3 control: {phrase}")
+for phrase in [
+    "PreCompact",
+    "precompact_checkpoint.create_checkpoint",
+    "handled",
+]:
+    require(phrase in context_hook,f"context hook bridge missing v2.3 control: {phrase}")
 
 update_check=UPDATE_CHECK.read_text(encoding="utf-8")
 for phrase in [
@@ -166,4 +212,4 @@ if errors:
 print("PLAT VALIDATION PASSED")
 print(f"- hot path: {len(skill)} chars / {len(skill.splitlines())} lines")
 print(f"- version: {VERSION.read_text().strip()}")
-print("- v2 runtime: task capsule + watchdog + bounded Brain")
+print("- v2.3 runtime: task capsule + telemetry/proxy context guard + evidence masking + bounded Brain")

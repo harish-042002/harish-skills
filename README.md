@@ -6,7 +6,7 @@
 
 **Minimum sufficient engineering depth for AI coding agents.**
 
-**v2.2.0 · context economy · output firewall · fresh-context recovery · proof-first execution**
+**v2.3.0 · cross-agent context runtime · real telemetry when available · evidence masking · proof-first execution**
 
 Plat is an engineering control plane for AI coding agents. It helps an agent understand the real task, keep the requested scope intact, choose the smallest sufficient reasoning depth, load only the engineering knowledge it actually needs, reuse repository truth, and prove the result before calling the work complete.
 
@@ -166,11 +166,13 @@ Plat routes engineering effort by the unresolved risk, not by how long the promp
 
 Depth can increase or decrease as evidence changes. “More thinking” is not automatically better.
 
-### Context economy
+### Cross-agent context economy
 
-Plat v2.2 keeps full logs and large command output on disk instead of replaying them through every model turn. Noisy tests/builds/diffs can run through `evidence_exec.py`, which stores complete output under `.plat/logs/` and returns a small evidence summary. `context_guard.py` tracks returned-byte pressure, repeated reads, large outputs, and broad-suite reruns. RED context can earn one fresh isolated execution worker; Brain reviews use a deterministic <=4 KB packet rather than the full session.
+Plat v2.3 uses the same context runtime across coding agents. `context_guard.py` always works from host-neutral proxies; `host_context.py` overlays real token/cache/context telemetry when a host or wrapper exposes it. No telemetry is required.
 
-The first v2.2 live target comes from a real Claude Code session that reached **108.1M cache reads**, **797.3K cache writes**, and **70% /platSkill usage share** while still producing strong verification. The goal is to preserve that rigor while cutting context replay, not to skip tests.
+Noisy commands use `evidence_exec.py`; large/repeated source ranges can use `evidence_read.py`, which returns unchanged evidence once and then collapses later identical reads to a digest/pointer. Before compaction/reset, `precompact_checkpoint.py` writes a tiny durable checkpoint. Hook-capable hosts may call the same path through `context_hook.py`; other hosts use it directly when context health turns RED.
+
+The benchmark still comes from the real Claude Code session that reached **108.1M cache reads**, **797.3K cache writes**, and **70% /platSkill usage share**. The goal remains: preserve verification rigor while carrying dramatically less context.
 
 ### 3. Built-in engineering specialist brain
 
