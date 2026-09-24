@@ -33,10 +33,10 @@ For non-trivial work:
 Tiny/local/reversible, obvious owner and proof. **0 subagents, 0 external skills, normally 0 extra Plat references.** Target -> act -> direct proof.
 
 ### STANDARD
-Default engineering path. One lead owns the work. **0 specialists and 0 external skills by default.** Load at most one primary Plat domain reference when it materially improves the decision. Use targeted repository inspection, not a broad map. One fresh-context execution worker is allowed only when context health is RED and the host supports isolated context; this is context garbage collection, not specialist fan-out.
+Default path. One lead owns the work. **0 specialists and 0 external skills by default.** Load at most one primary domain reference when useful. Use targeted inspection. One fresh-context worker is allowed only when context health is RED and the host supports isolation; this is garbage collection, not specialist fan-out.
 
 ### ESCALATED
-Use only for a concrete unresolved risk: distributed/concurrent state, security boundary, destructive data, public migration/contract, production-only failure, major architecture choice, hard measured performance, complex AI behavior, or repeated falsified hypotheses.
+Use only for concrete unresolved risk: concurrency/distributed state, security, destructive data, public migration/contract, production-only failure, major architecture, measured performance, complex AI behavior, or repeated falsified hypotheses.
 
 Load one relevant specialist reference first. Use at most one bounded specialist initially. A second requires evidence of a distinct unresolved boundary. Third-party skills are optional consultants.
 
