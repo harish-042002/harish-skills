@@ -64,9 +64,10 @@ for phrase in ["Brain reviewer","Routine budget: <=2 Brain reviews","DIRECT/STAN
 require("cost-efficient-latest" in policy,"policy must use generic worker capability tier")
 require("one-tier-stronger-cost-effective" in policy,"policy must use generic Brain capability tier")
 require("MAX_BRAIN_REVIEWS = 2" in policy,"policy must cap routine Brain reviews")
+require('VALID_PATHS = {"DIRECT", "STANDARD", "ESCALATED"}' in policy,"policy must expose DIRECT/STANDARD/ESCALATED")
 require('depth in {"Quick", "Standard"}' in policy,"Quick/Standard must stay single-agent")
 
-for phrase in ["DEFAULT_CHECKPOINT_SECONDS = 300","YELLOW_AFTER_SECONDS = 600","RED_AFTER_SECONDS = 1200","MAX_BRAIN_REVIEWS = 2",'"BLOCKED"']:
+for phrase in ["DEFAULT_CHECKPOINT_SECONDS = 300","YELLOW_AFTER_SECONDS = 300","RED_AFTER_SECONDS = 600","ORDINARY_BRAIN_AFTER_SECONDS = 1200","MAX_BRAIN_REVIEWS = 2",'"BLOCKED"']:
     require(phrase in task_state,f"task-state helper missing: {phrase}")
 
 for path,msg in [(DISCOVERY,"installed-skill discovery broker is missing"),(ROUTING,"routing reference is missing"),(AWS_DEEP,"AWS deep knowledge card is missing"),(MAINTENANCE_GATE,"maintenance evidence gate is missing"),(MAINTENANCE_EVIDENCE,"maintenance evidence is missing"),(RESEARCH_LOG,"research log is missing")]:
@@ -77,7 +78,7 @@ for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`",skill):
     require(p.exists(),f"missing referenced file: {p.relative_to(ROOT)}")
 
 require(VERSION.read_text().strip()==SKILL_VERSION.read_text().strip(),"root VERSION and skill VERSION differ")
-require(VERSION.read_text().strip()=="2.0.2","Plat cross-agent release must be version 2.0.2")
+require(VERSION.read_text().strip()=="2.1.0","Plat runtime release must be version 2.1.0")
 
 payload=json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
 require(payload.get("schema_version")==1,"maintenance evidence schema_version must be 1")
