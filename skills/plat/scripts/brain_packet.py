@@ -57,7 +57,14 @@ def build_packet(
     }
 
     def size() -> int:
-        return len(json.dumps(packet, separators=(",", ":"), ensure_ascii=False).encode("utf-8"))
+        return len(
+            json.dumps(
+                packet,
+                indent=2,
+                sort_keys=True,
+                ensure_ascii=False,
+            ).encode("utf-8")
+        )
 
     while size() > max_bytes and packet["evidence"]:
         packet["evidence"].pop()
