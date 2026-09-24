@@ -6,7 +6,7 @@
 
 **Minimum sufficient engineering depth for AI coding agents.**
 
-**v2.0.2 · fast autonomous runtime · full coding-agent catalog · 2-hour updates · proof-first execution**
+**v2.2.0 · context economy · output firewall · fresh-context recovery · proof-first execution**
 
 Plat is an engineering control plane for AI coding agents. It helps an agent understand the real task, keep the requested scope intact, choose the smallest sufficient reasoning depth, load only the engineering knowledge it actually needs, reuse repository truth, and prove the result before calling the work complete.
 
@@ -84,9 +84,9 @@ DIRECT / STANDARD / ESCALATED
   ↓
 single-agent execution by default
   ↓
-5-minute progress watchdog
+output firewall + progress/context watchdogs
   ↓
-self-correct or bounded Brain review only when earned
+self-correct / fresh-context recovery / bounded Brain
   ↓
 fresh focused verification
 ~~~
@@ -165,6 +165,12 @@ Plat routes engineering effort by the unresolved risk, not by how long the promp
 | **Research** | decision depends on external/current evidence or multiple independent unknowns | read-only evidence gathering, compare, then decide |
 
 Depth can increase or decrease as evidence changes. “More thinking” is not automatically better.
+
+### Context economy
+
+Plat v2.2 keeps full logs and large command output on disk instead of replaying them through every model turn. Noisy tests/builds/diffs can run through `evidence_exec.py`, which stores complete output under `.plat/logs/` and returns a small evidence summary. `context_guard.py` tracks returned-byte pressure, repeated reads, large outputs, and broad-suite reruns. RED context can earn one fresh isolated execution worker; Brain reviews use a deterministic <=4 KB packet rather than the full session.
+
+The first v2.2 live target comes from a real Claude Code session that reached **108.1M cache reads**, **797.3K cache writes**, and **70% /platSkill usage share** while still producing strong verification. The goal is to preserve that rigor while cutting context replay, not to skip tests.
 
 ### 3. Built-in engineering specialist brain
 
