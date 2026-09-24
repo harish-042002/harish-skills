@@ -6,7 +6,7 @@
 
 **Minimum sufficient engineering depth for AI coding agents.**
 
-**v1.9.0 · adaptive depth · scope fidelity · research economics · specialist orchestration · AWS deep · proof-first execution**
+**v2.0.0 · fast autonomous runtime · task capsule · progress watchdog · bounded Brain · proof-first execution**
 
 Plat is an engineering control plane for AI coding agents. It helps an agent understand the real task, keep the requested scope intact, choose the smallest sufficient reasoning depth, load only the engineering knowledge it actually needs, reuse repository truth, and prove the result before calling the work complete.
 
@@ -27,7 +27,7 @@ Plat is an engineering control plane for AI coding agents. It helps an agent und
 | Specialist sprawl | many agents disagree, recurse, or duplicate work | P-01 remains lead; bounded specialists report evidence back |
 | “Done” without proof | plausible patch, weak evidence | require fresh verification matched to the requested behavior |
 
-> **Plat’s hypothesis:** the best coding-agent workflow is not “think more.” It is **use the smallest engineering team and depth that can solve the real problem correctly, stay inside the requested scope, then prove it.**
+> **Plat v2 principle:** **solve immediately from the strongest current evidence, measure whether real progress is happening, and escalate reasoning or specialists only when the trajectory proves they are needed.**
 
 <img src="assets/plat-activate.svg" alt="Verified one-command Plat installation flow" width="100%" />
 
@@ -75,21 +75,21 @@ The installer chooses the agent and skill install scope, copies Plat into the re
 ~~~text
 request
   ↓
-resolve latest intent + scope
+load/update compact Task Capsule
   ↓
-inspect repository truth
+DIRECT / STANDARD / ESCALATED
   ↓
-choose MODE + minimum sufficient DEPTH
+single-agent execution by default
   ↓
-load only relevant engineering guidance
+5-minute progress watchdog
   ↓
-execute / investigate
+self-correct or bounded Brain review only when earned
   ↓
-fresh verification
+fresh focused verification
 ~~~
 
 **Modes:** Build · Debug · Review · Research · Design · Optimize · Migrate  
-**Depths:** Quick · Standard · Deep · Research
+**Execution:** DIRECT · STANDARD · ESCALATED (Research is a task type, not unlimited depth)
 
 A request for a detailed explanation does **not** automatically trigger Deep engineering depth. Output preference and technical depth are separate.
 
