@@ -5,7 +5,7 @@ description: Autonomous engineering control layer for coding agents. Use for sof
 
 # Plat
 
-Solve the engineering problem directly while preserving correctness, scope, and fresh proof.
+Solve directly while preserving scope, correctness, and fresh proof.
 
 ## Active truth
 
@@ -17,14 +17,14 @@ Treat **only, alone, just, no/no need, do not/don't, keep X, work on these** as 
 
 For non-trivial work:
 
-1. **Anchor** goal, hard scope, current slice, and proof in `.plat/session.json` when continuity/compaction risk justifies it. Use `scripts/task_state.py`.
-2. **Align** the latest message with the capsule. Continue silently when aligned; apply clear corrections automatically; ask one focused question only when materially different interpretations or authority boundaries remain.
+1. **Anchor** goal, scope, slice, and proof in `.plat/session.json` when continuity risk justifies it. Use `scripts/task_state.py`.
+2. **Align** with the capsule. Continue when aligned; apply clear corrections; ask only when material interpretations or authority boundaries remain.
 3. **Route** to DIRECT, STANDARD, or ESCALATED. Research is a task type, not unlimited depth.
 4. **Inspect** only until ownership, required delta, and direct proof are known.
-5. **Act** immediately once those three are known.
-6. **Verify** with the narrowest fresh evidence; widen only when risk earns it.
+5. **Act** once those three are known.
+6. **Verify** narrowly; widen only when risk earns it.
 7. **Checkpoint** health during long work. Time alone is not failure; lack of meaningful progress is.
-8. **Persist** only compact current truth expensive to rediscover.
+8. **Persist** only compact truth expensive to rediscover.
 
 ## Execution paths
 
@@ -37,7 +37,7 @@ Default engineering path. One lead owns the work. **0 subagents and 0 external s
 ### ESCALATED
 Use only for a concrete unresolved risk: distributed/concurrent state, security boundary, destructive data, public migration/contract, production-only failure, major architecture choice, hard measured performance, complex AI behavior, or repeated falsified hypotheses.
 
-Load one relevant specialist reference first. Use at most one bounded specialist/subagent initially. A second requires new evidence exposing a distinct unresolved boundary. Third-party skills are optional bounded consultants, never default machinery.
+Load one relevant specialist reference first. Use at most one bounded specialist initially. A second requires evidence of a distinct unresolved boundary. Third-party skills are optional consultants.
 
 ## Model tiers, not model names
 
@@ -55,7 +55,7 @@ Brain may inspect the capsule and concise decisive evidence, then return the sma
 
 ## Time and progress watchdog
 
-Record start time for non-trivial work. Use cheap checkpoints around meaningful boundaries and evaluate at roughly five-minute intervals without creating a separate reasoning turn merely to read the clock.
+Record start time for non-trivial work. Check health around meaningful boundaries at roughly five-minute intervals without a separate reasoning turn just to read the clock.
 
 Meaningful progress means uncertainty reduced, ownership/delta/proof localized, implementation advanced, a hypothesis discriminated/retired, or verification produced useful evidence.
 
