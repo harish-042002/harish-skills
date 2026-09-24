@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO="harish-042002/harish-skills"
-RAW_BASE="https://raw.githubusercontent.com/${REPO}/main"
+RAW_BASE="https://raw.githubusercontent.com/\${REPO}/main"
 AGENT=""
 SCOPE=""
 RECONFIGURE=0
@@ -12,42 +12,61 @@ usage() {
 Plat installer
 
 Usage:
-  bash install.sh [--agent claude-code|codex|cursor] [--scope global|project] [--reconfigure]
+  bash install.sh [--agent all|<skills-cli-agent-id>] [--scope global|project] [--reconfigure]
+
+Examples:
+  bash install.sh --agent all --scope global
+  bash install.sh --agent codex --scope global
+  bash install.sh --agent kiro-cli --scope global
+  bash install.sh --agent antigravity --scope project
+
+Agent IDs are validated by the current skills@latest catalog. Plat does not keep
+its own fixed coding-agent whitelist.
 
 The installer:
-  1. installs Plat into the selected agent using direct copy mode,
-  2. verifies SKILL.md exists in the agent's real skill directory,
-  3. runs one-time developer preference onboarding and creates only ~/.plat/profile.md,
-  4. wires Plat into the agent instructions,
-  5. registers one user-level background release check every 2 hours.
+  1. installs Plat using the current Skills CLI agent catalog,
+  2. verifies the installed Plat scope using skills list --json,
+  3. runs one-time developer preference onboarding,
+  4. adds extra persistent instruction wiring only for known hosts where useful,
+  5. registers the 2-hour release checker and cross-agent updater.
 
-Re-running this installer updates Plat while preserving existing preferences and the daily checker.
+Re-running this installer updates/synchronizes registered Plat installations
+while preserving the developer profile.
 EOF
 }
 
 ask_agent() {
-  local choice raw_choice
+  local choice raw_choice custom
   while true; do
     echo
-    echo "Choose your coding agent:"
+    echo "Choose where to install Plat:"
     echo "  1. Claude Code"
     echo "  2. Codex"
     echo "  3. Cursor"
+    echo "  4. All coding agents supported by skills@latest"
+    echo "  5. Another supported agent ID"
     read -r -p "> " raw_choice || exit 1
 
     if [[ -z "$raw_choice" ]]; then
-      choice="1"
+      choice="4"
     else
-      # macOS terminals may send literal arrow-key escape sequences to plain Bash read.
-      # Keep a trailing numeric choice when present; otherwise re-prompt.
-      choice="${raw_choice##*[!0-9]}"
+      choice="\${raw_choice##*[!0-9]}"
     fi
 
     case "$choice" in
       1) AGENT="claude-code"; return 0 ;;
       2) AGENT="codex"; return 0 ;;
       3) AGENT="cursor"; return 0 ;;
-      *) echo "Please enter 1, 2, or 3." >&2 ;;
+      4) AGENT="*"; return 0 ;;
+      5)
+        read -r -p "Skills CLI agent ID (example: kiro-cli, antigravity, cline, opencode): " custom || exit 1
+        if [[ -n "$custom" ]]; then
+          AGENT="$custom"
+          return 0
+        fi
+        echo "Agent ID cannot be empty." >&2
+        ;;
+      *) echo "Please enter 1, 2, 3, 4, or 5." >&2 ;;
     esac
   done
 }
@@ -64,7 +83,7 @@ ask_scope() {
     if [[ -z "$raw_choice" ]]; then
       choice="1"
     else
-      choice="${raw_choice##*[!0-9]}"
+      choice="\${raw_choice##*[!0-9]}"
     fi
 
     case "$choice" in
@@ -73,21 +92,6 @@ ask_scope() {
       *) echo "Please enter 1 or 2." >&2 ;;
     esac
   done
-}
-
-expected_skill_dir() {
-  if [[ "$SCOPE" == "global" ]]; then
-    case "$AGENT" in
-      claude-code) printf '%s\n' "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/plat" ;;
-      codex) printf '%s\n' "${CODEX_HOME:-$HOME/.codex}/skills/plat" ;;
-      cursor) printf '%s\n' "$HOME/.cursor/skills/plat" ;;
-    esac
-  else
-    case "$AGENT" in
-      claude-code) printf '%s\n' "$(pwd)/.claude/skills/plat" ;;
-      codex|cursor) printf '%s\n' "$(pwd)/.agents/skills/plat" ;;
-    esac
-  fi
 }
 
 append_block() {
@@ -123,29 +127,49 @@ EOF
   echo "✓ Added Plat Cursor rule: $file"
 }
 
-wire_agent() {
-  if [[ "$SCOPE" == "global" ]]; then
-    case "$AGENT" in
-      claude-code) append_block "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md" ;;
-      codex) append_block "${CODEX_HOME:-$HOME/.codex}/AGENTS.md" ;;
-      cursor) install_cursor_rule "$HOME/.cursor/rules/plat.mdc" ;;
-    esac
-  else
-    case "$AGENT" in
-      claude-code) append_block "$(pwd)/CLAUDE.md" ;;
-      codex|cursor) append_block "$(pwd)/AGENTS.md" ;;
-    esac
+wire_known_agents() {
+  if [[ "$AGENT" == "claude-code" ]]; then
+    if [[ "$SCOPE" == "global" ]]; then
+      append_block "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md"
+    else
+      append_block "$(pwd)/CLAUDE.md"
+    fi
+    return 0
+  fi
+
+  if [[ "$AGENT" == "codex" ]]; then
+    if [[ "$SCOPE" == "global" ]]; then
+      append_block "\${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
+    else
+      append_block "$(pwd)/AGENTS.md"
+    fi
+    return 0
+  fi
+
+  if [[ "$AGENT" == "cursor" ]]; then
+    if [[ "$SCOPE" == "global" ]]; then
+      install_cursor_rule "$HOME/.cursor/rules/plat.mdc"
+    else
+      append_block "$(pwd)/AGENTS.md"
+    fi
+    return 0
+  fi
+
+  if [[ "$AGENT" == "*" && "$SCOPE" == "global" ]]; then
+    [[ -d "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}" ]] && append_block "\${CLAUDE_CONFIG_DIR:-$HOME/.claude}/CLAUDE.md"
+    [[ -d "\${CODEX_HOME:-$HOME/.codex}" ]] && append_block "\${CODEX_HOME:-$HOME/.codex}/AGENTS.md"
+    [[ -d "$HOME/.cursor" ]] && install_cursor_rule "$HOME/.cursor/rules/plat.mdc"
   fi
 }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --agent)
-      AGENT="${2:-}"
+      AGENT="\${2:-}"
       shift 2
       ;;
     --scope)
-      SCOPE="${2:-}"
+      SCOPE="\${2:-}"
       shift 2
       ;;
     --reconfigure)
@@ -170,11 +194,8 @@ command -v curl >/dev/null 2>&1 || { echo "curl is required." >&2; exit 1; }
 
 [[ -n "$AGENT" ]] || ask_agent
 [[ -n "$SCOPE" ]] || ask_scope
+[[ "$AGENT" != "all" ]] || AGENT="*"
 
-case "$AGENT" in
-  claude-code|codex|cursor) ;;
-  *) echo "Unsupported agent: $AGENT" >&2; exit 2 ;;
-esac
 case "$SCOPE" in
   global|project) ;;
   *) echo "Unsupported scope: $SCOPE" >&2; exit 2 ;;
@@ -182,7 +203,11 @@ esac
 
 echo
 echo "PLAT · INSTALL / UPDATE"
-echo "Agent: $AGENT"
+if [[ "$AGENT" == "*" ]]; then
+  echo "Agent: all agents supported by skills@latest"
+else
+  echo "Agent: $AGENT"
+fi
 echo "Scope: $SCOPE"
 echo
 
@@ -191,51 +216,35 @@ if [[ "$SCOPE" == "global" ]]; then
   INSTALL_ARGS+=(-g)
 fi
 
-npx "${INSTALL_ARGS[@]}"
-
-SKILL_DIR="$(expected_skill_dir)"
-if [[ ! -f "$SKILL_DIR/SKILL.md" ]]; then
-  echo >&2
-  echo "Plat install verification failed." >&2
-  echo "Expected: $SKILL_DIR/SKILL.md" >&2
-  echo "Nothing else was configured. Re-run the installer after checking the error above." >&2
-  exit 1
-fi
-
-echo "✓ Verified Plat skill: $SKILL_DIR/SKILL.md"
+npx "\${INSTALL_ARGS[@]}"
 
 tmp_setup="$(mktemp)"
-trap 'rm -f "$tmp_setup"' EXIT
-curl -fsSL "${RAW_BASE}/skills/plat/scripts/setup.py" -o "$tmp_setup"
+tmp_update="$(mktemp)"
+trap 'rm -f "$tmp_setup" "$tmp_update"' EXIT
+curl -fsSL "\${RAW_BASE}/skills/plat/scripts/setup.py" -o "$tmp_setup"
+curl -fsSL "\${RAW_BASE}/skills/plat/scripts/update_check.py" -o "$tmp_update"
 
-# Avoid expanding an empty Bash array here. macOS still ships Bash 3.2,
-# where set -u can treat an empty array expansion as an unbound variable.
 if [[ "$RECONFIGURE" -eq 1 ]]; then
   python3 "$tmp_setup" --force
 else
   python3 "$tmp_setup"
 fi
 
-wire_agent
+wire_known_agents
 
-UPDATE_CHECKER="$SKILL_DIR/scripts/update_check.py"
-if [[ -f "$UPDATE_CHECKER" ]]; then
-  if [[ "$SCOPE" == "project" ]]; then
-    python3 "$UPDATE_CHECKER" --register "$SKILL_DIR" --agent "$AGENT" --scope "$SCOPE" --project-root "$(pwd)" || true
-  else
-    python3 "$UPDATE_CHECKER" --register "$SKILL_DIR" --agent "$AGENT" --scope "$SCOPE" || true
-  fi
-  python3 "$UPDATE_CHECKER" --update-all || true
+if [[ "$SCOPE" == "project" ]]; then
+  python3 "$tmp_update" --register-scope --agent-selector "$AGENT" --scope project --project-root "$(pwd)"
 else
-  echo "Warning: Plat daily update checker not found at $UPDATE_CHECKER" >&2
+  python3 "$tmp_update" --register-scope --agent-selector "$AGENT" --scope global
 fi
+
+python3 "$HOME/.plat/bin/update_check.py" --update-all || true
 
 echo
 echo "✓ Plat is ready."
 echo "  Developer profile: $HOME/.plat/profile.md"
-echo "  Skill:       $SKILL_DIR"
+echo "  Registered installs: $HOME/.plat/installations.json"
 echo
-echo "Ask normally. Plat decides the smallest useful mode, depth, and specialist team."
-echo "Update checks run every 2 hours outside engineering sessions and notify only when a newer release or remaining outdated installation exists."
-echo
-echo "Re-running this installer for any registered agent also syncs all other registered Plat installations."
+echo "The upstream Skills CLI owns the coding-agent catalog and install paths."
+echo "Update checks run every 2 hours outside engineering sessions."
+echo "Re-running this installer from any supported agent can synchronize all registered Plat groups."
