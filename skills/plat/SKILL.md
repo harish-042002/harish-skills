@@ -11,7 +11,7 @@ Solve directly while preserving scope and fresh proof.
 
 **latest developer request/correction > compact task capsule > current repo/runtime evidence > optional project cache > developer preferences > Plat defaults**
 
-Treat **only, alone, just, no/no need, do not/don't, keep X, work on these** as hard scope constraints.
+Treat explicit exclusions and **only/just/keep X** wording as hard scope constraints.
 
 ## Runtime kernel
 
