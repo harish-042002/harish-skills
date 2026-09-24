@@ -59,9 +59,10 @@ Record start time for non-trivial work. Use cheap checkpoints around meaningful 
 
 Meaningful progress means uncertainty reduced, ownership/delta/proof localized, implementation advanced, a hypothesis discriminated/retired, or verification produced useful evidence.
 
-- **GREEN:** continue.
-- **YELLOW:** stop generic exploration; choose ACT / VERIFY / REROUTE.
-- **RED:** bounded Brain review if budget remains; otherwise reroute or surface blocker.
+- **GREEN:** continue while meaningful progress is recent.
+- **YELLOW (~5m without meaningful progress):** stop generic exploration; choose ACT / VERIFY / REROUTE.
+- **RED (~10m without meaningful progress, or repeated failed hypotheses/reroutes):** bounded Brain review if budget remains; otherwise reroute or surface blocker.
+- **~20m ordinary-task safeguard:** if progress is still weak, Brain review is strongly preferred before any further exploration.
 - **BLOCKED:** ask only for missing authority/access/decision that cannot be safely inferred.
 
 ## Task capsule and compaction
