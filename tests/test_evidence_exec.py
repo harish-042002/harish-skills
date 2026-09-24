@@ -39,7 +39,10 @@ class EvidenceExecTests(unittest.TestCase):
             )
             self.assertEqual(result["exit_code"], 0)
             self.assertGreater(result["total_output_bytes"], 19000)
-            self.assertLessEqual(len(result["excerpt"].encode("utf-8")), 4096)
+            self.assertLessEqual(
+                len(json.dumps(result, indent=2, sort_keys=True).encode("utf-8")),
+                4096,
+            )
             log_path = Path(result["log_path"])
             self.assertTrue(log_path.exists())
             self.assertGreater(log_path.stat().st_size, 19000)
