@@ -32,9 +32,10 @@ Meaningful progress includes:
 
 Suggested health thresholds are starting defaults to benchmark, not universal deadlines:
 
-- `<10m without meaningful progress`: continue or tighten next action.
-- `>=10m`: YELLOW -> prohibit generic exploration; choose ACT / VERIFY / REROUTE.
-- `>=20m`: RED for ordinary work -> bounded Brain review if available/budgeted; otherwise re-localize or surface the blocker.
+- `<5m without meaningful progress`: continue or tighten the next action.
+- `>=5m`: YELLOW -> prohibit generic exploration; choose ACT / VERIFY / REROUTE.
+- `>=10m`: RED -> bounded Brain review if available/budgeted; otherwise re-localize or surface the blocker.
+- `>=20m` on an ordinary task with weak progress: Brain review is strongly preferred before any further exploration.
 
 Use `scripts/task_state.py` to make these thresholds deterministic where supported.
 
