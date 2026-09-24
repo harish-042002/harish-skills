@@ -47,7 +47,12 @@ class BrainPacketTests(unittest.TestCase):
             evidence=["e" * 2000 for _ in range(10)],
             max_bytes=4096,
         )
-        rendered = json.dumps(packet, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        rendered = json.dumps(
+            packet,
+            indent=2,
+            sort_keys=True,
+            ensure_ascii=False,
+        ).encode("utf-8")
         self.assertLessEqual(len(rendered), 4096)
         self.assertNotIn("SHOULD_NOT_BE_COPIED", rendered.decode("utf-8"))
 
