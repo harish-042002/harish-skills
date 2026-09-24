@@ -24,14 +24,19 @@ Normal model-visible command output target: <=6 KB. Read exact log ranges only w
 
 ## Context watchdog
 
-Use `scripts/context_guard.py` when a task is non-trivial or output-heavy. It tracks returned-byte volume, repeated reads, large outputs, broad-suite count, and fresh-context-worker usage without depending on provider token telemetry.
+Use `scripts/host_context.py` + `scripts/context_guard.py` for non-trivial/output-heavy work. The common guard always works from proxy signals; real host telemetry overlays it when available.
 
-Starting thresholds:
-- GREEN: below pressure thresholds.
-- YELLOW: >=64 KB cumulative returned evidence, >=3 large outputs, >=2 repeated reads, or >1 broad-suite run.
-- RED: >=128 KB cumulative returned evidence, >=6 large outputs, or >=4 repeated reads.
+Proxy starting thresholds:
+- YELLOW: >=64 KB returned evidence, >=3 large outputs, >=2 repeated reads, >=12 file reads, or >1 broad-suite run.
+- RED: >=128 KB returned evidence, >=6 large outputs, >=4 repeated reads, or >=24 file reads.
 
-On YELLOW, stop broad raw returns and use summaries + pointers. On RED, checkpoint then use one fresh-context worker if supported; otherwise compact/reset and resume from disk.
+Real-telemetry starting thresholds:
+- YELLOW: context utilization >=65% or task-local cache-read delta >=8M.
+- RED: context utilization >=80% or task-local cache-read delta >=20M.
+
+The first real telemetry sample becomes the task baseline; Plat acts on deltas rather than lifetime/session totals. These are benchmarkable starting defaults, not universal provider limits.
+
+On YELLOW, stop broad raw returns and use summaries + pointers. On RED, run `precompact_checkpoint.py`, then use one fresh-context worker if supported; otherwise compact/reset and resume from disk.
 
 ## Five-minute watchdog
 
@@ -64,7 +69,7 @@ A search must answer a concrete question. "Be thorough" is not a question.
 
 ## Evidence ledger
 
-For long Research keep compact accepted facts + pointers. Do not reread unchanged large files to recover already accepted facts.
+For long work keep compact accepted facts + pointers. Use `evidence_read.py` for large/repeated ranges: unchanged consumed evidence should collapse to a digest/pointer instead of being replayed. Re-read only when the file changed or a new question requires exact content.
 
 For same-shape peers/adapters:
 
