@@ -14,6 +14,10 @@ import subprocess
 import sys
 import time
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
 import context_guard
 
 DEFAULT_MAX_RETURN_BYTES = 6 * 1024
