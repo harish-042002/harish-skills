@@ -23,9 +23,10 @@ For non-trivial work:
 4. **Inspect** only until ownership, required delta, and direct proof are known.
 5. **Act** once those three are known.
 6. **Verify** narrowly; widen only when risk earns it.
-7. **Contain** noisy command/test/diff output with `scripts/evidence_exec.py`; keep full logs on disk and return only bounded evidence.
-8. **Checkpoint** both progress and context health. Time alone is not failure; repeated context replay is.
-9. **Persist** only compact truth and evidence pointers expensive to rediscover.
+7. **Contain** noisy commands with `evidence_exec.py`; use `evidence_read.py` for large/repeated reads so unchanged evidence becomes a pointer.
+8. **Measure** context with `host_context.py` when telemetry exists, otherwise use the same deterministic byte/read proxies.
+9. **Checkpoint** progress + context health; RED context runs `precompact_checkpoint.py` before isolation/compaction.
+10. **Persist** only compact truth and evidence pointers expensive to rediscover.
 
 ## Execution paths
 
@@ -65,18 +66,18 @@ Progress health:
 - **~20m safeguard:** prefer Brain review before more ordinary exploration.
 - **BLOCKED:** ask only for missing authority/access/decision.
 
-Context health uses `scripts/context_guard.py`:
+Context health uses `context_guard.py`. Start with a best-effort `host_context.py` snapshot; real host telemetry overlays the common proxy guard when available.
 - **GREEN:** continue.
 - **YELLOW:** stop large raw returns; use summaries + pointers.
-- **RED:** checkpoint, then use one fresh-context worker when supported; otherwise compact/reset and resume from pointers.
+- **RED:** run `precompact_checkpoint.py`, then one fresh-context worker when supported; otherwise compact/reset and resume from pointers.
 
-Run noisy commands through `scripts/evidence_exec.py`: normally <=6 KB returns; full logs stay under `.plat/logs/`.
+Noisy commands and reads normally return <=6 KB; full logs stay under `.plat/logs/`. Hosts exposing lifecycle hooks may route PreCompact/preCompact through `context_hook.py`; hooks are optional, never required.
 
 ## Task capsule and compaction
 
 Use `references/context.md` when work is long, may compact/switch agents, or is expensive to rediscover. Store current truth and evidence pointers, never hidden reasoning, transcripts, or large tool output.
 
-After compaction/fresh-context handoff: **read capsule -> inspect branch/diff -> revalidate only stale facts -> resume `next`**. Do not replay the whole conversation, logs, or repository discovery.
+After compaction/fresh-context handoff: **read capsule/checkpoint -> inspect branch/diff -> revalidate only stale facts -> resume `next`**. Do not replay conversation history, logs, or repository discovery.
 
 ## Primary knowledge routes
 
