@@ -661,3 +661,36 @@ Adopted principle: the hot path should remain small while detailed knowledge is 
 ### Validation target
 
 Plat v2 must preserve or improve correctness while materially reducing time-to-first-edit, tool calls, reference loads, duplicated reads, subagent share, aggregate model/API time, and wall time. Claims of actual percentage savings remain pending matched live A/B runs.
+
+
+## v2.0.1 — Two-hour checks and multi-install synchronization
+
+Evidence ID: `2026-09-24-v2.0.1-multi-install-updater`
+
+### Problem
+
+Plat could detect a new release, but the original daily checker tracked notification state only by release version. Updating Codex while leaving Claude Code or Cursor outdated could therefore suppress another useful notification for the same release. Re-running the installer also updated only the selected agent copy.
+
+### Sources inspected
+
+#### vercel-labs/skills — MIT
+
+Inspected the current native `skills update` implementation and documentation: named-skill updates, global/project scope selection, source/lock tracking, and reinstallation behavior.
+
+Adopted: use the upstream CLI's native scoped update path first, then verify each Plat registration. Reuse: principle-only.
+
+#### jdx/mise — MIT
+
+Inspected current self-update behavior: explicit interval throttling, non-fatal version checks, deliberate separation between checking and mutation, and safe fallback behavior.
+
+Adopted: keep the scheduled check lightweight/non-fatal and notification-only; perform mutation only after an intentional installer or `--update-all` action. Reuse: principle-only.
+
+### Plat adaptation
+
+1. Background checks move from 24 hours to **2 hours** on LaunchAgent, systemd/cron, and Windows Scheduled Task.
+2. Notification dedupe key is now **latest release + exact outdated installation set**, not only release version.
+3. Registry schema records project roots so project-local installations can be updated from the correct working directory.
+4. `--update-all` updates Plat by scope using `npx skills@latest update plat`, then verifies every registered `VERSION`.
+5. Any installation still stale after the native update gets a targeted compatibility reinstall.
+6. Re-running the installer for any registered agent registers that copy and then synchronizes all other registered Plat installations.
+7. Background checks never silently mutate skill files mid-session.

@@ -274,6 +274,53 @@
         "Plat v2 structural validator with <=7000-character hot-path budget and explicit v2 runtime controls",
         "GitHub Actions full unit/compile/maintenance validation before merge"
       ]
+    },
+    {
+      "id": "2026-09-24-v2.0.1-multi-install-updater",
+      "date": "2026-09-24",
+      "capability": "Check Plat releases every two hours, notify per current outdated installation set, and let one intentional update synchronize all registered Codex, Claude Code, and Cursor installations without background mutation.",
+      "material_files": [
+        ".github/workflows/release-plat.yml",
+        "install.ps1",
+        "install.sh",
+        "scripts/validate_plat.py",
+        "skills/plat/VERSION",
+        "skills/plat/scripts/update_check.py"
+      ],
+      "sources": [
+        {
+          "repo": "vercel-labs/skills",
+          "license": "MIT",
+          "inspected": "native skills update command, global/project scope selection, per-skill update filtering, lock/source tracking, and copy/symlink update behavior",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "jdx/mise",
+          "license": "MIT",
+          "inspected": "self-update interval throttling, non-fatal update checks, explicit update command, and safe separation between checking and intentional mutation",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "use the native skills update command by scope before falling back to targeted reinstall",
+        "track all registered Plat installations and verify each installed VERSION after update",
+        "run background release checks every two hours with native OS schedulers",
+        "dedupe notifications by latest version plus the exact outdated-installation set so a partially updated fleet can notify again",
+        "keep background checking notification-only while intentional installer/update-all actions may synchronize all registered copies",
+        "persist project roots for reliable project-scoped updates"
+      ],
+      "rejected": [
+        "silently auto-updating agent skills from the two-hour background task",
+        "treating one updated Codex copy as proof that Claude Code/Cursor are current",
+        "notifying only once per release regardless of which installations remain outdated",
+        "reinstalling every agent separately when the native scoped skills update command can update the shared scope",
+        "checking for releases inside coding-agent prompts"
+      ],
+      "tests": [
+        "updater tests for exact 7200-second cadence, notification dedupe, same-release re-notification after the outdated set changes, project-root registration, native global/project update commands, fallback verification, pruning, and offline behavior",
+        "structural validation for two-hour scheduler strings, update-all support, scoped skills update, and v2.0.1 evidence",
+        "GitHub Actions full Python unit discovery, compile checks, Bash syntax, maintenance gate, and release validation"
+      ]
     }
   ]
 }

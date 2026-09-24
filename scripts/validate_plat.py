@@ -12,6 +12,7 @@ EFFICIENCY = ROOT / "skills" / "plat" / "references" / "efficiency.md"
 TASK_STATE = ROOT / "skills" / "plat" / "scripts" / "task_state.py"
 POLICY = ROOT / "skills" / "plat" / "scripts" / "orchestration_policy.py"
 DISCOVERY = ROOT / "skills" / "plat" / "scripts" / "discover_skills.py"
+UPDATE_CHECK = ROOT / "skills" / "plat" / "scripts" / "update_check.py"
 VERSION = ROOT / "VERSION"
 SKILL_VERSION = ROOT / "skills" / "plat" / "VERSION"
 MAINTENANCE_GATE = ROOT / "scripts" / "maintenance_gate.py"
@@ -74,11 +75,23 @@ for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`",skill):
     require(p.exists(),f"missing referenced file: {p.relative_to(ROOT)}")
 
 require(VERSION.read_text().strip()==SKILL_VERSION.read_text().strip(),"root VERSION and skill VERSION differ")
-require(VERSION.read_text().strip()=="2.0.0","Plat v2 runtime release must be version 2.0.0")
+require(VERSION.read_text().strip()=="2.0.1","Plat updater release must be version 2.0.1")
 
 payload=json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
 require(payload.get("schema_version")==1,"maintenance evidence schema_version must be 1")
-require(any(x.get("id")=="2026-09-24-v2-runtime-kernel" for x in payload.get("entries",[])),"missing v2 maintenance evidence entry")
+require(any(x.get("id")=="2026-09-24-v2.0.1-multi-install-updater" for x in payload.get("entries",[])),"missing v2.0.1 updater maintenance evidence entry")
+
+update_check=UPDATE_CHECK.read_text(encoding="utf-8")
+for phrase in [
+    "CHECK_INTERVAL_SECONDS = 2 * 60 * 60",
+    "OnUnitActiveSec=2h",
+    "\"HOURLY\"",
+    "--update-all",
+    "last_notified_signature",
+    "skills@latest",
+    "\"update\"",
+]:
+    require(phrase in update_check,f"update checker missing v2.0.1 control: {phrase}")
 
 for name in ["cases.json","trigger-cases.json","run_behavioral_eval.py","score_results.py"]:
     require((BEHAVIORAL_DIR/name).exists(),f"behavioral asset missing: {name}")
