@@ -59,8 +59,10 @@ def _interesting_excerpt(text: str, max_bytes: int) -> str:
     if len(data) <= max_bytes:
         return excerpt
 
-    clipped = data[:max_bytes].decode("utf-8", errors="ignore")
-    return clipped.rstrip() + "\n...[excerpt truncated]"
+    suffix = b"\n...[excerpt truncated]"
+    keep = max(0, max_bytes - len(suffix))
+    clipped = data[:keep].decode("utf-8", errors="ignore").rstrip()
+    return clipped + suffix.decode("utf-8")
 
 
 def run_command(
