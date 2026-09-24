@@ -18,6 +18,7 @@ SCHEMA_VERSION = 1
 CANONICAL_FILE = Path(".plat/telemetry.json")
 ENV_JSON = "PLAT_TELEMETRY_JSON"
 ENV_FILE = "PLAT_TELEMETRY_FILE"
+CAPABILITIES_ENV = "PLAT_HOST_CAPABILITIES_JSON"
 TRANSCRIPT_ENV_VARS = (
     "PLAT_TRANSCRIPT_PATH",
     "CLAUDE_TRANSCRIPT_PATH",
@@ -182,12 +183,30 @@ def normalize(payload: dict[str, Any], *, host: str = "unknown", source: str = "
         for key, value in candidate.items():
             merged[key] = max(merged.get(key, 0.0), value)
 
+    capabilities = payload.get("capabilities")
+    if not isinstance(capabilities, dict):
+        capabilities = {}
+    env_caps = os.environ.get(CAPABILITIES_ENV)
+    if env_caps:
+        parsed_caps = json.loads(env_caps)
+        if isinstance(parsed_caps, dict):
+            capabilities = {**capabilities, **parsed_caps}
+
     snapshot: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "available": bool(merged),
         "host": host or "unknown",
         "source": source,
         "observed_at": now_iso(),
+        "capabilities": {
+            key: bool(value)
+            for key, value in capabilities.items()
+            if key in {
+                "isolated_context",
+                "precompact_hook",
+                "usage_telemetry",
+            }
+        },
     }
     for key, value in merged.items():
         snapshot[key] = int(value) if float(value).is_integer() else value
@@ -247,12 +266,27 @@ def discover(*, host: str = "unknown", transcript: Path | None = None) -> dict[s
         snap["records"] = parsed.get("records", 0)
         return snap
 
+    capabilities = {}
+    env_caps = os.environ.get(CAPABILITIES_ENV)
+    if env_caps:
+        parsed_caps = json.loads(env_caps)
+        if isinstance(parsed_caps, dict):
+            capabilities = {
+                key: bool(value)
+                for key, value in parsed_caps.items()
+                if key in {
+                    "isolated_context",
+                    "precompact_hook",
+                    "usage_telemetry",
+                }
+            }
     return {
         "schema_version": SCHEMA_VERSION,
         "available": False,
         "host": host or "unknown",
         "source": "none",
         "observed_at": now_iso(),
+        "capabilities": capabilities,
     }
 
 
