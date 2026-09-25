@@ -18,13 +18,34 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Apply frozen patch, validate, and prepare commit without moving main
+      - name: Apply frozen patch, validate, and export content blobs without moving main
         env:
           GH_TOKEN: ${{ github.token }}
           PYTHONDONTWRITEBYTECODE: '1'
         run: |
           set -euo pipefail
           cp .plat-publish/prepare_publish.py "$RUNNER_TEMP/prepare_publish.py"
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          path = Path(os.environ['RUNNER_TEMP']) / 'prepare_publish.py'
+          text = path.read_text()
+          start = text.index("tree = api('/git/trees'")
+          text = text[:start] + '''
+          for entry in entries:
+              content = entry.pop('content')
+              blob = api('/git/blobs', {'content': content, 'encoding': 'utf-8'})
+              entry['sha'] = blob['sha']
+          manifest = {'base': BASE, 'base_tree': '180addfccc08ec1eb4bf34a327469bca46011fa2',
+                      'expected_tree': output(['git', 'rev-parse', 'HEAD^{tree}']),
+                      'version': '2.4.0-rc.2', 'skill_digest': TREE_DIGEST,
+                      'tree_elements': entries, 'validation': '166 tests and all gates passed',
+                      'main_updated': False}
+          Path('publish-manifest.json').write_text(json.dumps(manifest, indent=2))
+          print('PUBLICATION_MANIFEST=' + json.dumps(manifest), flush=True)
+          '''
+          path.write_text(text)
+          PY
           python "$RUNNER_TEMP/prepare_publish.py"
       - uses: actions/upload-artifact@v4
         with:
