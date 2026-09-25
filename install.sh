@@ -96,21 +96,27 @@ ask_scope() {
 
 append_block() {
   local file="$1"
-  mkdir -p "$(dirname "$file")"
-  touch "$file"
-
-  if grep -q "<!-- plat:start -->" "$file" 2>/dev/null; then
-    echo "✓ Plat instruction already present: $file"
-    return 0
-  fi
-
-  cat >> "$file" <<'EOF'
-
-<!-- plat:start -->
-For software engineering requests, use the installed Plat skill.
-<!-- plat:end -->
-EOF
-  echo "✓ Added Plat instruction: $file"
+  python3 - "$file" <<'PLAT_RULE_PY'
+from pathlib import Path
+import re
+import sys
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8") if path.exists() else ""
+start, end = "<!-- plat:start -->", "<!-- plat:end -->"
+if text.count(start) != text.count(end) or text.count(start) > 1:
+    raise SystemExit("Ambiguous Plat markers; instruction file left unchanged: " + str(path))
+block = start + "\n" + 'For obvious, local, reversible edits, work directly and verify the result without loading Plat unless explicitly requested. Use the installed Plat skill for non-trivial engineering work, unresolved risk, or multi-step changes.' + "\n" + end
+if start in text:
+    if text.index(end) < text.index(start):
+        raise SystemExit("Reversed Plat markers; instruction file left unchanged")
+    updated = re.sub(re.escape(start) + r".*?" + re.escape(end), lambda _: block, text, flags=re.S)
+else:
+    updated = text + ("\n" if text and not text.endswith("\n") else "") + "\n" + block + "\n"
+path.parent.mkdir(parents=True, exist_ok=True)
+if updated != text:
+    path.write_text(updated, encoding="utf-8")
+print("Plat activation rule current: " + str(path))
+PLAT_RULE_PY
 }
 
 install_cursor_rule() {
@@ -118,11 +124,11 @@ install_cursor_rule() {
   mkdir -p "$(dirname "$file")"
   cat > "$file" <<'EOF'
 ---
-description: Use installed Plat for software engineering requests
+description: Route non-trivial engineering work to Plat; keep tiny edits direct
 alwaysApply: true
 ---
 
-For software engineering requests, use the installed Plat skill.
+For obvious, local, reversible edits, work directly and verify the result without loading Plat unless explicitly requested. Use the installed Plat skill for non-trivial engineering work, unresolved risk, or multi-step changes.
 EOF
   echo "✓ Added Plat Cursor rule: $file"
 }

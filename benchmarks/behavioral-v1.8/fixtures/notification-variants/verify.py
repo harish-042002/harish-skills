@@ -10,7 +10,8 @@ for state in states:
     rows = STATE_VARIANTS[state]
     assert len(rows) == 5, (state, len(rows))
     assert len(set(rows)) == 5
-    assert len(reachable_variants(state)) >= 5
+    assert len(reachable_variants(state)) == 5
+    assert set(reachable_variants(state)) == set(rows)
 
 source = Path("catalogue.py").read_text(encoding="utf-8")
 tree = ast.parse(source)

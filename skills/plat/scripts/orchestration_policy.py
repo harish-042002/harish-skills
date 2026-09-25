@@ -53,7 +53,7 @@ def decide(
     wall_time_critical: bool = False,
     health: str = "GREEN",
     context_health: str = "GREEN",
-    host_isolated_context: bool = True,
+    host_isolated_context: bool = False,
     fresh_context_workers: int = 0,
     brain_preflight: bool = False,
     brain_reviews: int = 0,

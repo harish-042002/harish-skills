@@ -19,12 +19,12 @@ Use when the developer asks to set up/customize Plat, when an existing profile c
 
 Profiles reduce rediscovery and tune explanation/output to the developer. They are **hints and verified summaries**, not hidden policy and not sources of repository truth.
 
-For interactive human use, the **global developer profile is a one-time required onboarding step**. The recommended Plat installer performs it during installation. If Plat was installed through a generic skill installer and the profile is missing, complete onboarding on first Plat use before substantive engineering work.
+The global developer profile is optional preference context. The installer may offer onboarding, but a missing profile never blocks engineering work. Use neutral defaults and ask preference questions only when the answer affects the current task.
 
 Installation/onboarding creates **only** the global developer profile at `~/.plat/profile.md`.
 
 Project and session state are separate runtime concerns:
-- global developer profile - required once for interactive use and the only profile created during installation;
+- global developer profile - optional for interactive use and the only profile created during installation;
 - project profile - optional later runtime cache only when explicitly requested or clearly useful for non-trivial repository work; never create it during installation/onboarding;
 - session state - only for non-trivial continuation.
 

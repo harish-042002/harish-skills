@@ -109,3 +109,12 @@ v2.3 makes the context-control architecture portable, but coding-agent hosts exp
 - Dynamic host capability inputs can enable isolated-context behavior, but Plat cannot create a host feature that the coding agent itself does not support.
 
 The 65/80% context and 8M/20M task-local cache-read thresholds are starting benchmark values, not provider guarantees. They may need tuning after matched runs across Codex, Claude Code, Cursor, Kiro, Cline, OpenCode, and other hosts.
+
+
+## v2.4.0-rc.1 audit candidate (not a released performance claim)
+
+This candidate replaces the v2.3 recovery interpretation above: cumulative cache replay, file-read counts and byte totals are not context occupancy and cannot independently trigger RED recovery. Missing or stale current occupancy remains unknown. The optional wrappers are not universal host interception. Command timeouts apply only to commands routed through the wrapper.
+
+The candidate has Linux Python runtime tests, not repeated live coding-model experiments or native Windows/macOS host verification. Older benchmark assets are absent from the downloaded CI validation snapshot; its behavioral test class cannot run in that snapshot. Full upstream repository validation must still run before a release.
+
+A smaller entrypoint is a measured byte reduction, not proof of an equal token, cost or latency reduction. No exact duration or savings for the user's two-to-three-hour Luna runs has been established.

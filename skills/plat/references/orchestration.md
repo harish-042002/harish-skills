@@ -1,3 +1,5 @@
+<!-- v2.4 candidate: Follow SKILL.md for activation. Review is optional, not a timer-triggered ceremony. Unknown host isolation is unavailable. No cumulative-work metric alone justifies compaction. -->
+
 # Bounded Orchestration and Brain Review
 
 Use only after the Plat lead has localized a concrete unresolved question or task health proves the current trajectory is unhealthy.
@@ -38,7 +40,7 @@ Use Brain for:
 - repeated failed hypotheses;
 - material scope/architecture drift.
 
-Build Brain input with `scripts/brain_packet.py`. Send only goal, hard constraints, current slice, task health/time, counters, concise evidence pointers, current direction, and one question. Hard cap: 4 KB.
+Build Brain input with `scripts/brain_packet.py`. Send only goal, hard constraints, current slice, task health/time, counters, concise evidence pointers, current direction, and one question. Hard cap: 4 KB by default; reject rather than truncate binding requirements.
 
 Brain may return a correction/next discriminating action. It must not edit, run broad discovery/full suites, recursively delegate, or take task ownership.
 

@@ -35,6 +35,13 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Evaluation dependencies
+        run: python -m pip install -r benchmarks/requirements.txt
+
       - name: Validate Plat
         env:
           PYTHONDONTWRITEBYTECODE: "1"
@@ -96,25 +103,26 @@ jobs:
 
           ## Highlights
 
-          - One canonical context runtime works across Skills-compatible coding agents.
-          - Real host telemetry overlays deterministic proxy health when available; telemetry is never required.
-          - Canonical JSON/env/file/transcript usage normalization supports provider-shaped token/cache fields.
-          - Consumed-evidence masking collapses unchanged repeated reads to digest/pointer references.
-          - Context pressure tracks returned bytes, large outputs, total/repeated reads, broad-suite reruns, and optional real cache/context deltas.
-          - Pre-compaction checkpoints preserve only compact task/repo/health state and evidence pointers.
-          - Hook-capable hosts can route PreCompact/preCompact through a generic bridge; unsupported hosts use the same RED-context checkpoint path.
-          - Host capabilities are dynamic inputs rather than hardcoded provider assumptions.
-          - Output firewall, one fresh-context-worker cap, 4 KB Brain packets, two-hour update checks, and full coding-agent catalog support remain intact.
-          - Verification quality remains the completion gate; context savings do not justify skipping proof.
+          - Minimal ordinary execution; deeper runtime helpers remain optional.
+          - Context occupancy is separate from cumulative cache and read traffic.
+          - Lossless evidence continuation, complete binding constraints, and bounded optional commands.
+          - Corrected usage accounting and independent benchmark verifiers.
+          - 166 local regression tests and runtime-helper timings; no verified end-to-end model cost or speed gain.
+          - Version 2.4.0-rc.2 is a benchmark candidate, not a stable-quality certification.
 
           The release asset `skill.zip` contains the complete Plat skill and MIT license.
           EOF
 
+          RELEASE_FLAGS=()
+          if [[ "$VERSION" == *-* ]]; then
+            RELEASE_FLAGS+=(--prerelease)
+          fi
+
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "Plat $TAG" --notes-file release-notes.md
+            gh release edit "$TAG" "${RELEASE_FLAGS[@]}" --title "Plat $TAG" --notes-file release-notes.md
             gh release upload "$TAG" skill.zip SHA256SUMS.txt --clobber
           else
-            gh release create "$TAG" skill.zip SHA256SUMS.txt \
+            gh release create "$TAG" skill.zip SHA256SUMS.txt "${RELEASE_FLAGS[@]}" \
               --target "$GITHUB_SHA" \
               --title "Plat $TAG" \
               --notes-file release-notes.md

@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import math
 import os
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,7 @@ TRANSCRIPT_ENV_VARS = (
 _COUNTER_KEYS = {
     "input_tokens": ("input_tokens", "prompt_tokens"),
     "output_tokens": ("output_tokens", "completion_tokens"),
+    "reasoning_output_tokens": ("reasoning_output_tokens",),
     "cache_read_tokens": (
         "cache_read_tokens",
         "cache_read_input_tokens",
@@ -57,7 +59,7 @@ def now_iso() -> str:
 def _number(value: Any) -> float | None:
     if isinstance(value, bool):
         return None
-    if isinstance(value, (int, float)):
+    if isinstance(value, (int, float)) and math.isfinite(value) and value >= 0:
         return float(value)
     return None
 
@@ -76,7 +78,7 @@ def _extract_from_dict(obj: dict[str, Any]) -> dict[str, float]:
     if cost is not None:
         out["cost_usd"] = max(out.get("cost_usd", 0.0), cost)
 
-    details = obj.get("prompt_tokens_details")
+    details = obj.get("input_tokens_details", obj.get("prompt_tokens_details"))
     if isinstance(details, dict):
         cached = _number(details.get("cached_tokens"))
         if cached is not None:
@@ -84,21 +86,27 @@ def _extract_from_dict(obj: dict[str, Any]) -> dict[str, float]:
                 out.get("cache_read_tokens", 0.0),
                 cached,
             )
+    details = obj.get("output_tokens_details", obj.get("completion_tokens_details"))
+    if isinstance(details, dict):
+        reasoning = _number(details.get("reasoning_tokens"))
+        if reasoning is not None:
+            out["reasoning_output_tokens"] = reasoning
     return out
 
 
 def _usage_candidates(obj: Any) -> list[dict[str, Any]]:
-    found: list[dict[str, Any]] = []
-    if isinstance(obj, dict):
-        direct = _extract_from_dict(obj)
-        if direct:
-            found.append(direct)
-        for value in obj.values():
-            found.extend(_usage_candidates(value))
-    elif isinstance(obj, list):
-        for value in obj:
-            found.extend(_usage_candidates(value))
-    return found
+    """Only documented envelopes, not arbitrary user text or tool payloads."""
+    if not isinstance(obj, dict):
+        return []
+    found = [_extract_from_dict(obj)]
+    for path in (("usage",), ("message", "usage"),
+                 ("payload", "info", "total_token_usage")):
+        cur = obj
+        for key in path:
+            cur = cur.get(key) if isinstance(cur, dict) else None
+        if isinstance(cur, dict):
+            found.append(_extract_from_dict(cur))
+    return [x for x in found if x]
 
 
 def _dedupe_id(obj: dict[str, Any], line_no: int) -> str:
@@ -120,60 +128,82 @@ def _dedupe_id(obj: dict[str, Any], line_no: int) -> str:
     return f"line:{line_no}"
 
 
-def parse_jsonl(path: Path) -> dict[str, Any]:
-    totals = {
-        "input_tokens": 0.0,
-        "output_tokens": 0.0,
-        "cache_read_tokens": 0.0,
-        "cache_write_tokens": 0.0,
-        "cost_usd": 0.0,
-    }
-    maxima = {
-        "context_used_tokens": 0.0,
-        "context_limit_tokens": 0.0,
-    }
-    seen: set[str] = set()
-    records = 0
+def _named_dict(obj: Any, name: str) -> dict | None:
+    if not isinstance(obj, dict):
+        return None
+    paths = ((name,), ("message", name), ("payload", "info", name), ("info", name))
+    for path in paths:
+        cur = obj
+        for key in path:
+            cur = cur.get(key) if isinstance(cur, dict) else None
+        if isinstance(cur, dict):
+            return cur
+    return None
 
-    with path.open("r", encoding="utf-8", errors="replace") as fh:
-        for line_no, line in enumerate(fh, start=1):
-            line = line.strip()
-            if not line:
-                continue
+
+def parse_jsonl(path: Path) -> dict[str, Any]:
+    """Read one session. Known cumulative snapshots replace, never add to totals.
+
+    Only explicit usage dictionaries are treated as per-message usage. Unknown
+    log schemas stay unavailable instead of recursively counting arbitrary data.
+    """
+    counters = ("input_tokens", "output_tokens", "cache_read_tokens", "cache_write_tokens", "reasoning_output_tokens", "cost_usd")
+    contexts = ("context_used_tokens", "context_limit_tokens")
+    events: dict[str, dict] = {}
+    cumulative: dict | None = None
+    current: dict = {}
+    cumulative_records = 0
+    reported_cost = None
+    with path.open(encoding="utf-8", errors="replace") as fh:
+        for line_no, line in enumerate(fh, 1):
             try:
                 obj = json.loads(line)
             except json.JSONDecodeError:
                 continue
             if not isinstance(obj, dict):
                 continue
-            identity = _dedupe_id(obj, line_no)
-            if identity in seen:
+            total = _named_dict(obj, "total_token_usage")
+            usage = total if total is not None else _named_dict(obj, "usage")
+            if usage is None:
+                # Canonical rows must explicitly identify their counter semantics.
+                if obj.get("usage_kind") not in {"cumulative", "per_request"}:
+                    continue
+                usage = obj
+            event = _extract_from_dict(usage)
+            # Claude terminal result usage is aggregate; its cost is outside usage.
+            if obj.get("type") == "result":
+                cost = _number(obj.get("total_cost_usd"))
+                if cost is not None:
+                    reported_cost = cost
+            if not event:
                 continue
-            seen.add(identity)
-
-            candidates = _usage_candidates(obj)
-            if not candidates:
-                continue
-
-            # One logical event can contain the same usage at multiple nesting
-            # levels. Take the maximum per counter for that event, then sum
-            # events. Context-window fields are maxima, not additive.
-            event: dict[str, float] = {}
-            for candidate in candidates:
-                for key, value in candidate.items():
-                    event[key] = max(event.get(key, 0.0), value)
-
-            for key in totals:
-                totals[key] += event.get(key, 0.0)
-            for key in maxima:
-                maxima[key] = max(maxima[key], event.get(key, 0.0))
-            records += 1
-
-    return {
-        **{k: int(v) if float(v).is_integer() else v for k, v in totals.items()},
-        **{k: int(v) if float(v).is_integer() else v for k, v in maxima.items()},
-        "records": records,
-    }
+            for key in contexts:
+                value = event.get(key, _number(obj.get(key)))
+                if value is not None:
+                    current[key] = value
+            if total is not None or obj.get("usage_kind") == "cumulative" or obj.get("type") == "result":
+                cumulative = {key: value for key, value in event.items() if key in counters}
+                cumulative_records += 1
+            else:
+                # A later record of the same message may contain final usage.
+                identity = _dedupe_id(obj, line_no)
+                events[identity] = {**events.get(identity, {}), **event}
+    if cumulative is not None:
+        totals = cumulative
+        kind = "latest_cumulative_snapshot"
+        records = cumulative_records
+    else:
+        totals = {}
+        for event in events.values():
+            for key in counters:
+                if key in event:
+                    totals[key] = totals.get(key, 0) + event[key]
+        kind = "unique_message_totals"
+        records = len(events)
+    if reported_cost is not None:
+        totals["cost_usd"] = reported_cost
+    return {**totals, **current, "records": records, "counter_semantics": kind,
+            "observed_at": dt.datetime.fromtimestamp(path.stat().st_mtime, dt.timezone.utc).isoformat()}
 
 
 def normalize(payload: dict[str, Any], *, host: str = "unknown", source: str = "canonical") -> dict[str, Any]:
@@ -194,12 +224,12 @@ def normalize(payload: dict[str, Any], *, host: str = "unknown", source: str = "
 
     snapshot: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
-        "available": bool(merged),
-        "host": host or "unknown",
+        "available": bool(merged) and payload.get("available") is not False,
+        "host": host if host and host != "unknown" else str(payload.get("host", "unknown")),
         "source": source,
-        "observed_at": now_iso(),
+        "observed_at": payload.get("observed_at") or now_iso(),
         "capabilities": {
-            key: bool(value)
+            key: value is True
             for key, value in capabilities.items()
             if key in {
                 "isolated_context",
@@ -208,6 +238,8 @@ def normalize(payload: dict[str, Any], *, host: str = "unknown", source: str = "
             }
         },
     }
+    if payload.get("counter_semantics"):
+        snapshot["counter_semantics"] = payload["counter_semantics"]
     for key, value in merged.items():
         snapshot[key] = int(value) if float(value).is_integer() else value
 
@@ -244,14 +276,6 @@ def discover(*, host: str = "unknown", transcript: Path | None = None) -> dict[s
         payload = _load_json_payload(path.read_text(encoding="utf-8"))
         return normalize(payload, host=host, source=str(path))
 
-    canonical = CANONICAL_FILE
-    if canonical.exists():
-        payload = _load_json_payload(canonical.read_text(encoding="utf-8"))
-        snap = normalize(payload, host=host or str(payload.get("host", "unknown")), source=str(canonical))
-        if payload.get("source"):
-            snap["upstream_source"] = payload.get("source")
-        return snap
-
     transcript_path = transcript
     if transcript_path is None:
         for name in TRANSCRIPT_ENV_VARS:
@@ -266,13 +290,24 @@ def discover(*, host: str = "unknown", transcript: Path | None = None) -> dict[s
         snap["records"] = parsed.get("records", 0)
         return snap
 
+    canonical = CANONICAL_FILE
+    if canonical.exists():
+        payload = _load_json_payload(canonical.read_text(encoding="utf-8"))
+        snap = normalize(payload, host=host, source=str(canonical))
+        snap["upstream_source"] = payload.get("source")
+        # A cache is a historical record, not fresh host occupancy. Keep usage for
+        # reporting, but require fresh input before taking a context-reset action.
+        snap.pop("context_utilization", None)
+        snap["occupancy_fresh"] = False
+        return snap
+
     capabilities = {}
     env_caps = os.environ.get(CAPABILITIES_ENV)
     if env_caps:
         parsed_caps = json.loads(env_caps)
         if isinstance(parsed_caps, dict):
             capabilities = {
-                key: bool(value)
+                key: value is True
                 for key, value in parsed_caps.items()
                 if key in {
                     "isolated_context",

@@ -43,22 +43,24 @@ function Ask-Scope {
 
 function Add-InstructionBlock([string]$Path) {
   $dir = Split-Path -Parent $Path
-  if ($dir) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
-  if (-not (Test-Path $Path)) { New-Item -ItemType File -Force -Path $Path | Out-Null }
-
-  $content = Get-Content -Raw -Path $Path
-  if ($content -match "<!-- plat:start -->") {
-    Write-Host "Plat instruction already present: $Path"
-    return
+  $content = if (Test-Path $Path) { [IO.File]::ReadAllText($Path) } else { "" }
+  $start = "<!-- plat:start -->"
+  $end = "<!-- plat:end -->"
+  $starts = [regex]::Matches($content, [regex]::Escape($start)).Count
+  $ends = [regex]::Matches($content, [regex]::Escape($end)).Count
+  if ($starts -ne $ends -or $starts -gt 1) { throw "Ambiguous Plat markers; instruction file left unchanged: $Path" }
+  $block = $start + "`n" + "For obvious, local, reversible edits, work directly and verify the result without loading Plat unless explicitly requested. Use the installed Plat skill for non-trivial engineering work, unresolved risk, or multi-step changes." + "`n" + $end
+  if ($starts -eq 1) {
+    if ($content.IndexOf($end) -lt $content.IndexOf($start)) { throw "Reversed Plat markers; instruction file left unchanged" }
+    $pattern = "(?s)" + [regex]::Escape($start) + ".*?" + [regex]::Escape($end)
+    $updated = [regex]::Replace($content, $pattern, [System.Text.RegularExpressions.MatchEvaluator]{ param($m) $block })
+  } else {
+    $separator = if ($content -and -not $content.EndsWith("`n")) { "`n`n" } else { "`n" }
+    $updated = $content + $separator + $block + "`n"
   }
-
-  Add-Content -Path $Path -Value @"
-
-<!-- plat:start -->
-For software engineering requests, use the installed Plat skill.
-<!-- plat:end -->
-"@
-  Write-Host "Added Plat instruction: $Path"
+  if ($dir) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+  if ($updated -ne $content) { [IO.File]::WriteAllText($Path, $updated, [System.Text.UTF8Encoding]::new($false)) }
+  Write-Host "Plat activation rule current: $Path"
 }
 
 function Install-CursorRule([string]$Path) {
@@ -66,11 +68,11 @@ function Install-CursorRule([string]$Path) {
   New-Item -ItemType Directory -Force -Path $dir | Out-Null
   Set-Content -Path $Path -Value @"
 ---
-description: Use installed Plat for software engineering requests
+description: Route non-trivial engineering work to Plat; keep tiny edits direct
 alwaysApply: true
 ---
 
-For software engineering requests, use the installed Plat skill.
+For obvious, local, reversible edits, work directly and verify the result without loading Plat unless explicitly requested. Use the installed Plat skill for non-trivial engineering work, unresolved risk, or multi-step changes.
 "@
   Write-Host "Added Plat Cursor rule: $Path"
 }

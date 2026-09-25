@@ -40,10 +40,8 @@ class ContextGuardTests(unittest.TestCase):
 
     def test_red_recommends_one_fresh_context_worker(self):
         state = self.mod.new_state()
-        state = self.mod.record(
-            state,
-            returned_bytes=self.mod.RED_RETURNED_BYTES,
-            kind="command",
+        state = self.mod.apply_telemetry(
+            state, {"available": True, "context_utilization": 0.85}
         )
         self.assertEqual(state["health"]["status"], "RED")
         self.assertEqual(state["health"]["action"], "fresh-context-worker")
@@ -101,7 +99,7 @@ class ContextGuardTests(unittest.TestCase):
         self.assertEqual(state["telemetry"]["cache_read_delta"], 0)
         self.assertEqual(state["health"]["status"], "GREEN")
 
-    def test_real_cache_replay_can_turn_red_even_when_proxies_are_green(self):
+    def test_real_cache_replay_warns_efficiency_not_occupancy(self):
         state = self.mod.new_state()
         state = self.mod.apply_telemetry(
             state,
@@ -133,8 +131,9 @@ class ContextGuardTests(unittest.TestCase):
             state["telemetry"]["cache_read_delta"],
             self.mod.RED_CACHE_READ_DELTA,
         )
-        self.assertEqual(state["health"]["status"], "RED")
-        self.assertEqual(state["health"]["action"], "fresh-context-worker")
+        self.assertEqual(state["health"]["status"], "GREEN")
+        self.assertEqual(state["health"]["action"], "continue")
+        self.assertEqual(state["efficiency"]["status"], "YELLOW")
 
     def test_real_context_utilization_can_turn_yellow(self):
         state = self.mod.new_state()

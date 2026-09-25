@@ -1,0 +1,2 @@
+# Evaluation-only dependency; skill runtime uses only the standard library.
+PyYAML>=6.0,<7.0

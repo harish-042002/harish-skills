@@ -6,7 +6,7 @@
 
 **Minimum sufficient engineering depth for AI coding agents.**
 
-**v2.3.0 · cross-agent context runtime · real telemetry when available · evidence masking · proof-first execution**
+**v2.4.0-rc.2 · cross-agent context runtime · real telemetry when available · evidence masking · proof-first execution**
 
 Plat is an engineering control plane for AI coding agents. It helps an agent understand the real task, keep the requested scope intact, choose the smallest sufficient reasoning depth, load only the engineering knowledge it actually needs, reuse repository truth, and prove the result before calling the work complete.
 
@@ -30,6 +30,8 @@ Plat is an engineering control plane for AI coding agents. It helps an agent und
 > **Plat v2 principle:** **solve immediately from the strongest current evidence, measure whether real progress is happening, and escalate reasoning or specialists only when the trajectory proves they are needed.**
 
 <img src="assets/plat-activate.svg" alt="Verified one-command Plat installation flow" width="100%" />
+
+> **Benchmark candidate:** main carries 2.4.0-rc.2. Runtime regressions are tested; live model speed/cost improvements remain unverified. Stable-release update checks may still report v2.3.0; benchmark a pinned main commit.
 
 ## Install
 

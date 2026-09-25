@@ -3,9 +3,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from collections import defaultdict
 from pathlib import Path
-from statistics import mean
+from statistics import mean, median
 from typing import Any
 
 
@@ -27,10 +28,20 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
     for condition, items in sorted(groups.items()):
         passed = sum(bool(x.get("passed")) for x in items)
         telemetry_keys = sorted({k for x in items for k in x.get("telemetry", {})})
-        telem = {}
+        telem, coverage = {}, {}
         for key in telemetry_keys:
-            values = [float(x.get("telemetry", {}).get(key, 0)) for x in items]
-            telem[key] = round(mean(values), 4)
+            def complete(row):
+                counts = row.get("telemetry_coverage")
+                # Historical rows have no turn-level provenance; never invent it.
+                return counts is None or counts.get(key, 0) == row.get("attempted_turns", 1)
+            values = [float(x["telemetry"][key]) for x in items
+                      if complete(x) and isinstance(x.get("telemetry", {}).get(key), (int, float))
+                      and not isinstance(x["telemetry"][key], bool)
+                      and math.isfinite(x["telemetry"][key]) and x["telemetry"][key] >= 0]
+            telem[key] = round(mean(values), 6) if values else None
+            coverage[key] = {"reported":len(values), "total":len(items), "complete":len(values)==len(items),
+                             "partial_runs":sum(key in x.get("telemetry", {}) and not complete(x) for x in items),
+                             "turn_coverage_unknown_runs":sum("telemetry_coverage" not in x for x in items)}
         out[condition] = {
             "runs": len(items),
             "passed": passed,
@@ -39,6 +50,10 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
             "mean_lines_changed": round(mean(int(x.get("lines_added", 0)) + int(x.get("lines_deleted", 0)) for x in items), 4) if items else 0,
             "mean_wall_seconds": round(mean(float(x.get("wall_seconds", 0)) for x in items), 4) if items else 0,
             "mean_telemetry": telem,
+            "telemetry_coverage": coverage,
+            "median_wall_seconds": median([float(x["wall_seconds"]) for x in items]),
+            "p95_wall_seconds": sorted(float(x["wall_seconds"]) for x in items)[math.ceil(.95 * len(items)) - 1],
+            "timeouts": sum(any(f.get("returncode") == 124 for f in x.get("agent_failures", [])) for x in items),
         }
     return out
 

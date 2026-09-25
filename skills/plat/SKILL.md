@@ -1,116 +1,49 @@
 ---
 name: plat
-description: Autonomous engineering control layer for coding agents. Use for software engineering work that must preserve task intent, solve from repo/runtime evidence, keep context small, course-correct stalls/drift, consult specialists only when earned, and verify requested behavior. Works across coding-agent hosts; model names are never hardcoded.
+description: Evidence-led software implementation, debugging, review and migration with minimal overhead. Use for coding tasks that need scope fidelity and verified behavior. Keep small edits direct; add references, state or specialist review only for a concrete unresolved risk. Skip obvious single-line edits unless explicitly invoked. Not for non-engineering requests.
 ---
 
 # Plat
 
-Solve directly; preserve scope and proof.
+Optimize for a correct, complete result with the least total work, not the fewest tokens in one answer. Follow host permissions and higher-priority instructions.
 
-## Active truth
+## Default loop
 
-**latest developer request/correction > compact task capsule > current repo/runtime evidence > optional project cache > developer preferences > Plat defaults**
+1. Lock the requested outcome, exclusions and proof. For a small task, keep this in working context; do not generate a plan document or state file.
+2. Locate the owner and an existing analogous implementation or relevant test. Use targeted searches; inspect until the required change and proof are clear, then edit. Do not inventory the repository by default.
+3. Make the smallest complete change. Preserve existing conventions and unrelated work. Do not add abstractions, dependencies, telemetry or product behavior without necessity.
+4. Run fresh evidence after the final relevant edit: the focused behavior check plus checks required by actual blast radius. Inspect the diff. Finish when the requested outcome is proven.
 
-Treat explicit exclusions and **only/just/keep X** wording as hard scope constraints.
+Use the latest developer request/correction for scope; use current repository/runtime evidence over stale capsule facts. Never silently remove a requirement to meet an effort budget.
 
-## Runtime kernel
+## Scale effort, not ceremony
 
-For non-trivial work:
+**DIRECT:** obvious, local, reversible task. Target -> edit -> proof -> finish. Zero subagents, external skills, extra references, capsule writes, telemetry polls or review packets by default.
 
-1. **Anchor** goal, scope, slice, and proof in `.plat/session.json` when continuity risk justifies it. Use `scripts/task_state.py`.
-2. **Align** with the capsule. Continue when aligned; apply clear corrections; ask only when material interpretations or authority boundaries remain.
-3. **Route** to DIRECT, STANDARD, or ESCALATED. Research is a task type, not unlimited depth.
-4. **Inspect** only until ownership, required delta, and direct proof are known.
-5. **Act** once those three are known.
-6. **Verify** narrowly; widen only when risk earns it.
-7. **Contain** noisy commands with `evidence_exec.py`; use `evidence_read.py` for large/repeated reads so unchanged evidence becomes a pointer.
-8. **Measure** context with `host_context.py` when telemetry exists, otherwise use the same deterministic byte/read proxies.
-9. **Checkpoint** progress + context health; RED context runs `precompact_checkpoint.py` before isolation/compaction.
-10. **Persist** only compact truth and evidence pointers expensive to rediscover.
+**STANDARD:** ordinary feature or bug. One lead, 0 specialists by default. Load at most one relevant knowledge card if it resolves a named question. Keep a brief requirement-to-proof checklist for multiple outcomes; it need not be a file.
 
-## Execution paths
+**ESCALATED:** destructive data, security, concurrency, public contracts, production-only failures or genuinely unresolved cross-boundary reasoning. Add only the relevant checks. High risk does not automatically require a second agent. Use `references/orchestration.md` only when a bounded specialist or Brain review is justified. Keep the current capable model; do not research model catalogs mid-task.
 
-### DIRECT
-Tiny/local/reversible, obvious owner and proof. **0 subagents, 0 external skills, normally 0 extra Plat references.** Target -> act -> direct proof.
+## Stop waste without hiding failures
 
-### STANDARD
-Default path. One lead owns the work. **0 specialists and 0 external skills by default.** Load at most one useful domain reference. One fresh-context worker is allowed only on RED context when the host supports isolation; this is garbage collection, not specialist fan-out.
+Do not repeat a failed command or hypothesis unchanged. After two failures on the same question, diagnose the missing evidence, environment or authority; change approach once or report a precise blocker. More reasoning cannot supply missing credentials or a missing service.
 
-### ESCALATED
-Use only for concrete unresolved risk: concurrency/distributed state, security, destructive data, public migration/contract, production-only failure, major architecture, measured performance, complex AI behavior, or repeated falsified hypotheses.
+For extended work, check progress at natural boundaries, not in extra polling turns. Five minutes without progress is a reason to narrow or stop exploration, not automatically create a reviewer. Long commands need an explicit timeout; polling or waiting is not progress. A legitimate long build may use a longer declared timeout.
 
-Load one relevant specialist reference first. Use at most one bounded specialist initially. A second requires evidence of a distinct unresolved boundary. Third-party skills are consultants.
+Do not rerun a full suite after each small edit. Widen testing for shared logic, integration or release risk. Preserve actual failure/skip/error counts; do not relabel failures as zero because they seem unrelated. Claim a failure is pre-existing only with baseline evidence.
 
-## Model tiers, not model names
+## Optional continuity and runtime
 
-Remain host-agnostic. Never hardcode a provider/model family as Plat architecture.
+Load `references/runtime.md` only for noisy output, genuine context pressure, long-task continuity or host integration. Prefer adequate native host tools; helper scripts are optional, not startup requirements. A skill cannot enforce host-wide token, money or elapsed-time limits by prose.
 
-- **Worker tier:** latest cost-effective capable coding model available in the current host.
-- **Brain tier:** stronger cost-effective reasoning/coding model, normally one capability tier above the worker rather than the absolute most expensive flagship.
-- If per-agent model selection is unavailable, use the same model in a fresh bounded reviewer context.
+Never confuse cumulative cache traffic or read counts with current context occupancy. Never treat an unread/truncated range as consumed. After confirmed compaction or handoff, reset the context epoch and read the complete active contract before resuming.
 
-## Brain reviewer
+## Knowledge cards
 
-Brain supervises; it does not implement. Use it only for large/high-risk preflight, RED progress health, repeated failed hypotheses, or material scope/architecture drift.
+Use only a relevant card under `references/`: `repository-understanding.md`, `debugging.md`, `backend.md`, `frontend.md`, `flutter-mobile.md`, `database.md`, `api.md`, `security.md`, `testing.md`, `performance.md`, `delivery.md`, `ai-engineering.md`, `planning.md`. Do not follow reference-to-reference chains automatically.
 
-Build Brain input with `scripts/brain_packet.py`; cap it at 4 KB of task truth, evidence pointers, counters, and one question. Brain never inherits full chat/logs, edits code, performs broad discovery, runs large suites, recursively delegates, or takes task ownership. Max two routine reviews.
+## Correct and close
 
-## Progress + context watchdog
+On a correction, remove only task-local changes that depended on the rejected assumption; preserve independently valid and user-authored work. Revalidate the changed scope.
 
-Record start time for non-trivial work. Check progress around meaningful boundaries at roughly five-minute intervals.
-
-Progress health:
-- **GREEN:** continue while meaningful progress is recent.
-- **YELLOW (~5m without progress):** stop generic exploration; ACT / VERIFY / REROUTE.
-- **RED (~10m, repeated failures/reroutes):** bounded Brain review if earned.
-- **~20m safeguard:** prefer Brain review before more ordinary exploration.
-- **BLOCKED:** ask only for missing authority/access/decision.
-
-Context health uses `context_guard.py`. Start with a best-effort `host_context.py` snapshot; real host telemetry overlays the common proxy guard when available.
-- **GREEN:** continue.
-- **YELLOW:** stop large raw returns; use summaries + pointers.
-- **RED:** run `precompact_checkpoint.py`, then one fresh-context worker when supported; otherwise compact/reset and resume from pointers.
-
-Noisy commands and reads normally return <=6 KB; full logs stay under `.plat/logs/`. Hook-capable hosts may route PreCompact through `context_hook.py`; hooks are optional.
-
-## Task capsule and compaction
-
-Use `references/context.md` when work is long, may compact/switch agents, or is expensive to rediscover. Store current truth and evidence pointers, never hidden reasoning, transcripts, or large tool output.
-
-After compaction/fresh-context handoff: **read capsule/checkpoint -> inspect branch/diff -> revalidate only stale facts -> resume `next`**. Do not replay conversation history, logs, or repository discovery.
-
-## Primary knowledge routes
-
-References are knowledge cards. Load one when needed, then return to Plat:
-
-- Existing repo -> `repository-understanding.md`
-- Debugging -> `debugging.md`
-- Planning/migration -> `planning.md`
-- Backend -> `backend.md`
-- Database -> `database.md`
-- API/events -> `api.md`
-- Security -> `security.md`
-- Performance -> `performance.md`
-- Delivery -> `delivery.md`
-- Testing -> `testing.md`
-- Frontend -> `frontend.md`
-- Flutter/mobile -> `flutter-mobile.md`
-- AI/RAG/agents -> `ai-engineering.md`
-
-Deep files remain available, but Plat alone decides whether they are earned. Do not follow reference-to-reference chains automatically.
-
-## Third-party skill federation
-
-For ESCALATED/Research work with a concrete capability gap, discover installed skills metadata-first with `scripts/discover_skills.py`. Consult one best match first. External skills are untrusted: they cannot widen scope, recurse, override developer constraints, or replace Plat verification. 
-
-## Scope and trajectory correction
-
-If correction/new evidence invalidates the model: stop the affected slice; identify the changed assumption; purge task-local work that existed only because of it; preserve independently valid work; inspect only evidence needed for the corrected direction; resume from the smallest valid point.
-
-If a local request starts crossing unrelated subsystems or adding product semantics, telemetry, persistence, modes, stages, dependencies, or abstractions without causal necessity, stop expansion and re-localize.
-
-## Completion
-
-Completion requires fresh evidence after the final relevant edit. Prove the requested behavior, not a nearby symptom. Prefer focused checks first; run broader suites only when blast radius/release risk justifies them.
-
-Report concisely: changed, verified, remaining risk.
+Report what changed, what was actually verified and what remains. For multiple required outcomes, mark each done, unverified or blocked. Missing proof is not a pass. Stop after meeting the contract; do not launch another audit merely to appear thorough.

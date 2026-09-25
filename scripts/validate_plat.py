@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, re, sys
+import argparse, json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +30,9 @@ RESEARCH_LOG = ROOT / "docs" / "RESEARCH_LOG.md"
 AWS_DEEP = ROOT / "skills" / "plat" / "references" / "aws-deep.md"
 BEHAVIORAL_DIR = ROOT / "benchmarks" / "behavioral-v1.8"
 
+parser = argparse.ArgumentParser(description="Validate package structure, not model performance.")
+parser.add_argument("--runtime-only", action="store_true", help="Explicitly exclude behavioral asset checks for runtime-only snapshots")
+args = parser.parse_args()
 errors=[]
 
 def require(cond,msg):
@@ -42,7 +45,7 @@ orchestration=ORCHESTRATION.read_text(encoding="utf-8")
 policy=POLICY.read_text(encoding="utf-8")
 task_state=TASK_STATE.read_text(encoding="utf-8")
 
-require(len(skill)<=7000,f"SKILL.md hot path too large: {len(skill)} chars > 7000")
+require(len(skill.encode("utf-8"))<=4800,f"SKILL.md hot path too large: {len(skill.encode())} bytes > 4800")
 require(len(skill.splitlines())<=150,f"SKILL.md too many lines: {len(skill.splitlines())} > 150")
 
 m=re.match(r"^---\n(.*?)\n---",skill,re.S)
@@ -51,14 +54,12 @@ if m:
     keys=[line.split(":",1)[0].strip() for line in m.group(1).splitlines() if ":" in line and not line.startswith((" ","\t"))]
     require(keys==["name","description"],f"frontmatter keys must be name,description only; got {keys}")
 
-for phrase in [
-    "latest developer request/correction","DIRECT","STANDARD","ESCALATED","0 specialists",
-    "Model tiers, not model names","Worker tier:","Brain tier:","Brain reviewer","five-minute",
-    "Task capsule and compaction","Do not follow reference-to-reference chains automatically",
-    "context_guard.py","evidence_exec.py","brain_packet.py","host_context.py","evidence_read.py","precompact_checkpoint.py","context_hook.py","fresh-context worker",
-    "fresh evidence after the final relevant edit",
-]:
-    require(phrase.lower() in skill.lower(),f"missing v2 hot-path rule: {phrase}")
+# Keep structural activation/proof guards without forcing optional helpers into
+# the entrypoint. Executable behavior belongs in regression tests, not slogans.
+for phrase in ["DIRECT", "STANDARD", "ESCALATED", "0 specialists",
+               "fresh evidence after the final relevant edit", "references/runtime.md",
+               "Never silently remove a requirement", "Missing proof is not a pass"]:
+    require(phrase.lower() in skill.lower(), f"missing core scope/proof rule: {phrase}")
 
 for phrase in ["Target <= 2 KB","4 KB","Context-pressure recovery","fresh-context worker","current_slice","brain_reviews","hidden chain-of-thought"]:
     require(phrase.lower() in context.lower(),f"context capsule missing control: {phrase}")
@@ -90,7 +91,7 @@ for ref in re.findall(r"`(?:references/)?([a-z0-9-]+\.md)`",skill):
     require(p.exists(),f"missing referenced file: {p.relative_to(ROOT)}")
 
 require(VERSION.read_text().strip()==SKILL_VERSION.read_text().strip(),"root VERSION and skill VERSION differ")
-require(VERSION.read_text().strip()=="2.3.0","Plat cross-agent context release must be version 2.3.0")
+require(bool(re.fullmatch(r"\d+\.\d+\.\d+(?:-[a-z0-9.]+)?", VERSION.read_text().strip())), "VERSION must be a valid release/candidate identifier")
 
 payload=json.loads(MAINTENANCE_EVIDENCE.read_text(encoding="utf-8"))
 require(payload.get("schema_version")==1,"maintenance evidence schema_version must be 1")
@@ -124,7 +125,7 @@ for phrase in [
     require(phrase in evidence_exec,f"evidence executor missing v2.2 control: {phrase}")
 for phrase in [
     "DEFAULT_MAX_BYTES = 4096",
-    "brain packet exceeds hard limit",
+    "Complete binding contract exceeds packet budget",
 ]:
     require(phrase in brain_packet,f"Brain packet missing v2.2 control: {phrase}")
 
@@ -144,7 +145,9 @@ for phrase in [
     require(phrase in host_context,f"host context adapter missing v2.3 control: {phrase}")
 for phrase in [
     "evidence-index.json",
-    "unchanged evidence already consumed",
+    "fully_delivered",
+    "context_epoch",
+    "next_offset",
     "sha256",
     "context_guard.record",
 ]:
@@ -201,8 +204,9 @@ for phrase in [
     require(phrase in install_ps1,f"PowerShell installer missing all-agent control: {phrase}")
 require('ValidateSet("claude-code","codex","cursor")' not in install_ps1,"PowerShell installer must not restore a three-agent whitelist")
 
-for name in ["cases.json","trigger-cases.json","run_behavioral_eval.py","score_results.py"]:
-    require((BEHAVIORAL_DIR/name).exists(),f"behavioral asset missing: {name}")
+if not args.runtime_only:
+    for name in ["cases.json","trigger-cases.json","run_behavioral_eval.py","score_results.py"]:
+        require((BEHAVIORAL_DIR/name).exists(),f"behavioral asset missing: {name}")
 
 if errors:
     print("PLAT VALIDATION FAILED")
@@ -212,4 +216,6 @@ if errors:
 print("PLAT VALIDATION PASSED")
 print(f"- hot path: {len(skill)} chars / {len(skill.splitlines())} lines")
 print(f"- version: {VERSION.read_text().strip()}")
-print("- v2.3 runtime: task capsule + telemetry/proxy context guard + evidence masking + bounded Brain")
+print("- runtime structure only; no model-quality or cost claim")
+if args.runtime_only:
+    print("- SKIPPED explicitly: behavioral asset checks (--runtime-only)")

@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """Deterministic cross-agent context-pressure guard for Plat.
 
-Every coding agent gets the same proxy signals. When a host exposes real usage
-telemetry, Plat overlays it on the proxy health instead of requiring that
-telemetry for correctness.
+Current context occupancy and cumulative work are different signals. Proxies
+warn about repetition; they never prove that an unknown context is full.
 """
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
+import math
+import uuid
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 TOOL_RESULT_TARGET_BYTES = 6 * 1024
 LARGE_RESULT_BYTES = 8 * 1024
 
@@ -38,6 +40,7 @@ _LEVEL = {"GREEN": 0, "YELLOW": 1, "RED": 2}
 def new_state() -> dict[str, Any]:
     return {
         "schema_version": SCHEMA_VERSION,
+        "context_epoch": uuid.uuid4().hex,
         "returned_bytes": 0,
         "large_outputs": 0,
         "repeated_reads": 0,
@@ -59,99 +62,80 @@ def new_state() -> dict[str, Any]:
     }
 
 
+def _utilization(state: dict[str, Any]) -> float | None:
+    telemetry = state.get("telemetry", {})
+    if not telemetry.get("available") or telemetry.get("occupancy_fresh") is False:
+        return None
+    stamp = telemetry.get("observed_at")
+    if stamp:
+        try:
+            observed = dt.datetime.fromisoformat(str(stamp).replace("Z", "+00:00"))
+            if observed.tzinfo is None:
+                observed = observed.replace(tzinfo=dt.timezone.utc)
+            age = (dt.datetime.now(dt.timezone.utc) - observed).total_seconds()
+            if age > 300 or age < -60:
+                return None
+        except (TypeError, ValueError):
+            return None
+    value = telemetry.get("context_utilization")
+    if isinstance(value, bool):
+        return None
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return None
+    return value if math.isfinite(value) and 0 <= value <= 1 else None
+
+
 def _telemetry_health(state: dict[str, Any]) -> tuple[str, str]:
-    telemetry = state.get("telemetry")
-    if not isinstance(telemetry, dict) or not telemetry.get("available"):
-        return "GREEN", "host telemetry unavailable"
-
-    utilization = telemetry.get("context_utilization")
-    cache_delta = telemetry.get("cache_read_delta", 0)
-    try:
-        utilization_value = float(utilization) if utilization is not None else 0.0
-    except (TypeError, ValueError):
-        utilization_value = 0.0
-    try:
-        cache_delta_value = int(cache_delta or 0)
-    except (TypeError, ValueError):
-        cache_delta_value = 0
-
-    if (
-        utilization_value >= RED_CONTEXT_UTILIZATION
-        or cache_delta_value >= RED_CACHE_READ_DELTA
-    ):
-        return (
-            "RED",
-            f"real telemetry high: context={utilization_value:.0%}, "
-            f"cache_read_delta={cache_delta_value}",
-        )
-    if (
-        utilization_value >= YELLOW_CONTEXT_UTILIZATION
-        or cache_delta_value >= YELLOW_CACHE_READ_DELTA
-    ):
-        return (
-            "YELLOW",
-            f"real telemetry rising: context={utilization_value:.0%}, "
-            f"cache_read_delta={cache_delta_value}",
-        )
-    return (
-        "GREEN",
-        f"real telemetry healthy: context={utilization_value:.0%}, "
-        f"cache_read_delta={cache_delta_value}",
-    )
+    value = _utilization(state)
+    if value is None:
+        return "GREEN", "current context utilization unknown"
+    status = ("RED" if value >= RED_CONTEXT_UTILIZATION else
+              "YELLOW" if value >= YELLOW_CONTEXT_UTILIZATION else "GREEN")
+    return status, f"measured current context={value:.0%}"
 
 
 def evaluate(state: dict[str, Any]) -> dict[str, Any]:
     returned = int(state.get("returned_bytes", 0))
-    large = int(state.get("large_outputs", 0))
     repeated = int(state.get("repeated_reads", 0))
     reads = int(state.get("file_reads", 0))
     broad = int(state.get("broad_suite_runs", 0))
-    workers = int(state.get("fresh_context_workers", 0))
-
-    proxy_red = (
-        returned >= RED_RETURNED_BYTES
-        or large >= RED_LARGE_OUTPUTS
-        or repeated >= RED_REPEATED_READS
-        or reads >= RED_FILE_READS
-    )
-    proxy_yellow = (
-        returned >= YELLOW_RETURNED_BYTES
-        or large >= YELLOW_LARGE_OUTPUTS
-        or repeated >= YELLOW_REPEATED_READS
-        or reads >= YELLOW_FILE_READS
-        or broad > 1
-    )
-    proxy_status = "RED" if proxy_red else "YELLOW" if proxy_yellow else "GREEN"
-
-    telemetry_status, telemetry_reason = _telemetry_health(state)
-    status = max(
-        (proxy_status, telemetry_status),
-        key=lambda value: _LEVEL[value],
-    )
-
-    if status == "RED":
-        action = (
-            "fresh-context-worker"
-            if workers < MAX_FRESH_CONTEXT_WORKERS
-            else "checkpoint-compact"
-        )
-        reason = (
-            f"context pressure high: returned={returned}B, large_outputs={large}, "
-            f"repeated_reads={repeated}, file_reads={reads}; {telemetry_reason}"
-        )
-    elif status == "YELLOW":
-        action = "summarize-use-pointers"
-        reason = (
-            f"context pressure rising: returned={returned}B, large_outputs={large}, "
-            f"repeated_reads={repeated}, file_reads={reads}, broad_suites={broad}; "
-            f"{telemetry_reason}"
-        )
+    replay = state.get("telemetry", {}).get("cache_read_delta", 0) or 0
+    inefficient = (repeated >= YELLOW_REPEATED_READS or reads >= YELLOW_FILE_READS
+                   or broad > 1 or replay >= YELLOW_CACHE_READ_DELTA)
+    state["efficiency"] = {
+        "status": "YELLOW" if inefficient else "GREEN",
+        "reason": "repeated work/replay merits inspection; not proof of a full context"
+                  if inefficient else "no repetition warning",
+    }
+    utilization = _utilization(state)
+    if utilization is not None:
+        status, reason = _telemetry_health(state)
     else:
-        action = "continue"
-        reason = "context budget healthy"
-
+        # Bytes/reads cannot estimate fullness without a context capacity.
+        # In particular, 24 tiny reads must not create a new worker.
+        status = "YELLOW" if returned >= YELLOW_RETURNED_BYTES or inefficient else "GREEN"
+        reason = ("proxy warning; context utilization unknown; narrow outputs, do not auto-reset"
+                  if status == "YELLOW" else "context utilization unknown; no proxy warning")
+    if status == "RED":
+        action = ("fresh-context-worker" if int(state.get("fresh_context_workers", 0))
+                  < MAX_FRESH_CONTEXT_WORKERS else "checkpoint-compact")
+    else:
+        action = "summarize-use-pointers" if status == "YELLOW" else "continue"
     state["health"] = {"status": status, "reason": reason, "action": action}
     return state
+
+
+def reset_context(state: dict[str, Any]) -> dict[str, Any]:
+    """Call AFTER a confirmed context replacement; not from a PreCompact hook.
+
+    Clear epoch-local proxies and read masking, retaining the task's worker cap.
+    Use start for a genuinely new task (which also resets that cap).
+    """
+    fresh = new_state()
+    fresh["fresh_context_workers"] = int(state.get("fresh_context_workers", 0))
+    return fresh
 
 
 def apply_telemetry(state: dict[str, Any], snapshot: dict[str, Any]) -> dict[str, Any]:
@@ -196,6 +180,7 @@ def apply_telemetry(state: dict[str, Any], snapshot: dict[str, Any]) -> dict[str
         "source": snapshot.get("source", "unknown"),
         "observed_at": snapshot.get("observed_at"),
         "context_utilization": snapshot.get("context_utilization"),
+        "occupancy_fresh": snapshot.get("occupancy_fresh"),
         "input_delta": int(delta("input_tokens")),
         "output_delta": int(delta("output_tokens")),
         "cache_read_delta": int(delta("cache_read_tokens")),
@@ -286,6 +271,7 @@ def main() -> int:
 
     sub.add_parser("fresh-context-worker")
     sub.add_parser("status")
+    sub.add_parser("reset", help="After confirmed compaction/new context, reset epoch only")
 
     args = parser.parse_args()
     path = Path(args.state)
@@ -312,6 +298,9 @@ def main() -> int:
     elif args.command == "telemetry":
         snapshot = json.loads(Path(args.file).read_text(encoding="utf-8"))
         state = apply_telemetry(state, snapshot)
+        save(path, state)
+    elif args.command == "reset":
+        state = reset_context(state)
         save(path, state)
     elif args.command == "fresh-context-worker":
         state = record_fresh_context_worker(state)

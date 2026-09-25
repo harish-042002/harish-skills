@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Bounded file reads with consumed-evidence masking.
 
-An unchanged read range is returned once. Subsequent reads return only a
-pointer/digest unless --refresh is explicitly requested.
+Mask only a fully delivered range in the same confirmed context epoch.
+Truncated ranges remain readable; character offsets provide lossless continuation.
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ if str(SCRIPT_DIR) not in sys.path:
 import context_guard
 
 DEFAULT_MAX_RETURN_BYTES = 6 * 1024
-INDEX_VERSION = 1
+INDEX_VERSION = 2
 
 
 def load_index(path: Path) -> dict:
@@ -37,24 +37,64 @@ def save_index(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def _slice_lines(path: Path, start: int | None, end: int | None) -> tuple[str, int, int]:
-    lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-    if not lines:
-        return "", 1, 0
-    first = max(1, start or 1)
-    last = min(len(lines), end or len(lines))
-    if last < first:
-        return "", first, last
-    return "\n".join(lines[first - 1:last]), first, last
+READ_CHUNK_CHARS = 64 * 1024
 
 
-def _cap(text: str, max_bytes: int) -> str:
-    data = text.encode("utf-8")
-    if len(data) <= max_bytes:
-        return text
-    suffix = b"\n...[read truncated]"
-    keep = max(0, max_bytes - len(suffix))
-    return data[:keep].decode("utf-8", errors="ignore").rstrip() + suffix.decode("utf-8")
+def _window(path: Path, start: int, end: int | None, offset: int, limit: int):
+    """Stream bounded chunks, including a single very long line.
+
+    Preserve exact decoded LF/CRLF text, including the final newline. Range
+    hashes are recomputed for correctness, but no whole-file string or
+    unbounded readline is allocated. Line numbers use LF delimiters.
+    """
+    before = path.stat()
+    signature = lambda st: (st.st_dev, st.st_ino, st.st_size, st.st_mtime_ns, st.st_ctime_ns)
+    digest = hashlib.sha256()
+    selected = []
+    total = 0
+    line = 1
+    last = start - 1
+    with path.open(encoding="utf-8", errors="replace", newline="") as fh:
+        while True:
+            chunk = fh.read(READ_CHUNK_CHARS)
+            if not chunk:
+                break
+            # Skip entire blocks preceding the requested starting line.
+            if line < start:
+                count = chunk.count("\n")
+                if line + count < start:
+                    line += count
+                    continue
+                at = 0
+                while line < start:
+                    at = chunk.index("\n", at) + 1
+                    line += 1
+                chunk = chunk[at:]
+            stop = False
+            if end is not None:
+                if line > end:
+                    break
+                count = chunk.count("\n")
+                if line + count > end:
+                    at = 0
+                    for _ in range(end - line + 1):
+                        at = chunk.index("\n", at) + 1
+                    chunk = chunk[:at]
+                    stop = True
+            if chunk:
+                digest.update(chunk.encode("utf-8"))
+                lo = max(0, offset - total)
+                hi = min(len(chunk), offset + limit - total)
+                if hi > lo:
+                    selected.append(chunk[lo:hi])
+                total += len(chunk)
+                line += chunk.count("\n")
+                last = line - 1 if chunk.endswith("\n") else line
+            if stop:
+                break
+    if signature(path.stat()) != signature(before):
+        raise ValueError("source changed during read; restart this read")
+    return "".join(selected), start, last, total, digest.hexdigest()
 
 
 def read_evidence(
@@ -66,81 +106,71 @@ def read_evidence(
     index_path: Path = Path(".plat/evidence-index.json"),
     context_state: Path = Path(".plat/context.json"),
     refresh: bool = False,
+    offset: int = 0,
+    expected_sha256: str | None = None,
 ) -> dict:
     path = path.expanduser().resolve()
     if not path.is_file():
         raise FileNotFoundError(path)
     if max_return_bytes < 1024:
         raise ValueError("max_return_bytes must be >= 1024")
-
-    content, first, last = _slice_lines(path, start, end)
-    digest = hashlib.sha256(content.encode("utf-8")).hexdigest()
+    first = 1 if start is None else start
+    if first < 1 or (end is not None and end < first) or offset < 0:
+        raise ValueError("invalid line range or character offset")
+    content, first, last, total, digest = _window(path, first, end, offset, max_return_bytes)
+    if expected_sha256 and expected_sha256 != digest:
+        raise ValueError("source changed during pagination; restart this read")
+    if offset > total:
+        raise ValueError("offset is beyond the requested range")
     key = f"{path}#L{first}-L{last}"
-
+    state = context_guard.load(context_state)
+    # Legacy state has no usable consumption epoch; establish one, never reuse old masks.
+    if not state.get("context_epoch"):
+        state = context_guard.reset_context(state)
+    epoch = state["context_epoch"]
     index = load_index(index_path)
     entries = index.setdefault("entries", {})
     previous = entries.get(key)
-    masked = bool(
-        not refresh
-        and isinstance(previous, dict)
-        and previous.get("sha256") == digest
-    )
-
+    masked = bool(not refresh and offset == 0 and isinstance(previous, dict)
+                  and previous.get("sha256") == digest
+                  and previous.get("context_epoch") == epoch
+                  and previous.get("fully_delivered") is True)
+    result = {
+        "path": str(path), "range": f"L{first}-L{last}", "sha256": digest,
+        "masked": masked, "pointer": key, "context_health": "YELLOW",
+    }
     if masked:
-        result = {
-            "path": str(path),
-            "range": f"L{first}-L{last}",
-            "sha256": digest,
-            "masked": True,
-            "pointer": key,
-            "summary": "unchanged evidence already consumed; re-read only if a new question requires it",
-        }
+        result["summary"] = "unchanged range delivered fully in this context; --refresh rereads it"
     else:
-        meta = {
-            "path": str(path),
-            "range": f"L{first}-L{last}",
-            "sha256": digest,
-            "masked": False,
-            "pointer": key,
-        }
-        overhead = len(json.dumps(meta, indent=2, sort_keys=True).encode("utf-8")) + 128
-        visible = _cap(content, max(1024, max_return_bytes - overhead))
-        result = {**meta, "content": visible}
-        entries[key] = {
-            "sha256": digest,
-            "bytes": len(content.encode("utf-8")),
-        }
-        save_index(index_path, index)
-
+        result.update(content="", offset=offset, truncated=False, next_offset=None)
+        # Fit the serialized JSON, not raw text: escapes and Unicode can expand it.
+        def candidate(n):
+            result["content"] = content[:n]
+            result["truncated"] = offset + n < total
+            result["next_offset"] = offset + n if result["truncated"] else None
+            return len(json.dumps(result, indent=2, sort_keys=True).encode("utf-8"))
+        low, high = 0, len(content)
+        if candidate(0) > max_return_bytes:
+            raise ValueError("metadata exceeds return budget; shorten the path or raise the limit")
+        while low < high:
+            mid = (low + high + 1) // 2
+            if candidate(mid) <= max_return_bytes:
+                low = mid
+            else:
+                high = mid - 1
+        candidate(low)
+        if result["truncated"] and low == 0:
+            raise ValueError("return budget leaves no room for content")
+        # A partial page is not evidence that the whole range was consumed.
+        if offset == 0 and not result["truncated"]:
+            entries[key] = {"sha256": digest, "context_epoch": epoch, "fully_delivered": True}
+            save_index(index_path, index)
     rendered = json.dumps(result, indent=2, sort_keys=True)
-    if len(rendered.encode("utf-8")) > max_return_bytes:
-        if "content" in result:
-            result["content"] = _cap(result["content"], max(256, max_return_bytes // 2))
-        rendered = json.dumps(result, indent=2, sort_keys=True)
-    if len(rendered.encode("utf-8")) > max_return_bytes:
-        raise RuntimeError("evidence read exceeds hard return limit")
-
-    state = context_guard.load(context_state)
-    state = context_guard.record(
-        state,
-        returned_bytes=min(len(rendered.encode("utf-8")), max_return_bytes),
-        kind="read",
-        key=key,
-    )
+    state = context_guard.record(state, returned_bytes=len(rendered.encode("utf-8")), kind="read", key=key)
     context_guard.save(context_state, state)
-    result["context_health"] = state["health"]
-
-    final = json.dumps(result, indent=2, sort_keys=True)
-    if len(final.encode("utf-8")) > max_return_bytes and "content" in result:
-        overflow = len(final.encode("utf-8")) - max_return_bytes
-        data = result["content"].encode("utf-8")
-        keep = max(0, len(data) - overflow - 64)
-        result["content"] = data[:keep].decode("utf-8", errors="ignore").rstrip()
-        if keep < len(data):
-            result["content"] += "\n...[read truncated]"
-        final = json.dumps(result, indent=2, sort_keys=True)
-    if len(final.encode("utf-8")) > max_return_bytes:
-        raise RuntimeError("evidence read exceeds hard return limit after health metadata")
+    result["context_health"] = state["health"]["status"]
+    if len(json.dumps(result, indent=2, sort_keys=True).encode("utf-8")) > max_return_bytes:
+        raise RuntimeError("evidence read exceeds hard return limit")
     return result
 
 
@@ -153,6 +183,8 @@ def main() -> int:
     parser.add_argument("--index", default=".plat/evidence-index.json")
     parser.add_argument("--context-state", default=".plat/context.json")
     parser.add_argument("--refresh", action="store_true")
+    parser.add_argument("--offset", type=int, default=0, help="Character offset within the requested range")
+    parser.add_argument("--expected-sha256", help="Reject continuation if the source has changed")
     args = parser.parse_args()
 
     result = read_evidence(
@@ -163,6 +195,8 @@ def main() -> int:
         index_path=Path(args.index),
         context_state=Path(args.context_state),
         refresh=args.refresh,
+        offset=args.offset,
+        expected_sha256=args.expected_sha256,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

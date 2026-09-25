@@ -24,25 +24,17 @@ Normal model-visible command output target: <=6 KB. Read exact log ranges only w
 
 ## Context watchdog
 
-Use `scripts/host_context.py` + `scripts/context_guard.py` for non-trivial/output-heavy work. The common guard always works from proxy signals; real host telemetry overlays it when available.
+Use the optional runtime only when context/output or continuity makes it useful; see `runtime.md`. Do not add separate polling turns to ordinary tasks.
 
-Proxy starting thresholds:
-- YELLOW: >=64 KB returned evidence, >=3 large outputs, >=2 repeated reads, >=12 file reads, or >1 broad-suite run.
-- RED: >=128 KB returned evidence, >=6 large outputs, >=4 repeated reads, or >=24 file reads.
+Measured current utilization warns at 65% and permits context recovery at 80%. Without current utilization, bytes/read counts can warn about unnecessary work, but cannot prove a full context or trigger RED recovery. Cumulative cache-read traffic measures repeated billed work, not current occupancy. Keep these metrics separate.
 
-Real-telemetry starting thresholds:
-- YELLOW: context utilization >=65% or task-local cache-read delta >=8M.
-- RED: context utilization >=80% or task-local cache-read delta >=20M.
-
-The first real telemetry sample becomes the task baseline; Plat acts on deltas rather than lifetime/session totals. These are benchmarkable starting defaults, not universal provider limits.
-
-On YELLOW, stop broad raw returns and use summaries + pointers. On RED, run `precompact_checkpoint.py`, then use one fresh-context worker if supported; otherwise compact/reset and resume from disk.
+YELLOW means narrow evidence returns. A measured RED can justify checkpoint plus confirmed context replacement, with at most one fresh-context worker per task when the host actually supports isolation. Call `context_guard.py reset` only after replacement succeeds so old counters and read masks cannot leak into the new context.
 
 ## Five-minute watchdog
 
 Record task start time for non-trivial work. Around meaningful boundaries, check whether roughly five minutes have elapsed since the last checkpoint. Do not create a separate LLM turn just to read the clock; use deterministic local time/state when available.
 
-Time alone is not a failure. A long build/test/download can be healthy. Evaluate whether the interval produced meaningful progress.
+Time alone is not a failure. A long build/test/download can be healthy only with a known operation and an explicit deadline; `--waiting` without `--waiting-until` is not proof of progress. Evaluate whether the interval produced meaningful progress.
 
 Meaningful progress includes:
 
@@ -57,7 +49,7 @@ Suggested health thresholds are starting defaults to benchmark, not universal de
 - `<5m without meaningful progress`: continue or tighten the next action.
 - `>=5m`: YELLOW -> prohibit generic exploration; choose ACT / VERIFY / REROUTE.
 - `>=10m`: RED -> bounded Brain review if available/budgeted; otherwise re-localize or surface the blocker.
-- `>=20m` on an ordinary task with weak progress: Brain review is strongly preferred before any further exploration.
+- `>=20m` on an ordinary task with weak progress: stop generic exploration and surface the concrete blocker unless a named, testable corrective step is available. Do not repeatedly extend the budget.
 
 Use `scripts/task_state.py` to make these thresholds deterministic where supported.
 
@@ -69,7 +61,7 @@ A search must answer a concrete question. "Be thorough" is not a question.
 
 ## Evidence ledger
 
-For long work keep compact accepted facts + pointers. Use `evidence_read.py` for large/repeated ranges: unchanged consumed evidence should collapse to a digest/pointer instead of being replayed. Re-read only when the file changed or a new question requires exact content.
+For long work keep compact accepted facts + pointers. Use `evidence_read.py` for large/repeated ranges: only fully delivered unchanged evidence in the same context epoch may collapse to a digest/pointer. Follow continuation offsets for truncated output; it is never fully consumed. Re-read only when the file changed or a new question requires exact content.
 
 For same-shape peers/adapters:
 
@@ -91,7 +83,7 @@ When host model selection exists, every delegated worker uses the lowest adequat
 
 ## Brain economics
 
-Brain review is not implementation. Build the input with `scripts/brain_packet.py`; hard cap the packet at 4 KB. Include only goal, hard constraints, slice, health, counters, evidence pointers, and one corrective question.
+Brain review is not implementation. Build the input with `scripts/brain_packet.py`; use a 4 KB default packet budget. A complete binding contract is mandatory: the builder rejects oversized contracts rather than clipping requirements. Include only goal, hard constraints, slice, health, counters, evidence pointers, and one corrective question.
 
 Routine Brain budget: maximum two reviews. Full chat history, raw logs, large diffs, and broad repo dumps are forbidden Brain input.
 

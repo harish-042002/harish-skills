@@ -6,6 +6,7 @@ on:
     paths:
       - "skills/plat/**"
       - "tests/**"
+      - "benchmarks/**"
       - "scripts/**"
       - "docs/RESEARCH_LOG.md"
       - "docs/MAINTENANCE.md"
@@ -19,6 +20,7 @@ on:
     paths:
       - "skills/plat/**"
       - "tests/**"
+      - "benchmarks/**"
       - "scripts/**"
       - "docs/RESEARCH_LOG.md"
       - "docs/MAINTENANCE.md"
@@ -54,11 +56,14 @@ jobs:
       - name: Structural validation
         run: python scripts/validate_plat.py
 
+      - name: Evaluation dependencies
+        run: python -m pip install -r benchmarks/requirements.txt
+
       - name: Runtime unit tests
         run: python -m unittest discover -s tests -p "test_*.py"
 
       - name: Python syntax
-        run: python -m compileall -q scripts skills/plat/scripts tests
+        run: python -m compileall -q scripts skills/plat/scripts tests benchmarks
 
       - name: Shell syntax
         run: bash -n install.sh
@@ -72,6 +77,7 @@ jobs:
           cp -R tests .ci-snapshot/
           cp -R scripts .ci-snapshot/
           cp -R docs .ci-snapshot/
+          cp -R benchmarks .ci-snapshot/
           cp VERSION install.sh install.ps1 .ci-snapshot/
           cd .ci-snapshot
           zip -qr ../plat-validation-snapshot.zip .

@@ -35,79 +35,40 @@ def build_packet(
     execution = state.get("execution", {}) if isinstance(state.get("execution"), dict) else {}
     health = state.get("health", {}) if isinstance(state.get("health"), dict) else {}
 
+    # These are binding instructions, not optional summary prose. Never clip them.
     packet: dict[str, Any] = {
-        "goal": _clip(state.get("goal", ""), 500),
-        "must": _clip(state.get("must", []), 220),
-        "must_not": _clip(state.get("must_not", []), 220),
+        "goal": state.get("goal", ""),
+        "must": state.get("must", []),
+        "must_not": state.get("must_not", []),
+        "preserve": state.get("preserve", []),
+        "proof": state.get("proof", []),
+        "question": question,
+        "contract_complete": True,
         "current_slice": _clip(state.get("current_slice", ""), 320),
         "owner": _clip(state.get("owner", []), 220),
-        "proof": _clip(state.get("proof", []), 220),
         "next": _clip(state.get("next", ""), 320),
-        "health": {
-            "status": health.get("status"),
-            "reason": _clip(health.get("reason", ""), 220),
-        },
-        "trajectory": {
-            "failed_hypotheses": execution.get("failed_hypotheses", 0),
-            "reroutes": execution.get("reroutes", 0),
-            "brain_reviews": execution.get("brain_reviews", 0),
-        },
+        "health": {"status": health.get("status"), "reason": _clip(health.get("reason", ""), 220)},
+        "trajectory": {key: execution.get(key, 0) for key in ("failed_hypotheses", "reroutes", "brain_reviews")},
         "evidence": _clip(evidence or [], 300),
-        "question": _clip(question, 500),
+        "optional_context_omitted": False,
     }
-
-    def size() -> int:
-        return len(
-            json.dumps(
-                packet,
-                indent=2,
-                sort_keys=True,
-                ensure_ascii=False,
-            ).encode("utf-8")
-        )
-
+    def size():
+        # Match CLI serialization, including escaped Unicode.
+        return len(json.dumps(packet, indent=2, sort_keys=True).encode("utf-8"))
     while size() > max_bytes and packet["evidence"]:
         packet["evidence"].pop()
-
+        packet["optional_context_omitted"] = True
+    for field in ("next", "owner", "current_slice", "health"):
+        if size() <= max_bytes:
+            break
+        packet.pop(field, None)
+        packet["optional_context_omitted"] = True
     if size() > max_bytes:
-        for field in ("proof", "owner", "must_not", "must"):
-            values = packet.get(field)
-            if isinstance(values, list) and len(values) > 2:
-                packet[field] = values[:2]
-            if size() <= max_bytes:
-                break
-
-    if size() > max_bytes:
-        packet["question"] = _clip(str(packet["question"]), 300)
-        packet["goal"] = _clip(str(packet["goal"]), 320)
-        packet["current_slice"] = _clip(str(packet["current_slice"]), 220)
-        packet["next"] = _clip(str(packet["next"]), 220)
-        packet["health"]["reason"] = _clip(
-            str(packet["health"].get("reason", "")),
-            160,
-        )
-        for field in ("proof", "owner", "must_not", "must"):
-            values = packet.get(field)
-            if isinstance(values, list):
-                packet[field] = [_clip(x, 140) for x in values[:2]]
-
-    if size() > max_bytes:
-        packet["evidence"] = []
-        packet["proof"] = packet.get("proof", [])[:1]
-        packet["owner"] = packet.get("owner", [])[:1]
-        packet["must"] = packet.get("must", [])[:1]
-        packet["must_not"] = packet.get("must_not", [])[:1]
-        packet["question"] = _clip(str(packet["question"]), 220)
-        packet["goal"] = _clip(str(packet["goal"]), 240)
-        packet["current_slice"] = _clip(str(packet["current_slice"]), 160)
-        packet["next"] = _clip(str(packet["next"]), 160)
-
-    rendered_size = size()
-    if rendered_size > max_bytes:
         raise ValueError(
-            f"brain packet exceeds hard limit: {rendered_size} > {max_bytes}"
+            "Complete binding contract exceeds packet budget. Do not delegate an incomplete brief; "
+            "use a verified shared contract file, choose a genuinely independent slice, "
+            "or explicitly increase --max-bytes."
         )
-
     return packet
 
 

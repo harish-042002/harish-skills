@@ -572,6 +572,120 @@
         "full repository validation remains unchanged because no skill runtime files changed",
         "existing v2.3.0 packaged skill SHA/content remains the product artifact"
       ]
+    },
+    {
+      "id": "2026-09-25-v2.4-economy-correctness-audit",
+      "date": "2026-09-25",
+      "capability": "Fix demonstrated runtime economy and evidence-loss defects; reduce activation overhead while retaining requirement-level verification.",
+      "material_files": [
+        "install.ps1",
+        "install.sh",
+        "scripts/validate_plat.py",
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/agents/openai.yaml",
+        "skills/plat/references/context.md",
+        "skills/plat/references/efficiency.md",
+        "skills/plat/references/orchestration.md",
+        "skills/plat/references/profile.md",
+        "skills/plat/references/runtime.md",
+        "skills/plat/scripts/brain_packet.py",
+        "skills/plat/scripts/context_guard.py",
+        "skills/plat/scripts/evidence_exec.py",
+        "skills/plat/scripts/evidence_read.py",
+        "skills/plat/scripts/host_context.py",
+        "skills/plat/scripts/orchestration_policy.py",
+        "skills/plat/scripts/task_state.py"
+      ],
+      "sources": [
+        {
+          "repo": "https://developers.openai.com/api/docs/guides/latency-optimization",
+          "license": "Public documentation; no source code or prose copied; principle-only review",
+          "inspected": "Fewer requests, less generated output, and end-to-end latency rather than prompt-size-only optimization.",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "https://www.anthropic.com/engineering/building-effective-agents",
+          "license": "Public documentation; no source code or prose copied; principle-only review",
+          "inspected": "Start simple; add orchestration only when evaluation demonstrates better outcomes.",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "Direct activation gate for trivial tasks; optional rather than compulsory runtime ceremony.",
+        "Separate current context occupancy from cumulative usage; epoch-scoped complete-read masking and lossless continuation.",
+        "Finite command capture, faithful exit status, bounded waiting, complete binding review contracts.",
+        "Executable defect regressions and explicit limits on live-model and cross-platform evidence."
+      ],
+      "rejected": [
+        "Adding more reviewers or nested agents to compensate for broken accounting.",
+        "Treating historical cache traffic as current context occupancy.",
+        "Claiming speed, savings or flagship-equivalent model quality from structural checks or a single historical pilot."
+      ],
+      "tests": [
+        "37 new deterministic regression tests (33 runtime plus four activation tests).",
+        "123 runnable unit tests on Linux, with behavioral fixture lane explicitly unavailable in the downloaded snapshot.",
+        "Skill validator, runtime-only structural validator, Python compilation, Bash syntax, and diff whitespace checks."
+      ]
+    },
+    {
+      "id": "2026-09-25-v2.4-rc2-runtime-benchmark-integrity",
+      "date": "2026-09-25",
+      "capability": "Bounded evidence reads, measured runtime regression repair, faithful usage accounting, trustworthy fixture evaluation and reproducible native comparison preflight.",
+      "material_files": [
+        ".github/workflows/validate-plat.yml",
+        "install.ps1",
+        "install.sh",
+        "scripts/validate_plat.py",
+        "skills/plat/SKILL.md",
+        "skills/plat/VERSION",
+        "skills/plat/agents/openai.yaml",
+        "skills/plat/references/context.md",
+        "skills/plat/references/efficiency.md",
+        "skills/plat/references/orchestration.md",
+        "skills/plat/references/profile.md",
+        "skills/plat/references/runtime.md",
+        "skills/plat/scripts/brain_packet.py",
+        "skills/plat/scripts/context_guard.py",
+        "skills/plat/scripts/evidence_exec.py",
+        "skills/plat/scripts/evidence_read.py",
+        "skills/plat/scripts/host_context.py",
+        "skills/plat/scripts/orchestration_policy.py",
+        "skills/plat/scripts/task_state.py",
+        ".github/workflows/release-plat.yml"
+      ],
+      "sources": [
+        {
+          "repo": "https://learn.chatgpt.com/docs/non-interactive-mode",
+          "license": "Public documentation; principle-only; no code copied",
+          "inspected": "Native CLI JSON usage, explicit model/effort, ephemeral workspaces and authentication boundaries.",
+          "reuse": "principle-only"
+        },
+        {
+          "repo": "https://code.claude.com/docs/en/cli-reference",
+          "license": "Public documentation; principle-only; no code copied",
+          "inspected": "Result/usage and CLI budget boundaries; no fabricated provider cost from local timings.",
+          "reuse": "principle-only"
+        }
+      ],
+      "adopted": [
+        "Chunked lossless reads; strict telemetry envelopes and cumulative accounting.",
+        "Retained logs, immutable source-verifier check, untracked changes, partial usage coverage.",
+        "Separate runtime timings, scripted correctness checks and unavailable live-model evidence.",
+        "Publish unchanged rc2 skill to main; install evaluation dependencies in release CI and mark prerelease tags accurately."
+      ],
+      "rejected": [
+        "Claiming dollar/model speed gains from helper microbenchmarks.",
+        "Averaging unknown cost as zero or accepting keyword-only safety proofs.",
+        "Adding automatic reviewers to ordinary task execution."
+      ],
+      "tests": [
+        "166 local tests pass, all provided test classes included.",
+        "225 order-balanced timed helper samples across three versions.",
+        "Three original false-positive verifiers now reject invalid scripted solutions.",
+        "Live preflight attempted; zero model calls, blocked on CLI/auth.",
+        "Local structural, syntax, package and combined patch/gate checks."
+      ]
     }
   ]
 }

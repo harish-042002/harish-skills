@@ -270,3 +270,11 @@ Candidate targets are deliberately stated as **targets, not achieved claims**:
 - <=10% wall-time regression, preferably faster.
 
 A matched v1.8-vs-v1.9 rerun with >=3 repetitions per arm is required before reporting these as improvements.
+
+
+## 2026-09-25 rc2 runtime follow-up
+
+166 local tests pass, including restored fixture coverage. 225 order-balanced
+helper timings compare v2.3, rc1 and rc2. No live model call, token saving or dollar
+saving was measured. Native preflight is blocked by missing CLI/auth. Complete
+methodology and raw results are in the separately delivered benchmark fix pack.

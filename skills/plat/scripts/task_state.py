@@ -65,6 +65,7 @@ def evaluate_checkpoint(
     meaningful_progress: bool = False,
     blocked: bool = False,
     waiting: bool = False,
+    waiting_until: str | None = None,
     reason: str = "",
     checkpoint_seconds: int = DEFAULT_CHECKPOINT_SECONDS,
 ) -> dict[str, Any]:
@@ -79,6 +80,22 @@ def evaluate_checkpoint(
         execution["last_checkpoint_at"] = stamp
         return {"due": True, "elapsed": elapsed, "since_progress": since_progress, "brain_recommended": False, "state": state}
 
+    if meaningful_progress:
+        execution["last_progress_at"] = stamp
+        since_progress = 0
+        state["health"] = {"status": "GREEN", "reason": reason or "meaningful progress observed", "action": "continue"}
+
+    if waiting and not meaningful_progress:
+        deadline = waiting_until or execution.get("waiting_until")
+        if deadline and elapsed_seconds(stamp, deadline) > 0:
+            execution["waiting_until"] = deadline
+            state["health"] = {"status": "GREEN", "reason": reason or "bounded operation pending", "action": "continue"}
+        else:
+            state["health"] = {"status": "BLOCKED", "reason": "waiting requires an unexpired explicit operation deadline", "action": "inspect-or-stop-operation"}
+        execution["last_checkpoint_at"] = stamp
+        return {"due": True, "elapsed": elapsed, "since_progress": since_progress, "brain_recommended": False, "state": state}
+    execution.pop("waiting_until", None)
+
     if since_checkpoint < checkpoint_seconds:
         return {"due": False, "elapsed": elapsed, "since_progress": since_progress, "brain_recommended": False, "state": state}
 
@@ -88,10 +105,6 @@ def evaluate_checkpoint(
         execution["last_progress_at"] = stamp
         state["health"] = {"status": "GREEN", "reason": reason or "meaningful progress observed", "action": "continue"}
         return {"due": True, "elapsed": elapsed, "since_progress": 0, "brain_recommended": False, "state": state}
-
-    if waiting:
-        state["health"] = {"status": "GREEN", "reason": reason or "waiting on known long-running operation", "action": "continue"}
-        return {"due": True, "elapsed": elapsed, "since_progress": since_progress, "brain_recommended": False, "state": state}
 
     if since_progress >= RED_AFTER_SECONDS:
         status, action = "RED", "brain-review"
@@ -152,6 +165,7 @@ def main() -> int:
     check.add_argument("--progress", action="store_true")
     check.add_argument("--blocked", action="store_true")
     check.add_argument("--waiting", action="store_true")
+    check.add_argument("--waiting-until", help="ISO deadline for a known pending operation")
     check.add_argument("--reason", default="")
     event = sub.add_parser("event")
     event.add_argument("--kind", choices=["brain-review", "reroute", "failed-hypothesis"], required=True)
@@ -168,7 +182,7 @@ def main() -> int:
 
     state = load(path)
     if args.command == "checkpoint":
-        result = evaluate_checkpoint(state, meaningful_progress=args.progress, blocked=args.blocked, waiting=args.waiting, reason=args.reason)
+        result = evaluate_checkpoint(state, meaningful_progress=args.progress, blocked=args.blocked, waiting=args.waiting, waiting_until=args.waiting_until, reason=args.reason)
         save(path, result["state"])
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0

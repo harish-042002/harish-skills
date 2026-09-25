@@ -24,7 +24,7 @@ class BrainPacketTests(unittest.TestCase):
     def setUpClass(cls):
         cls.mod = load_module()
 
-    def test_packet_is_hard_capped(self):
+    def test_oversized_contract_is_rejected_instead_of_clipped(self):
         state = {
             "goal": "g" * 5000,
             "must": ["m" * 1200 for _ in range(10)],
@@ -41,20 +41,9 @@ class BrainPacketTests(unittest.TestCase):
             },
             "accepted_evidence": ["SHOULD_NOT_BE_COPIED" * 1000],
         }
-        packet = self.mod.build_packet(
-            state,
-            question="q" * 5000,
-            evidence=["e" * 2000 for _ in range(10)],
-            max_bytes=4096,
-        )
-        rendered = json.dumps(
-            packet,
-            indent=2,
-            sort_keys=True,
-            ensure_ascii=False,
-        ).encode("utf-8")
-        self.assertLessEqual(len(rendered), 4096)
-        self.assertNotIn("SHOULD_NOT_BE_COPIED", rendered.decode("utf-8"))
+        with self.assertRaisesRegex(ValueError, "binding contract"):
+            self.mod.build_packet(state, question="q" * 5000,
+                                  evidence=["e" * 2000 for _ in range(10)], max_bytes=4096)
 
     def test_packet_keeps_core_course_correction_fields(self):
         state = {

@@ -917,3 +917,29 @@ This is a metadata-only correction. The published v2.3.0 skill already contains 
 The corrected description is checked against the same public provenance already used for v2.3: `bm629/agent-skills` (MIT) for observation masking/filesystem cold-context patterns and `rohitg00/agentmemory` (Apache-2.0) for cross-host PreCompact/durable context patterns. No source code or prose is copied.
 
 No Plat runtime behavior changes and no version bump is warranted; the release description is refreshed for the existing v2.3.0 release.
+
+
+## 2026-09-25: v2.4.0-rc.1 runtime economy/correctness audit
+
+Evidence ID: `2026-09-25-v2.4-economy-correctness-audit`. Candidate only; not a released performance claim.
+
+Inspected https://developers.openai.com/api/docs/guides/latency-optimization and https://www.anthropic.com/engineering/building-effective-agents. Both are public documentation reviewed for principles only; no external code or wording was incorporated. The implementation was developed against reproduced defects in Plat v2.3.0.
+
+Adopted fewer compulsory steps, optional wrappers, scoped verification and evidence-backed escalation. Rejected more nested reviewers and proxy-driven context resets. This supersedes the earlier 8M/20M cache-replay and 12/24-read occupancy interpretation in this historical log: cumulative traffic can warn about cost but does not prove a full context.
+
+Defect reproductions include 24 tiny reads causing RED, 21M cumulative cache tokens causing RED at 40% occupancy, truncated reads marked consumed, cumulative transcript snapshots overcounted, early progress discarded, unbounded commands and clipped binding contracts. The candidate adds epoch reset, lossless continuation, deadlines, complete-contract rejection and a trivial-task activation gate. Existing managed activation blocks are upgraded instead of silently leaving the old rule in place.
+
+Verification: 37 new regression tests plus 86 existing runnable tests. The downloaded GitHub validation snapshot omits the older behavioral-evaluation fixtures; full discovery retains that explicit missing-input failure. No live agent/model runs or native Windows/macOS runs were performed. Reduced entrypoint bytes are measured packaging data, not measured task-cost or wall-time savings.
+
+
+## 2026-09-25-v2.4-rc2-runtime-benchmark-integrity
+
+Benchmarked helper performance and repaired rc1 read latency, telemetry and
+evaluator integrity. 166 local tests pass; 225 runtime samples; no live model
+execution or billed savings. Rejected fabricated zero-cost and keyword-only proof.
+
+Inspected sources (principle-only, no copied code):
+- https://learn.chatgpt.com/docs/non-interactive-mode
+- https://code.claude.com/docs/en/cli-reference
+
+Publication note for 2026-09-25-v2.4-rc2-runtime-benchmark-integrity: the skill bytes remain unchanged. Release CI now installs the evaluation dependency and labels prereleases; main documentation identifies rc2 as an unproven live-performance candidate.
