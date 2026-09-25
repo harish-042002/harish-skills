@@ -1,0 +1,34 @@
+name: Prepare verified Plat rc2
+
+on:
+  push:
+    branches: [publish/plat-rc2-20260925]
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply frozen patch, validate, and prepare commit without moving main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          cp .plat-publish/prepare_publish.py "$RUNNER_TEMP/prepare_publish.py"
+          python "$RUNNER_TEMP/prepare_publish.py"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plat-rc2-publication-manifest
+          path: publish-manifest.json
+          if-no-files-found: error
+          retention-days: 7
